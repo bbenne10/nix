@@ -1,0 +1,64 @@
+From 118233b3af3cd584ec597dc87e704f7d2922defc Mon Sep 17 00:00:00 2001
+From: Bryan Bennett <bbenne10@gmail.com>
+Date: Fri, 27 Nov 2020 21:09:58 -0500
+Subject: [PATCH 09/10] config changes pt1
+
+---
+ config.def.h | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
+
+diff --git a/config.def.h b/config.def.h
+index e5d8707..161f658 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -1,4 +1,5 @@
+ /* See LICENSE file for copyright and license details. */
++#include <X11/XF86keysym.h>
+ 
+ /* appearance */
+ static const unsigned int borderpx  = 3;        /* border pixel of windows */
+@@ -60,11 +61,41 @@ static const Layout layouts[] = {
+ static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
+ static const char *dmenucmd[] = { "rofi", "-show", "run" };
+ static const char *termcmd[]  = { "alacritty", NULL };
++static const char *pass_cmd[]  = { "passmenu", NULL };
++
++static const char *vol_up[]  = { "pamixer", "set-sink-volume", "0", "+5%", NULL };
++static const char *vol_dwn[] = { "pamixer", "set-sink-volume", "0", "-5%", NULL };
++static const char *vol_mut[] = { "pamixer", "set-sink-mute", "0", "toggle", NULL };
++
++static const char *bright_up[]  = { "xbacklight", "+3%", NULL };
++static const char *bright_dwn[] = { "xbacklight", "-3%", NULL };
++
++static const char *lock_cmd[]   = { "slock", NULL };
+ 
+ static Key keys[] = {
+ 	/* modifier                     key        function        argument */
+ 	{ MODKEY,                       XK_space,  spawn,          {.v = dmenucmd } },
+ 	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
++
++	{ 0,                            XF86XK_AudioLowerVolume, spawn,          { .v = vol_dwn } },
++	{ 0,                            XF86XK_AudioRaiseVolume, spawn,          { .v = vol_up  } },
++	{ 0,                            XF86XK_AudioMute,        spawn,          { .v = vol_mut } },
++
++	/* 
++	{ 0,                            XF86XK_MonBrightnessUp,  spawn,          { .v = bright_up } },
++	{ 0,                            XF86XK_MonBrightnessDown,spawn,          { .v = bright_dwn } },
++
++	{ 0,                            XF86XK_AudioPlay,        spawn,          { .v = media_tog } },
++	{ 0,                            XF86XK_AudioNext,        spawn,          { .v = media_nxt } },
++	{ 0,                            XF86XK_AudioPrev,        spawn,          { .v = media_prv } },
++
++	{ 0,                            XF86XK_MonBrightnessUp,  spawn,          { .v = bright_up } },
++	{ 0,                            XF86XK_MonBrightnessDown,spawn,          { .v = bright_dwn } },
++	*/
++
++        { MODKEY,                       XK_p,      spawn,          { .v = pass_cmd } },
++        { ControlMask|MODKEY,           XK_space,  spawn,          { .v = lock_cmd } },
++
+ 	{ MODKEY,                       XK_b,      togglebar,      {0} },
+ 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
+ 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
+-- 
+2.25.4
+
