@@ -1,103 +1,46 @@
 { config, pkgs, ... }:
 {
-  # Let Home Manager install and manage itself.
-  programs.home-manager.enable = true;
-
-  home.username = "bryan";
-  home.homeDirectory = "/home/bryan";
-  home.stateVersion = "20.09";
-
-  nixpkgs.config.allowUnfree = true;
-  # nixpkgs.overlays = [
-  #   (import (builtins.fetchTarball {
-  #     url = https://github.com/nix-community/emacs-overlay/archive/master.tar.gz;
-  #   }))
-  # ];
-
-  xsession = {
-    enable = true;
-    windowManager = {
-      command = "${pkgs.dwm}/bin/dwm";
-    };
-    initExtra = ''
-      . ~/.fehbg;
-    '';
-    pointerCursor = {
-      package = pkgs.vanilla-dmz;
-      name = "Vanilla-DMZ";
-      size = 48; 
-    };
-  };
-
-  xresources.properties = {
-      "Xft.dpi" =  "192";
-  };
-
   home.packages = with pkgs; [
-    acpitool
     alacritty
-    brightnessctl
     curl
-    dwm
-    # (emacsWithPackagesFromUsePackage {
-    #   config = /home/bryan/code/dotfiles/emacs.org;
-    #   package = pkgs.emacsUnstable;
-    #   alwaysEnsure = true;
-    #   })
     exa
     fd
-    feh
-    firefox
-    gcc
+    # firefox
     git
-    gnum4
-    gnumake
     htop
-    i3lock
-    jetbrains-mono
+    iosevka
+    neovim
     pass
-    pciutils
-    picom
-    pmutils
-    pulseaudio-ctl
     ripgrep
-    rofi
-    rofi-pass
-    vim
     weechat
-    xss-lock
     zsh
   ];
+
+  programs.home-manager = { enable = true; };
 
   programs.alacritty = {
     enable = true;
     settings = {
       window = {
         dimensions = {
-	        columns = 0;
-	        lines = 0;
+          columns = 0;
+          lines = 0;
         };
-	      padding = {
-	        x = 12;
-	        y = 12;
+        padding = {
+          x = 12;
+          y = 12;
         };
-	      dynamic_padding = false;
+        dynamic_padding = false;
       };
       scrolling = {
         history = 10000;
-	      multiplier = 3;
+        multiplier = 3;
       };
       font = {
-        normal = {
-	        family = "JetBrains Mono";
-        };
-	      bold = {
-	        family = "JetBrains Mono";
-        };
-	      italic = {
-	        family = "JetBrains Mono";
-        };
-	      size = 10.0;
+        normal = { family = "JetBrains Mono"; };
+        bold = { family = "JetBrains Mono"; };
+        italic = { family = "JetBrains Mono"; };
+        size = 10.0;
         offset = {
           x = 0;
           y = 0;
@@ -172,9 +115,7 @@
     # delta = {
     #   enable = true;
     # };
-    lfs = {
-      enable = true;
-    };
+    lfs = { enable = true; };
     signing = {
       key = "4AF3A523BC147CA2";
       signByDefault = true;
@@ -186,10 +127,10 @@
       "auto-save-list"
       "custom.el"
       "url/"
-      "\#*"
+      "#*"
       "*~"
       ".#*"
-      "\#*\#"
+      "#*#"
       "*.log"
       ".DS_Store"
       "**/*.elc"
@@ -200,53 +141,73 @@
     userEmail = "bbenne10@gmail.com";
     userName = "Bryan Bennett";
   };
-    
-  services.gpg-agent = {
-    enable = true;
-    defaultCacheTtl = 1800;
-    enableSshSupport = true;
-  };
 
-  programs.opam = {
-    enable = true;
-    enableZshIntegration = true;
-  };
-
-  programs.starship = {
-    enable = true;
-    enableZshIntegration = true;
-    settings = {
-        add_newline = false;
-        # prompt_order = [ "package" "character" ];
-        scan_timeout = 10;
-        character.symbol = "➜";
-      };
-  };
+  # programs.starship = {
+  #   enable = true;
+  #   enableZshIntegration = true;
+  #   settings = {
+  #     add_newline = false;
+  #     scan_timeout = 10;
+  #     character.symbol = "➜";
+  #   };
+  # };
 
   programs.zsh = {
     enable = true;
     autocd = true;
+    dotDir = ".config/zsh";
     enableCompletion = true;
     enableAutosuggestions = true;
     shellAliases = {
       rmr = "rm -r";
+      ls = "exa";
     };
+
     initExtra = ''
+      setopt noclobber
+      setopt chasedots
+      setopt no_histverify
+
       bindkey "^[[1;5C" forward-word
       bindkey "^[[1;5D" backward-word
 
       # Accept autosuggestions with Ctrl + Spc
       bindkey "^ " autosuggest-accept
+
+      # vterm emacs support
+      function vterm_printf() {
+        printf "\e]%s\e\\" "$1"
+      }
     '';
-  };
 
-
-  # services
-  services.picom = {
-    enable = true;
-    experimentalBackends = true;
-    fade = true;
-    vSync = true;
-    blur = true;
+    plugins = [
+      {
+        name = "fzf-tab";
+        src = pkgs.fetchFromGitHub {
+          owner = "Aloxaf";
+          repo = "fzf-tab";
+          rev = "8584ed59107f37996b977a499ea0d536d851920d";
+          sha256 = "177k0wjc2rzp1kynrrmqi0zn3my198cksc6y190sw1r4ia5bsf4k";
+        };
+      }
+      {
+        name = "fast-syntax-highlighting";
+        src = pkgs.fetchFromGitHub {
+          owner = "zdharma";
+          repo = "fast-syntax-highlighting";
+          rev = "be2f385453670c18c40320a7384333f98fcd9f79";
+          sha256 = "1jjhv2ag1rnj1ayrwag5mxyjbdmmf5h5yxvmlc1i44pjcqz3w4s9";
+        };
+      }
+      {
+        name = "fzf-marks";
+        src = pkgs.fetchFromGitHub {
+          owner = "urbainvaes";
+          repo = "fzf-marks";
+          rev = "5400c3a10b8f054a36dcbbf35611a1d735298034"; # 12/24/20 HEAD
+          sha256 = "11klccmdxfx4xdakn1k9qw8l6bxv9qwcz0g5y69r51nvlbrhkxx1";
+        };
+      }
+    ];
   };
 }
