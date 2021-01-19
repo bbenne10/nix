@@ -6,7 +6,11 @@
   home.homeDirectory = "/Users/bbennett37";
 
   programs.firefox = {
-    enable = true;
+    # Let definition of common override everything but package here
     package = pkgs.Firefox;
   };
+
+  home.packages = with pkgs; [
+    (pkgs.lowPrio emacsMacport)
+  ];
 }

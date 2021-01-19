@@ -5,18 +5,28 @@
     curl
     exa
     fd
-    # firefox
+    # (firefox.override { extraNativeMessagingHosts = [ passff-host ]; })
     git
     htop
     iosevka
+    mpv
     neovim
     pass
     ripgrep
     weechat
     zsh
+
+    # ((import (pkgs.fetchFromGitHub {
+    #       owner = "numtide";
+    #       repo = "devshell";
+    #       rev = "17a8c6b64127a19b5136f9ce4dad17ca2934f4df";
+    #       sha256 = "17a8c6b64127a19b5136f9ce4dad17ca2934f4df";
+    #     }).devshell))
   ];
 
-  programs.home-manager = { enable = true; };
+  programs.home-manager = {
+    enable = true;
+  };
 
   programs.alacritty = {
     enable = true;
@@ -82,7 +92,7 @@
         };
         # indexed_colors = []
       };
-      visual_bell = {
+      bell = {
         animation = "EaseOutExpo";
         color = "0xffffff";
         duration = 0;
@@ -95,6 +105,31 @@
     enable = true;
     enableZshIntegration = true;
     enableNixDirenvIntegration = true;
+    stdlib = ''
+      : ''${XDG_CACHE_HOME:=$HOME/.cache}
+      declare -A direnv_layout_dirs
+      direnv_layout_dir() {
+        echo "''${direnv_layout_dirs[$PWD]:=$(
+          echo -n "$XDG_CACHE_HOME"/direnv/layouts/
+          echo -n "$PWD" | shasum | cut -d ' ' -f 1
+        )}"a
+      }
+    '';
+  };
+
+  programs.emacs = {
+    enable = true;
+  };
+
+  programs.firefox = {
+    enable = true;
+    profiles = {
+      bryan = {
+        settings = {
+          "general.smoothScroll" = false;
+        };
+      };
+    };
   };
 
   programs.fzf = {
@@ -142,15 +177,15 @@
     userName = "Bryan Bennett";
   };
 
-  # programs.starship = {
-  #   enable = true;
-  #   enableZshIntegration = true;
-  #   settings = {
-  #     add_newline = false;
-  #     scan_timeout = 10;
-  #     character.symbol = "➜";
-  #   };
-  # };
+  programs.starship = {
+    enable = true;
+    enableZshIntegration = true;
+    settings = {
+      add_newline = false;
+      scan_timeout = 10;
+      character.symbol = "➜";
+    };
+  };
 
   programs.zsh = {
     enable = true;
@@ -178,6 +213,10 @@
       function vterm_printf() {
         printf "\e]%s\e\\" "$1"
       }
+
+      # I have no idea where this is coming from
+      # But I don't need it for now
+      unset RPS1;
     '';
 
     plugins = [
@@ -210,4 +249,5 @@
       }
     ];
   };
+
 }
