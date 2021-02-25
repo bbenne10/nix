@@ -98,6 +98,9 @@
         duration = 0;
       };
       background_opacity = 0.75;
+      shell = {
+        program = "${pkgs.zsh}/bin/zsh";
+      };
     };
   };
 
