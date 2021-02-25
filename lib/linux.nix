@@ -13,8 +13,7 @@
     };
   };
 
-  home.packages = with pkgs;
-    home.packages + [
+  home.packages = with pkgs; [
       acpitool
       brightnessctl
       dwm

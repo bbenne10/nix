@@ -5,7 +5,6 @@
     curl
     exa
     fd
-    # (firefox.override { extraNativeMessagingHosts = [ passff-host ]; })
     git
     htop
     iosevka
