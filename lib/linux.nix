@@ -30,6 +30,7 @@
       pulseaudio-ctl
       rofi
       rofi-pass
+      ungoogled-chromium
       weechat
       xss-lock
     ];
