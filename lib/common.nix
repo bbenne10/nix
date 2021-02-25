@@ -476,12 +476,9 @@
     aliases = {
       graph = "log --graph --oneline --decorate";
       up = "!git pull --ff-only && git submodule update --init --recursive";
-      wip = "commit -am WIP";
+      wip = "commit --no-sign -am WIP";
       unwip = "!git log --pretty=%B -1 | grep -iq wip && git reset HEAD~";
     };
-    # delta = {
-    #   enable = true;
-    # };
     lfs = { enable = true; };
     signing = {
       key = "4AF3A523BC147CA2";
