@@ -1,15 +1,19 @@
 { config, pkgs, ... }:
 {
   home.packages = with pkgs; [
+    abduco
     alacritty
     curl
+    dvtm
     exa
     fd
     git
     htop
     iosevka
+    manix
     mpv
     neovim
+    pandoc
     pass
     ripgrep
     weechat
