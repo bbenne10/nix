@@ -51,6 +51,9 @@
         };
         dynamic_padding = false;
       };
+      selection = {
+        save_to_clipboard = true;
+      };
       scrolling = {
         history = 10000;
         multiplier = 3;
@@ -59,7 +62,7 @@
         normal = { family = "JetBrains Mono"; };
         bold = { family = "JetBrains Mono"; };
         italic = { family = "JetBrains Mono"; };
-        size = 10.0;
+        size = 12.0;
         offset = {
           x = 0;
           y = 0;
@@ -106,7 +109,7 @@
         color = "0xffffff";
         duration = 0;
       };
-      background_opacity = 0.75;
+      background_opacity = 0.95;
       shell = {
         program = "${pkgs.zsh}/bin/zsh";
       };
@@ -118,6 +121,7 @@
     enableZshIntegration = true;
     enableNixDirenvIntegration = true;
     stdlib = ''
+      # Centralize direnv layouts in $HOME/.cache/direnv/layouts
       : ''${XDG_CACHE_HOME:=$HOME/.cache}
       declare -A direnv_layout_dirs
       direnv_layout_dir() {
@@ -180,6 +184,11 @@
     ];
     userEmail = "bbenne10@gmail.com";
     userName = "Bryan Bennett";
+    extraConfig = {
+      pull = {
+        rebase = true;
+      };
+    };
   };
 
   programs.starship = {
