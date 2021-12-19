@@ -1,8 +1,7 @@
 (eval-when-compile (require 'use-package))
-(defvar bb-font-family "JetBrains Mono")
-(defvar bb-font-size 120)
+(defvar bb-font-family "Share Tech Mono")
+(defvar bb-font-size 140)
 (defvar bb-default-leader-key "<f13>")
-(if (string= (system-name) "tia-bxb-d01.ctisl.gtri.org") (setq bb-default-leader-key "<XF86TouchpadOff>"))
 
 (set-face-attribute 'default nil
     :family bb-font-family
@@ -89,13 +88,14 @@
     :init (setq doom-modeline-env-version nil)
     :config (doom-modeline-mode))
 
-(use-package undo-tree :config (global-undo-tree-mode))
+(use-package undo-tree
+  :config (global-undo-tree-mode))
 
 (use-package evil
     :after (undo-tree)
     :init (setq evil-undo-system 'undo-tree
                 evil-want-keybinding nil
-    evil-want-integration t)
+                evil-want-integration t)
     :config
       (evil-mode 1))
 
@@ -117,8 +117,12 @@
     :after evil
     :config (global-evil-surround-mode 1))
 
-(use-package ivy :config (ivy-mode))
-(use-package counsel :config (counsel-mode))
+(use-package ivy
+  :config (ivy-mode))
+
+(use-package counsel
+  :config (counsel-mode))
+
 (use-package company
   :delight company-mode
   :custom (company-tooltip-limit 20
@@ -127,11 +131,11 @@
     (global-company-mode 1))
 
 (use-package origami
-    :hook (prog-mode . origami-mode))
+  :hook (prog-mode . origami-mode))
 
 (use-package git-gutter
-    :hook (prog-mode . git-gutter-mode)
-    :init (setq git-gutter:update-interval 2))
+  :hook (prog-mode . git-gutter-mode)
+  :custom (git-gutter:update-interval 2))
 
 (use-package magit
     :commands (magit-status)
@@ -139,8 +143,7 @@
     :defer 5
     :custom (magit-popup-show-common-commands nil
              magit-display-buffer-function 'magit-display-buffer-same-window-except-diff-v1))
-    :init
-    (evil-leader/set-key "g" 'magit)
+    :init (evil-leader/set-key "g" 'magit)
 
 (use-package rainbow-delimiters
     :hook (prog . rainbow-delimiters))
@@ -152,22 +155,21 @@
     (display-line-numbers-mode)))) ; Show line numbers
 
 (use-package ws-butler
-    :config (ws-butler-global-mode))
+  :config (ws-butler-global-mode))
 
 (use-package direnv
   :after lsp
-  :config
-    (direnv-mode))
+  :config (direnv-mode))
 
 (use-package nix-mode)
+
 (use-package nix-sandbox)
 
 (use-package editorconfig
-    :config (editorconfig-mode 1))
+  :config (editorconfig-mode 1))
 
 (use-package perspective
-  :config
-  (persp-mode))
+  :config (persp-mode))
 
 (use-package persp-projectile
   :commands (projectile-persp-switch-project)
@@ -177,8 +179,7 @@
   :delight projectile-mode
   :commands (projectile-switch-project projectile-find-file projectile-mode)
   :after evil-leader
-  :custom (projectile-completion-system 'ivy
-           projectile-require-project-root nil
+  :custom (projectile-require-project-root nil
            projectile-git-command "fd . --print0 --color never"
            projectile-indexing-method 'alien
            projectile-project-search-path '("~/code"))
@@ -186,7 +187,8 @@
 
 (use-package counsel-projectile
   :after projectile
-  :custom (counsel-projectile-rg-initial-input '(ivy-thing-at-point))
+  :custom (counsel-projectile-rg-initial-input '(ivy-thing-at-point)
+           projectile-completion-system 'ivy)
   :config
   (evil-define-key 'normal 'global (kbd "<leader>b") 'counsel-projectile)
   (evil-leader/set-key
@@ -214,14 +216,12 @@
          (window-height . 15)))
    :hook (flycheck-mode . flycheck-set-indication-mode))
 
-
 (use-package which-key
   :config (which-key-mode 1))
 
 (use-package lsp-mode
   :config
-  (defun bb/lsp-setup-python()
-    (message "DIR: %s" (default-directory))
+  (defun bb/lsp-setup()
     (let ((current (nix-current-sandbox)))
       (when current (setq lsp-pyls-server-command (nix-executable-find (nix-current-sandbox) "pyls"))))
 
@@ -238,8 +238,7 @@
       lsp-pyls-plugins-pyflakes-enabled nil
       lsp-pyls-plugins-autopep8-enabled nil
       ;; and now just set a few variables to better defaults
-      lsp-pyls-plugins-flake8-max-line-length 88
-     )
+      lsp-pyls-plugins-flake8-max-line-length 88)
 
     (lsp-register-custom-settings
      '(("pyls.plugins.pyls_black.enabled" t t)
@@ -247,8 +246,9 @@
   :hook
   ((python-mode . lsp)
    (reason-mode . lsp)
+   (web-mode . lsp)
    (lsp-mode . lsp-enable-which-key-integration)
-   (lsp-before-initialize . bb/lsp-setup-python)))
+   (lsp-before-initialize . bb/lsp-setup)))
 
 (use-package lsp-ui
   :config
@@ -285,14 +285,14 @@
   :mode ("\\.rei?'")
   :init (setq refmt-command 'opam))
 
+(use-package rust-mode
+  :mode ("\\.rs'"))
+
 (use-package tuareg
   :mode ("\\.mli?'"))
 
 (use-package merlin
   :mode ("\\.mli?'"))
-
-(use-package lsp-java
-  :mode ("\\.java'"))
 
 (use-package yaml-mode
   :mode ("\\.yaml'" "\\.yml'"))
@@ -303,3 +303,8 @@
 
 (use-package lua-mode
   :mode (".lua$"))
+
+(use-package vterm)
+
+(use-package zig-mode
+  :mode ("\\.zig\\'"))
