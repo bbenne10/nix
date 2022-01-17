@@ -56,13 +56,37 @@
             };
           }; in genAttrs systems mkPkgs);
         darwinPkgs = pkgsBySystem.x86_64-darwin;
+        linuxPkgs = pkgsBySystem.x86_64-linux;
     in {
+
+      nixosConfigurations = {
+        "bennett-laptop" = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+          modules = [
+            home-manager.nixosModules.home-manager
+            ./hardware/laptop.nix
+            ./lib/common.nix
+            ./lib/linux.nix
+            ./hosts/bennett-laptop.nix
+          ];
+          specialArgs = {
+           pkgsForSystem=linuxPkgs;
+           userName="bryan";
+           system="x86_64-linux";
+           inherit home-manager
+                   zsh-fzf_tab
+                   zsh-fast_syntax_highlighting
+                   zsh-fzf_marks;
+          };
+        };
+      };
       darwinConfigurations = {
         "cipher-4590" = darwin.lib.darwinSystem {
           system = "x86_64-darwin";
           specialArgs = {
              pkgsForSystem=darwinPkgs;
              userName="bbennett37";
+	     system="x86_64-darwin";
              inherit home-manager
                      zsh-fzf_tab
                      zsh-fast_syntax_highlighting
@@ -70,7 +94,8 @@
           };
           modules = [
             home-manager.darwinModules.home-manager
-             ./common.nix
+             ./lib/common.nix
+             ./hosts/cipher-4590.nix
           ];
         };
       };

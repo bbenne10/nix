@@ -1,21 +1,27 @@
-{ config, lib, pkgsForSystem, home-manager, userName, zsh-fzf_tab, zsh-fast_syntax_highlighting, zsh-fzf_marks, ...}: {
+{ config, lib, pkgsForSystem, home-manager, system, userName, zsh-fzf_tab, zsh-fast_syntax_highlighting, zsh-fzf_marks, ...}: {
+
+  nix = {
+    trustedUsers = [ userName ];
+    package = pkgsForSystem.nixUnstable;
+    binaryCachePublicKeys = [
+      "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+      "nixpkgs-wayland.cachix.org-1:3lwxaILxMRkVhehr5StQprHdEo4IrE8sRho9R9HOLYA="
+    ];
+    binaryCaches = [
+      "https://cache.nixos.org"
+      "https://nixpkgs-wayland.cachix.org"
+    ];
+  };
+
   users.users.${userName}.home = if pkgsForSystem.stdenv.isDarwin then "/Users/${userName}" else "/home/${userName}";
-  nix.trustedUsers = [ userName ];
-  nix.package = pkgsForSystem.nixUnstable;
-  services.nix-daemon.enable = true;
+
   fonts = {
-    enableFontDir = true;
+    fontDir.enable = true;
     fonts = with pkgsForSystem; [
       shareTechMono
-      noto-fonts
-      noto-fonts-emoji
-      fira-code
-      fira-code-symbols
-      hasklig
     ];
   };
   programs.zsh.enable = true;
-  system.stateVersion = 4;
 
   home-manager.users.${userName} = {
     home.stateVersion = "20.09";
@@ -27,29 +33,31 @@
       gnupg
       htop
       manix
+      neovim
       pandoc
       pass
       ripgrep
       weechat
-    ];
+      tmux
+    ]; 
 
     programs.emacs = {
       enable = true;
       package = pkgsForSystem.emacsWithPackagesFromUsePackage {
-        config = ./conf.d/emacs.el;
+        config = ./../conf.d/emacs.el;
         package = pkgsForSystem.emacs;
         alwaysEnsure = true;
       };
     };
 
-    home.file.".config/emacs/init.el".source = ./conf.d/emacs.el;
+    home.file.".config/emacs/init.el".source = ./../conf.d/emacs.el;
 
     programs.kitty = {
       enable = true;
       settings = {
         shell = "${pkgsForSystem.zsh}/bin/zsh";
         font_family = "Share Tech Mono";
-        font_size = "14.0";
+        font_size = "20.0";
         font_features = "ShareTechMono-Regular -liga";
         macos_option_as_alt = true;
         macos_custom_beam_cursor = true;
@@ -144,6 +152,56 @@
       };
     };
 
+    programs.gpg = {
+      enable = true;
+      mutableKeys = false;
+      mutableTrust = false;
+      publicKeys = [{
+        text = ''
+          -----BEGIN PGP PUBLIC KEY BLOCK-----
+
+          mQENBGG435gBCAC805OTSnHrC7ciKpsy4SDwMrJRCvdqbd6JvkJKrhe09llqcVY7
+          FltPPwetiTXdjDN2+v4AT2LWM9jElRRVi6IOdbQofnHVGO8JDmr6Cd8YugmAn2W6
+          pAqR+1UNF2s6hUqZJNZasIxxrqXeGCFL/eb/t/Fj8aGTKA38ydJMKAB0o93UcbGo
+          x1Mi7wFfNHify+xEUiYcTbtHug0ucwXWSVBT13KnQ1AagXsKu6Af4+V1bdCPvG5q
+          PavY0oRN5mks1B8siwv50VrRuCb96rcNU4HlRmomi2hcZaEKpP2zKYzXjGH5cjJe
+          KpBN1HiCYZ3iF88wBPHEPV7JTx2Jbq0QaooLABEBAAG0LEJyeWFuIEJlbm5ldHQg
+          PEJyeWFuLkJlbm5ldHRAcHJvdG9ubWFpbC5jb20+iQFOBBMBCAA4FiEEQeoAtAD5
+          aXAcstOv75Dj6YuPXAsFAmG435gCGw8FCwkIBwIGFQoJCAsCBBYCAwECHgECF4AA
+          CgkQ75Dj6YuPXAvl3wf8D8ZYjMNyQO1vtM+vubEy9VX9MI8Y+TJUrx7FS7ynpIG5
+          oU4x7mQfW2DpRMG0IALUqF3oVSe1oY5WrZGTnDfjFcmDGGGFm+vgPJQloRc0JTQS
+          7vFVtMZqxX5CRagtLm8JyXU5rO5KGRqrwAHf0+cD+WPt61PEvt39cU+aVHnZ55uv
+          szonV2InWCLzcN5ukMVEptoCDiLyk5PDK59tO364UmkGSeMIleORw4TrauINfmd1
+          6P8iNw9Y4IMgiOc964pVM/gfAEIraZiTN2RNFs44JzKERVHt0dUco/ZCtuceWjs/
+          o4RIRKscIEq5AlJr2Z7zfea8fFNv/zXsgb5LOQjNjLkBDQRhuN/FAQgA0LZnQOb4
+          aDXDdeD3hUvNGPvgVT0gSSmo4NYZana+XcIa/lIOs71B1aSct+hWbzOlS9Lf3AeB
+          sBab/QfrR5BAk3x0IEC70NaUCLmuQchH94YXOaMFVgN1jkGvRPdhfjxUfwIzSR2k
+          KkgGXr2KG8UU9N6+HwpMGjg11rrbc9N9eIVdByTGT12UMR6zxKQQZpuwHHrVrLuM
+          xMQsMBDgytWk+1rw1KegryEGgKkUpH2UIYqw//xO14AoU71XFW41VdhOmpEjj69H
+          AGW9PD+v1413pnXVd6ISbYMxlQfM4sQn9+Ged3rQ+I+jGlVo4kZr+Sdj333Oys8M
+          HY7PixZEq99vCwARAQABiQE2BBgBCAAgFiEEQeoAtAD5aXAcstOv75Dj6YuPXAsF
+          AmG438UCGyAACgkQ75Dj6YuPXAvI/wf/RVjCF9zEw/Xk9rKVG74Mr1MpZbGVT8XQ
+          uXJ0WzZrcfRDkhX5+3+DkF4T4RlvEZKfVsYu5rrjMenGuT9wrX8i0GRxUC8pQ7er
+          aH/gwmh4ohbyqCyz/VisSasq3EeUFlR9OtiIj9BmkI+0aUgOue17ig3LBHduMvu/
+          rlvVkzxFgsRFDcRrZXkOnBX0gJVl7YjY61NBx9Y0AEAfzO34CsuPrf3kt12IaVV8
+          11yglK7c0LtTouKQZxHdky+b5I3JuS28RhfeJ6eWIPc+5p+90Daf8mA92QKMXDvr
+          T4NpJ2/hTmCr49+VOabR0yv1iDjHagZywgT+fTxkwzonAlYXFXyMzw==
+          =1nQI
+          -----END PGP PUBLIC KEY BLOCK-----'';
+        trust = "ultimate";
+      }];
+    };
+
+    services.gpg-agent = {
+      enable = true;
+      enableScDaemon = true;
+      enableSshSupport = true;
+      sshKeys = [
+        "8DA8DC50C6EA0D64FEBEF928E162CEDA7DCCA6B6"
+      ];
+
+    };
+
     programs.htop = {
       enable = true;
       settings = {
@@ -202,7 +260,7 @@
         # vterm emacs support
         function vterm_printf() {
           printf "\e]%s\e\\" "$1"
-                   }
+        }
 
         # I have no idea where this is coming from
         # But I don't need it for now

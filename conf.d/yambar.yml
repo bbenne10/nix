@@ -1,0 +1,189 @@
+# fonts we'll be re-using here and there
+awesome: &awesome FontAwesome:style=solid:size=20
+
+std_underline: &std_underline {underline: { size: 2, color: ff0000ff}}
+
+colors_green: &colors_green b8bb26ff
+
+bar:
+  height: 52
+  location: top
+  spacing: 15
+  margin: 20
+
+  # Default font
+  font: ShareTechMono:style=regular:size=24
+
+  foreground: FBF1C7FF
+  background: 282828FF
+
+  left:
+    - river:
+        title: { empty: {} }
+        anchors:
+          - base: &river_base
+              margin: 15
+              tag: id
+              default: {string: {text: , font: *awesome}}
+              values:
+                1: {string: {text: , font: *awesome}}
+                2: {string: {text: , font: *awesome}}
+                3: {string: {text: , font: *awesome}}
+                4: {string: {text: , font: *awesome}}
+
+        content:
+          map:
+            on-click: sh -c "riverctl set-focused-tags $((1 << ({id} - 1)))"
+            tag: state
+            values:
+              urgent:
+                map:
+                  <<: *river_base
+                  deco: {background: {color: 8b0000ff}}
+              focused:
+                map:
+                  <<: *river_base
+                  deco: {stack: [background: {color: ffa0a04c}, underline: {size: 5, color: ff0000ff}]}
+              unfocused: {map: {<<: *river_base}}
+              invisible:
+                map:
+                  tag: occupied
+                  values:
+                    false: {empty: {}}
+                    true: {map: {<<: *river_base, foreground: ffffff4c}}
+
+  center:
+    - clock:
+        time-format: "%-l:%M %p"
+        content:
+          - string: {text: , font: *awesome, right-margin: 10}
+          - string: {text: "{date} @ {time}"}
+
+  right:
+    - removables:
+        anchors:
+          drive: &drive { text: , font: *awesome}
+          optical: &optical {text: , font: *awesome}
+        spacing: 5
+        content:
+          map:
+            tag: mounted
+            values:
+              false:
+                map:
+                  tag: optical
+                  on-click: udisksctl mount -b {device}
+                  values:
+                    false: [{string: *drive}, {string: {text: "{label}"}}]
+                    true: [{string: *optical}, {string: {text: "{label}"}}]
+              true:
+                map:
+                  tag: optical
+                  on-click: udisksctl unmount -b {device}
+                  values:
+                    false:
+                      - string: {<<: *drive, deco: *std_underline}
+                      - string: {text: "{label}"}
+                    true:
+                      - string: {<<: *optical, deco: *std_underline}
+                      - string: {text: "{label}"}
+    - network:
+        name: wlp59s0
+        content:
+          map:
+            tag: state
+            default: {string: {text: , font: *awesome, foreground: ffffff66}}
+            values:
+              down: {string: {text: , font: *awesome, foreground: ff0000ff}}
+              up:
+                map:
+                  tag: ipv4
+                  default:
+                    - string: {text: , font: *awesome}
+                    - string: {text: "{ssid}"}
+                  values:
+                    "":
+                      - string: {text: , font: *awesome, foreground: ffffff66}
+                      - string: {text: "{ssid}", foreground: ffffff66}
+    - alsa:
+        card: hw:PCH
+        mixer: Master
+        content:
+          map:
+            tag: online
+            values:
+              false: {string: {text: , font: *awesome, foreground: ff0000ff}}
+              true:
+                map:
+                  on-click: /bin/sh -c "amixer -q sset Speaker unmute && amixer -q sset Headphone unmute && amixer -q sset Master toggle"
+                  tag: muted
+                  values:
+                    true: {string: {text: , font: *awesome, foreground: ffffff66}}
+                    false:
+                      ramp:
+                        tag: volume
+                        items:
+                          - string: {text: , font: *awesome}
+                          - string: {text: , font: *awesome}
+                          - string: {text: , font: *awesome}
+                          - string: {text: , font: *awesome}
+                          - string: {text: , font: *awesome}
+    - backlight:
+        name: intel_backlight
+        content: [ string: {text: , font: *awesome}, string: {text: "{percent}%"}]
+    - battery:
+        name: BAT0
+        poll-interval: 30
+        anchors:
+          discharging: &discharging
+            list:
+              items:
+                - ramp:
+                    tag: capacity
+                    items:
+                      - string: {text: , foreground: ff0000ff, font: *awesome}
+                      - string: {text: , foreground: ffa600ff, font: *awesome}
+                      - string: {text: , font: *awesome}
+                      - string: {text: , font: *awesome}
+                      - string: {text: , font: *awesome}
+                      - string: {text: , font: *awesome}
+                      - string: {text: , font: *awesome}
+                      - string: {text: , font: *awesome}
+                      - string: {text: , font: *awesome}
+                      - string: {text: , foreground: 00ff00ff, font: *awesome}
+                - string: {text: "{capacity}% {estimate}"}
+        content:
+          map:
+            tag: state
+            values:
+              unknown:
+                <<: *discharging
+              discharging:
+                <<: *discharging
+              charging:
+                - string: {text: , foreground: *colors_green, font: *awesome}
+                - string: {text: "{capacity}% {estimate}"}
+              full:
+                - string: {text: , foreground: *colors_green, font: *awesome}
+                - string: {text: "{capacity}% full"}
+              not charging:
+                - ramp:
+                    tag: capacity
+                    items:
+                      - string: {text:  , foreground: ff0000ff, font: *awesome}
+                      - string: {text:  , foreground: ffa600ff, font: *awesome}
+                      - string: {text:  , foreground: *colors_green, font: *awesome}
+                      - string: {text:  , foreground: *colors_green, font: *awesome}
+                      - string: {text:  , foreground: *colors_green, font: *awesome}
+                      - string: {text:  , foreground: *colors_green, font: *awesome}
+                      - string: {text:  , foreground: *colors_green, font: *awesome}
+                      - string: {text:  , foreground: *colors_green, font: *awesome}
+                      - string: {text:  , foreground: *colors_green, font: *awesome}
+                      - string: {text:  , foreground: *colors_green, font: *awesome}
+                - string: {text: "{capacity}%"}
+    - label:
+        content:
+          string:
+            on-click: sudo pm-suspend-hybrid
+            text: 
+            font: *awesome

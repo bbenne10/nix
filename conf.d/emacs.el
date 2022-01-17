@@ -1,6 +1,6 @@
 (eval-when-compile (require 'use-package))
 (defvar bb-font-family "Share Tech Mono")
-(defvar bb-font-size 140)
+(defvar bb-font-size 200)
 (defvar bb-default-leader-key "<f13>")
 
 (set-face-attribute 'default nil
@@ -80,7 +80,7 @@
 
 (use-package doom-themes
     :config
-      (load-theme 'doom-nord t)
+      (load-theme 'doom-gruvbox t)
       (doom-themes-visual-bell-config)
       (doom-themes-org-config))
 

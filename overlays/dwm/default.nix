@@ -1,12 +1,11 @@
-(self: super:
-with import <nixpkgs/lib>;
-let dwmPatchBaseDir = /home/bryan/.config/nixpkgs/overlays/patches/dwm;
+{nixpkgs}: (self: super:
+let dwmPatchBaseDir = ./patches/dwm;
     isPatch = builtins.match ".+\.patch";
     fullPatchPath = attrsets.mapAttrsToList(k: v: if isPatch k != null then dwmPatchBaseDir + ("/" + k) else null);
     filterNull = filter (i: i != null);
 in
 {
-  dwm = super.dwm.overrideAttrs (old: {
+  dwm-mod = super.dwm.overrideAttrs (old: {
     buildInputs = with self.pkgs; old.buildInputs ++ [ 
       pango 
       pkgconfig 
@@ -14,7 +13,7 @@ in
     ];
     configurePhase = ''
       substitute ./config.def.h ./config.h \
-        --replace @alacritty@ "${self.pkgs.alacritty}/bin/alacritty" \
+        --replace @alacritty@ "${self.pkgs.kitty}/bin/kitty" \
         --replace @i3lock@ "${self.pkgs.i3lock}/bin/i3lock" \
         --replace @pamixer@ "${self.pkgs.pamixer}/bin/pamixer" \
         --replace @rofi@ "${self.pkgs.rofi}/bin/rofi"\
@@ -30,9 +29,7 @@ in
       pamixer 
       pass
       rofi 
-      rofi-pass
       slock 
     ];
   });
-}
-)
+})
