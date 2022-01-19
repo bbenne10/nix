@@ -9,7 +9,7 @@
   networking.hostName = "bennett-laptop"; 
   networking.nameservers = [ "192.168.1.142" ];
 
-  users.users.bryan = {
+  users.users.${userName} = {
     isNormalUser = true;
     extraGroups = [ "wheel" "docker" "vboxusers" "video"];
     hashedPassword = "$6$hc672tTQXjHQV$xOGejAjJAdP3VhKMAHCZ2J8G0mj2mjrYS7l4hkq6fVRlLygWplZeem4LX0MEdGGBsGaqClLUc6Z4fkRsfROYB/";
@@ -38,7 +38,6 @@
 
   environment.variables = {
     GDK_SCALE = "2";
-    GDK_DPI_SCALE = "0.5";
     _JAVA_OPTIONA = "-Dsun.java2d.uiScale=2";
   };
 

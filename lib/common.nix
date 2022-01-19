@@ -1,19 +1,24 @@
 { config, lib, pkgsForSystem, home-manager, system, userName, zsh-fzf_tab, zsh-fast_syntax_highlighting, zsh-fzf_marks, ...}: {
-
   nix = {
     trustedUsers = [ userName ];
     package = pkgsForSystem.nixUnstable;
     binaryCachePublicKeys = [
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-      "nixpkgs-wayland.cachix.org-1:3lwxaILxMRkVhehr5StQprHdEo4IrE8sRho9R9HOLYA="
     ];
+    extraOptions = ''
+      experimental-features = nix-command flakes
+    '';
     binaryCaches = [
       "https://cache.nixos.org"
-      "https://nixpkgs-wayland.cachix.org"
     ];
   };
 
-  users.users.${userName}.home = if pkgsForSystem.stdenv.isDarwin then "/Users/${userName}" else "/home/${userName}";
+  users.users.${userName} = {
+    home = if pkgsForSystem.stdenv.isDarwin then "/Users/${userName}" else "/home/${userName}";
+    openssh.authorizedKeys.keys = [
+      "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDQtmdA5vhoNcN14PeFS80Y++BVPSBJKajg1hlqdr5dwhr+Ug6zvUHVpJy36FZvM6VL0t/cB4GwFpv9B+tHkECTfHQgQLvQ1pQIua5ByEf3hhc5owVWA3WOQa9E92F+PFR/AjNJHaQqSAZevYobxRT03r4fCkwaODXWuttz0314hV0HJMZPXZQxHrPEpBBmm7AcetWsu4zExCwwEODK1aT7WvDUp6CvIQaAqRSkfZQhirD//E7XgChTvVcVbjVV2E6akSOPr0cAZb08P6/XjXemddV3ohJtgzGVB8zixCf34Z53etD4j6MaVWjiRmv5J2Pffc7Kzwwdjs+LFkSr328L cardno:000606534762"
+    ];
+  };
 
   fonts = {
     fontDir.enable = true;
@@ -51,36 +56,6 @@
     };
 
     home.file.".config/emacs/init.el".source = ./../conf.d/emacs.el;
-
-    programs.kitty = {
-      enable = true;
-      settings = {
-        shell = "${pkgsForSystem.zsh}/bin/zsh";
-        font_family = "Share Tech Mono";
-        font_size = "20.0";
-        font_features = "ShareTechMono-Regular -liga";
-        macos_option_as_alt = true;
-        macos_custom_beam_cursor = true;
-        background = "#2E3440";
-        foreground = "#D8DEE9";
-        color0 = "#3B4252";
-        color1 = "#BF616A";
-        color2 = "#A3BE8C";
-        color3 = "#EBCB8B";
-        color4 = "#81A1C1";
-        color5 = "#B48EAD";
-        color6 = "#88C0D0";
-        color7 = "#E5E9F0";
-        color8 = "#4C566A";
-        color9 = "#BF616A";
-        color10 = "#A3BE8C";
-        color11 = "#EBCB8C";
-        color12 = "#81A1C1";
-        color13 = "#B48EAD";
-        color14 = "#8FBCBB";
-        color15 = "#ECEFF4";
-      };
-    };
 
     programs.bat = {
       enable = true;
@@ -189,18 +164,51 @@
           =1nQI
           -----END PGP PUBLIC KEY BLOCK-----'';
         trust = "ultimate";
-      }];
-    };
+      }
+      {
+        text = ''
+          -----BEGIN PGP PUBLIC KEY BLOCK-----
 
-    services.gpg-agent = {
-      enable = true;
-      enableScDaemon = true;
-      enableSshSupport = true;
-      sshKeys = [
-        "8DA8DC50C6EA0D64FEBEF928E162CEDA7DCCA6B6"
-      ];
+          xsFNBAAAAAABEADGOwOpy8tjQ3mHLvdG57kN/tR3PAz0dj8tzobo6oFHx5LFwOhp
+          yoHblwx66GzZp37lELpt3Gyp4q9fmlG2QI20tD9qWKy3NwS69cRJMrJjdF6hdWFQ
+          XQCxi7FOjScGeGNAgdaCUwdlLgtF16lfe/7gjh3JCjcwO+hW9dMJGk7iEW6lhOdT
+          juNS2KbGkjCLZvinBiJCx/99duIW7vFQs+VzKD7ETK9E09yNWVvcuVmn5dFXKMQd
+          F0oA1Ue+zNrervmVW0xeIY7zqDhsGlSQTFmnfrRdUcAIldpiUv1yoiQS/wupYFf1
+          ZtFX3HqeUgvy+m0wCHWWvEm+Fmu3T7EHr88Kow7d3Lwrei9pAF49lWY6RCRC7/Xi
+          XMEhv25eIh7JZuXGS9NZY7xnoNWMnM2vjZRMK5uynlILcHwU02s11E5fRzNFtb76
+          W6H2P0CJMY8YQkv4/tvdjaFotkB2dNb4LA8OOLM1vTbvB4KRtHcXDdwUylZQdD7Z
+          dMhqz7+RpkPecA0Qieen4yS/ijCRq8wxaMd/POEV6alaqTXaXzwERxsrrYvmoyQj
+          6zdxin40/KidGfRZb7+MO2nyolkEK7GNK3cjAhsFa2oAUs3Tf807hmpSEQsFn4EX
+          EXSP3ROIbxuYFwDDNs75pne4wjuXLOnnG1uAY3mJYQA+R6X7Xb/xOLy+xwARAQAB
+          zSlyb290IChJbXBvcnRlZCBmcm9tIFNTSCkgPHJvb3RAbG9jYWxob3N0PsLBYgQT
+          AQgAFgUCAAAAAAkQnE3mE4xxJ/ECGw8CGQEAANHNEAAcZ1U0rhCWQmG+yuZe7Nce
+          YQdlS82AEWWET5weE170DDlpURbo3D08fQlwh3Pnr9E3ng5HAgnFRH6Elm1aXGn3
+          DHtzsuQZLwMwYRmkn4cq418RpVl9hO+LfBTDNrwD+/SAQ0yHlZyZE12E49JLbTDP
+          2D1QO0L3UoHQUzHSb7hwJlo+x8iwipY9WKieD1TH3BdMKZd2tbFHP/Cmo1GHZlBe
+          DpzdyxOLowK9fw+WkGkWvPnTJuVwPxikvriwEOlLLyiNCMlDTX8VLwc28nT4euJr
+          k7hQFocmkL9eai2CU6FCt6HCPy3uHn3zZpPZMOErG1jLaF7cFc+N19tBHM2f4ZpU
+          t6AzcYv0TgjULBMlUScLNPi92cUNNFkBK666GjH363UWAxLk+MmOrLdKraQbvNV9
+          3Ay6MyhJKbMkNPi37mflCQyxEuDmAYQDqRu1427OIj0Jkuf79rcJsIgt+gGHyImX
+          /dTVQAlQ0krRVVjgKXGIMnWyyE+U0G0GE/h8putby6hq8tvMIVL2MZG9CVqdyBFG
+          BU0b9uAuTbLGf3kSmbhV3Y8ibGOTrRXAhSxzdOFTw4sHrSCh4cFlDqBTxmw7L5In
+          Y1WAw4SKGxIpKYDpSStOPrXVUcxzY45uHP6AxNDrOuU82jihZY9voJJ/kuWjpzyr
+          0uOxq8VoYZsQ2QZrNDLGbg==
+          =lxGb
+          -----END PGP PUBLIC KEY BLOCK-----'';
+        trust = "ultimate";
+      }
+    ];
+  };
 
-    };
+  services.gpg-agent = {
+    enable = true;
+    enableScDaemon = true;
+    enableSshSupport = true;
+    sshKeys = [
+      "8DA8DC50C6EA0D64FEBEF928E162CEDA7DCCA6B6"
+    ];
+
+  };
 
     programs.htop = {
       enable = true;
