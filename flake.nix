@@ -40,15 +40,6 @@
             overlays = [
               emacs.overlay
               (self: super: {
-                shareTechMono = nixpkgs.legacyPackages.${system}.stdenv.mkDerivation {
-                  name = "share_tech_mono";
-                  version = "1.0";
-                  src = ./.;
-                  installPhase = ''
-                     mkdir -p $out/share/fonts/opentype
-                     cp -R files/ShareTechMono-regular.ttf $out/share/fonts/opentype
-                   '';
-                 };
               })
             ];
             config = {
