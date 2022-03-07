@@ -256,11 +256,11 @@
           lsp-ui-doc-alignment 'window))
   :commands lsp-ui-mode
   :hook ((lsp-before-initialize . bb/lsp-ui-setup))
-  :bind (:map evil-normal-state-map
-          ("gd" . lsp-ui-peek-find-definitions)
-          ("gr" . lsp-ui-peek-find-references)
-          ("C-E" . flycheck-list-errors)
-          ("C-e" . flycheck-next-error)))
+  :general (:states 'normal
+    "gd" 'lsp-ui-peek-find-definitions
+    "gr" 'lsp-ui-peek-find-references
+    "C-E" 'flycheck-list-errors
+    "C-e" 'flycheck-next-error))
 
 (use-package reason-mode
   :mode ("\\.rei?'")
