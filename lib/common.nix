@@ -21,15 +21,17 @@
   };
 
   fonts = {
-    fontDir.enable = true;
+    enableFontDir = true;
+    # fontDir.enable = true;
     fonts = with pkgsForSystem; [
-      shareTechMono
+      (nerdfonts.override { fonts = [ "ShareTechMono" ]; })
+      noto-fonts
     ];
   };
   programs.zsh.enable = true;
 
   home-manager.users.${userName} = {
-    home.stateVersion = "20.09";
+    home.stateVersion = "21.11";
     home.packages = with pkgsForSystem; [
       curl
       exa

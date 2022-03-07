@@ -1,6 +1,6 @@
 (eval-when-compile (require 'use-package))
-(defvar bb-font-family "Share Tech Mono")
-(defvar bb-font-size 200)
+(defvar bb-font-family "ShureTechMono Nerd Font")
+(defvar bb-font-size 140)
 (defvar bb-default-leader-key "<f13>")
 
 (set-face-attribute 'default nil
