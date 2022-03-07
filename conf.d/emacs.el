@@ -108,7 +108,7 @@
 
 (use-package evil-collection
     :after (evil)
-    :config (evil-collection-init '(magit magit-todos)))
+    :config (evil-collection-init '(magit magit-todos consult)))
 
 (use-package evil-matchit
     :after evil
@@ -118,11 +118,7 @@
     :after evil
     :config (global-evil-surround-mode 1))
 
-(use-package ivy
-  :config (ivy-mode))
 
-(use-package counsel
-  :config (counsel-mode))
 
 (use-package company
   :delight company-mode
@@ -186,19 +182,9 @@
   :custom (projectile-require-project-root nil
            projectile-git-command "fd . --print0 --color never"
            projectile-indexing-method 'alien
-           projectile-project-search-path '("~/code"))
+           projectile-project-search-path '("~/code")
+           consult-project-root-function #'projectile-project-root)
   :config (projectile-mode))
-
-(use-package counsel-projectile
-  :after projectile
-  :custom (counsel-projectile-rg-initial-input '(ivy-thing-at-point)
-           projectile-completion-system 'ivy)
-  :config
-  (evil-define-key 'normal 'global (kbd "<leader>b") 'counsel-projectile)
-  (evil-leader/set-key
-    "b" 'counsel-projectile
-    evil-leader/leader 'counsel-projectile
-    "/" 'counsel-projectile-rg))
 
 (use-package fic-mode
     :commands (fic-mode)
@@ -291,6 +277,33 @@
 
 (use-package rust-mode
   :mode ("\\.rs'"))
+(use-package consult
+  :custom (register-preview-delay 0
+           register-preview-function #'consult-register-format
+           xref-show-xrefs-function #'consult-xref
+           xref-show-definitions-function #'consult-xref
+           consult-project-function #'projectile-project-root)
+  :init
+    (advice-add #'register-preview :override #'consult-register-preview)
+    (advice-add #'completing-read-multiple :override #'consult-completing-read-multiple)
+  :config
+  (consult-customize
+   consult-theme
+   :preview-key '(:debounce 0.2 any)
+   consult-ripgrep consult-git-grep consult-grep
+   consult-bookmark consult-recent-file consult-xref
+   consult--source-recent-file consult--source-project-recent-file consult--source-bookmark
+   :preview-key (kbd "M-.")))
+
+(use-package vertico
+   :init (vertico-mode))
+
+(use-package orderless
+   :custom (completion-styles '(orderless)))
+
+(use-package marginalia
+  :general (:map minibuffer-local-map "M-A" 'marginalia-cycle)
+  :init (marginalia-mode))
 
 (use-package tuareg
   :mode ("\\.mli?'"))
