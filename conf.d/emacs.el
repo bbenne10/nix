@@ -100,6 +100,7 @@
     :after (undo-tree)
     :init (setq evil-undo-system 'undo-tree
                 evil-want-keybinding nil
+                evil-echo-state nil
                 evil-want-integration t)
     :config
       (evil-mode 1))
