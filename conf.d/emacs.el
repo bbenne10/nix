@@ -119,16 +119,12 @@
     :config (global-evil-surround-mode 1))
 
 
-
 (use-package company
   :delight company-mode
   :custom (company-tooltip-limit 20
            company-tooltip-align-annotations t)
   :config
     (global-company-mode 1))
-
-(use-package origami
-  :hook (prog-mode . origami-mode))
 
 (use-package git-gutter
   :hook (prog-mode . git-gutter-mode)
