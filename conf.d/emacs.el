@@ -73,6 +73,8 @@
 ; Don't make me type out "yes" or "no" - even if it is important
 (defalias 'yes-or-no-p 'y-or-n-p)
 
+(use-package general)
+
 (use-package exec-path-from-shell
   :if (memq window-system '(mac ns))
   :custom (exec-path-from-shell-check-startup-files nil
@@ -102,14 +104,7 @@
                 evil-want-keybinding nil
                 evil-echo-state nil
                 evil-want-integration t)
-    :config
-      (evil-mode 1))
-
-(use-package evil-leader
-    :after (evil)
-    :config
-      (evil-leader/set-leader bb-default-leader-key)
-      (global-evil-leader-mode))
+    :config (evil-mode 1))
 
 (use-package evil-collection
     :after (evil)
@@ -146,10 +141,10 @@
 (use-package magit
     :commands (magit-status)
     :hook (after-save . magit-after-save-refresh-status)
-    :defer 5
+    :general (:prefix bb-default-leader-key
+              "g" 'magit)
     :custom (magit-popup-show-common-commands nil
              magit-display-buffer-function 'magit-display-buffer-same-window-except-diff-v1))
-    :init (evil-leader/set-key "g" 'magit)
 
 (use-package rainbow-delimiters
     :hook (prog . rainbow-delimiters))
@@ -179,12 +174,15 @@
 
 (use-package persp-projectile
   :commands (projectile-persp-switch-project)
-  :init (evil-leader/set-key "p" 'projectile-persp-switch-project))
+  :general (:prefix bb-default-leader-key
+            "p" 'projectile-persp-switch-project))
 
 (use-package projectile
   :delight projectile-mode
-  :commands (projectile-switch-project projectile-find-file projectile-mode)
-  :after evil-leader
+  :general (:prefix bb-default-leader-key
+            "b" 'find-file
+            bb-default-leader-key 'projectile-find-file
+            "/" 'consult-ripgrep)
   :custom (projectile-require-project-root nil
            projectile-git-command "fd . --print0 --color never"
            projectile-indexing-method 'alien
