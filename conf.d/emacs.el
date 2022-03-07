@@ -1,3 +1,8 @@
+;;; package --- Summary
+;;; Commentary:
+;;; Code:
+;; -*- lexical-binding: t -*-
+
 (eval-when-compile (require 'use-package))
 (defvar bb-font-family "ShureTechMono Nerd Font")
 (defvar bb-font-size 140)
