@@ -126,10 +126,6 @@
   :config
     (global-company-mode 1))
 
-(use-package git-gutter
-  :hook (prog-mode . git-gutter-mode)
-  :custom (git-gutter:update-interval 2))
-
 (use-package magit
     :commands (magit-status)
     :hook (after-save . magit-after-save-refresh-status)
@@ -147,6 +143,17 @@
     (global-hl-line-mode 1)        ; highlight the active line
     (display-line-numbers-mode)    ; Show line numbers
     (hs-minor-mode))))             ; Add hide-show
+
+(use-package git-gutter
+  :hook (prog-mode . git-gutter-mode)
+  :config
+  (setq git-gutter:update-interval 0.02))
+
+(use-package git-gutter-fringe
+  :config
+  (define-fringe-bitmap 'git-gutter-fr:added [224] nil nil '(center repeated))
+  (define-fringe-bitmap 'git-gutter-fr:modified [224] nil nil '(center repeated))
+  (define-fringe-bitmap 'git-gutter-fr:deleted [128 192 224 240] nil nil 'bottom))
 
 (use-package ws-butler
   :config (ws-butler-global-mode))
