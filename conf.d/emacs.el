@@ -145,7 +145,8 @@
     (prettify-symbols-mode 1)      ; show ligatures
     (show-paren-mode 1)            ; highlight matching brackets
     (global-hl-line-mode 1)        ; highlight the active line
-    (display-line-numbers-mode)))) ; Show line numbers
+    (display-line-numbers-mode)    ; Show line numbers
+    (hs-minor-mode))))             ; Add hide-show
 
 (use-package ws-butler
   :config (ws-butler-global-mode))
