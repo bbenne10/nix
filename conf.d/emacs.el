@@ -266,16 +266,6 @@
           ("C-E" . flycheck-list-errors)
           ("C-e" . flycheck-next-error)))
 
-(use-package web-mode
-  :mode (".jsx?$" ".html$" ".css$")
-  :custom (web-mode-markup-indent-offset 2
-           web-mode-code-indent-offset 2
-           web-mode-css-indent-offset 2
-           web-mode-attr-indent-offset 2
-           web-mode-enable-css-colorization t
-           web-mode-enable-current-column-highlight t
-           web-mode-enable-auto-quoting nil))
-
 (use-package reason-mode
   :mode ("\\.rei?'")
   :init (setq refmt-command 'opam))
