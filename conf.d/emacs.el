@@ -265,6 +265,10 @@
 (use-package reason-mode
   :mode ("\\.rei?'")
   :init (setq refmt-command 'opam))
+(use-package consult-lsp
+  :config
+    (consult-lsp-marginalia-mode)
+    (define-key lsp-mode-map [remap xref-find-apropos] #'consult-lsp-symbols))
 
 (use-package rust-mode
   :mode ("\\.rs'"))
