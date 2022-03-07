@@ -262,16 +262,11 @@
     "C-E" 'flycheck-list-errors
     "C-e" 'flycheck-next-error))
 
-(use-package reason-mode
-  :mode ("\\.rei?'")
-  :init (setq refmt-command 'opam))
 (use-package consult-lsp
   :config
     (consult-lsp-marginalia-mode)
     (define-key lsp-mode-map [remap xref-find-apropos] #'consult-lsp-symbols))
 
-(use-package rust-mode
-  :mode ("\\.rs'"))
 (use-package consult
   :custom (register-preview-delay 0
            register-preview-function #'consult-register-format
@@ -300,11 +295,7 @@
   :general (:map minibuffer-local-map "M-A" 'marginalia-cycle)
   :init (marginalia-mode))
 
-(use-package tuareg
-  :mode ("\\.mli?'"))
 
-(use-package merlin
-  :mode ("\\.mli?'"))
 (use-package multi-vterm
   ;; Stolen directly from https://github.com/suonlight/multi-vterm
   :config
@@ -343,6 +334,9 @@
     (evil-define-key 'normal vterm-mode-map (kbd "o")        #'evil-insert-resume)
     (evil-define-key 'normal vterm-mode-map (kbd "<return>") #'evil-insert-resume))
 
+(use-package rust-mode
+  :mode ("\\.rs'"))
+
 (use-package yaml-mode
   :mode ("\\.yaml'" "\\.yml'"))
 
@@ -354,6 +348,4 @@
   :mode (".lua$"))
 
 (use-package vterm)
-
-(use-package zig-mode
-  :mode ("\\.zig\\'"))
+ (use-package zig-mode :mode ("\\.zig\\'"))
