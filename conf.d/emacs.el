@@ -295,6 +295,8 @@
   :general (:map minibuffer-local-map "M-A" 'marginalia-cycle)
   :init (marginalia-mode))
 
+(use-package vterm
+  :custom (vterm-shell (concat (getenv "HOME") "/.nix-profile/bin/zsh")))
 
 (use-package multi-vterm
   ;; Stolen directly from https://github.com/suonlight/multi-vterm
@@ -346,6 +348,4 @@
 
 (use-package lua-mode
   :mode (".lua$"))
-
-(use-package vterm)
  (use-package zig-mode :mode ("\\.zig\\'"))
