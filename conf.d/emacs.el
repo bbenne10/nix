@@ -135,7 +135,7 @@
              magit-display-buffer-function 'magit-display-buffer-same-window-except-diff-v1))
 
 (use-package rainbow-delimiters
-    :hook (prog . rainbow-delimiters))
+    :hook (prog-mode . rainbow-delimiters-mode))
 
 (add-hook 'prog-mode-hook (function(lambda ()
     (prettify-symbols-mode 1)      ; show ligatures
@@ -195,7 +195,8 @@
     :init (setq fic-highlighted-words '("FIXME" "TODO" "BUG" "NOTE"))
     :hook (prog-mode . fic-mode))
 
-(use-package rainbow-mode)
+(use-package rainbow-mode
+  :hook (prog-mode . rainbow-mode))
 
 (use-package flycheck
   :custom (flycheck-highlighting-mode nil
