@@ -147,27 +147,6 @@
 (use-package editorconfig
   :config (editorconfig-mode 1))
 
-(use-package perspective
-  :config (persp-mode))
-
-(use-package persp-projectile
-  :commands (projectile-persp-switch-project)
-  :general (:prefix bb-default-leader-key
-            "p" 'projectile-persp-switch-project))
-
-(use-package projectile
-  :delight projectile-mode
-  :general (:prefix bb-default-leader-key
-            "b" 'find-file
-            bb-default-leader-key 'projectile-find-file
-            "/" 'consult-ripgrep)
-  :custom (projectile-require-project-root nil
-           projectile-git-command "fd . --print0 --color never"
-           projectile-indexing-method 'alien
-           projectile-project-search-path '("~/code")
-           consult-project-root-function #'projectile-project-root)
-  :config (projectile-mode))
-
 (use-package fic-mode
     :commands (fic-mode)
     :init (setq fic-highlighted-words '("FIXME" "TODO" "BUG" "NOTE"))
@@ -250,22 +229,35 @@
     (define-key lsp-mode-map [remap xref-find-apropos] #'consult-lsp-symbols))
 
 (use-package consult
+  :general (:prefix bb-default-leader-key
+            "/" 'consult-ripgrep)
   :custom (register-preview-delay 0
            register-preview-function #'consult-register-format
            xref-show-xrefs-function #'consult-xref
            xref-show-definitions-function #'consult-xref
            consult-project-function #'projectile-project-root)
+
   :init
     (advice-add #'register-preview :override #'consult-register-preview)
     (advice-add #'completing-read-multiple :override #'consult-completing-read-multiple)
   :config
-  (consult-customize
-   consult-theme
-   :preview-key '(:debounce 0.2 any)
-   consult-ripgrep consult-git-grep consult-grep
-   consult-bookmark consult-recent-file consult-xref
-   consult--source-recent-file consult--source-project-recent-file consult--source-bookmark
-   :preview-key (kbd "M-.")))
+    (consult-customize
+     consult-theme
+     :preview-key '(:debounce 0.2 any)
+     consult-ripgrep consult-git-grep consult-grep
+     consult-bookmark consult-recent-file consult-xref
+     consult--source-recent-file consult--source-project-recent-file consult--source-bookmark
+     :preview-key (kbd "M-.")))
+
+(use-package consult-project-extra)
+
+(use-package tabspaces
+  :hook (after-init . tabspaces-mode)
+  :commands (tabspaces-create-workspace
+             tabspaces-create-new-project-and-workspace
+             tabspaces-open-existing-project-and-workspace
+             tabspaces-switch-workspace)
+  :custom (tabspaces-use-filtered-buffers-as-default t))
 
 (use-package vertico
    :init (vertico-mode))
