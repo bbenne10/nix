@@ -179,7 +179,6 @@
 
     (setq
       lsp-idle-delay 0.5
-      lsp-enable-snippet nil  ;; Not supported by company capf, which is the recommended company backend
       lsp-pyls-configuration-sources ["flake8"]
       ;; enable things we want!
       lsp-pyls-plugins-flake8-enabled t
@@ -190,7 +189,8 @@
       lsp-pyls-plugins-pyflakes-enabled nil
       lsp-pyls-plugins-autopep8-enabled nil
       ;; and now just set a few variables to better defaults
-      lsp-pyls-plugins-flake8-max-line-length 88)
+      lsp-pyls-plugins-flake8-max-line-length 88
+      )
 
     (lsp-register-custom-settings
      '(("pyls.plugins.pyls_black.enabled" t t)
@@ -310,16 +310,27 @@
     (evil-define-key 'normal vterm-mode-map (kbd "o")        #'evil-insert-resume)
     (evil-define-key 'normal vterm-mode-map (kbd "<return>") #'evil-insert-resume))
 
-(use-package rust-mode
-  :mode ("\\.rs'"))
+;; languages
 
-(use-package yaml-mode
-  :mode ("\\.yaml'" "\\.yml'"))
+(use-package rust-mode :mode ("\\.rs'"))
+
+(use-package yaml-mode :mode ("\\.yaml'" "\\.yml'"))
 
 (use-package markdown-mode
   :config (setq markdown-command "pandoc")
   :mode (("\\.md'" . gfm-mode)))
 
-(use-package lua-mode
-  :mode (".lua$"))
- (use-package zig-mode :mode ("\\.zig\\'"))
+(use-package lua-mode :mode (".lua$"))
+
+(use-package zig-mode :mode ("\\.zig\\'"))
+
+;; Experimental java settings
+(use-package lsp-java
+  :hook (java-mode . lsp)
+  :custom (lsp-java-completion-import-order '("javax" "java" "" "edu.gatech.gtri.cipher" "blackforest" "#")))
+
+(use-package dap-mode
+  :after lsp-mode
+  :config (dap-auto-configure-mode))
+
+(use-package dap-java :ensure nil)
