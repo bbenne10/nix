@@ -149,7 +149,7 @@
 
 (use-package fic-mode
     :commands (fic-mode)
-    :init (setq fic-highlighted-words '("FIXME" "TODO" "BUG" "NOTE"))
+    :init (setq fic-highlighted-words '("FIXME" "TODO" "BUG" "NOTE" "XXX"))
     :hook (prog-mode . fic-mode))
 
 (use-package rainbow-mode
