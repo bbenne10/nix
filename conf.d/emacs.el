@@ -4,76 +4,65 @@
 ;; -*- lexical-binding: t -*-
 
 (eval-when-compile (require 'use-package))
-(defvar bb-font-family "ShureTechMono Nerd Font")
-(defvar bb-font-size 140)
+;; (defvar bb-font-family "ShureTechMono Nerd Font")
 (defvar bb-default-leader-key "<f13>")
 
-(set-face-attribute 'default nil
-    :family bb-font-family
-    :height bb-font-size
-    :width 'normal
-    :weight 'normal)
-
-(set-face-attribute 'line-number-current-line nil
-    :family bb-font-family
-    :height bb-font-size
-    :width 'expanded
-    :weight 'normal
-    :inverse-video nil)
+(set-face-attribute 'default nil :family "ShureTechMono Nerd Font")
+(set-face-attribute 'line-number-current-line nil :family "ShureTechMono Nerd Font")
 
 (push '(menu-bar-lines . 0) default-frame-alist)
 (push '(tool-bar-lines . 0) default-frame-alist)
 (push '(vertical-scroll-bars) default-frame-alist)
 
-(setq
-  ; disable customizations
-  custom-file null-device
-  ; disable the scratch message
-  initial-scratch-message ""
-  ; disable the startup screen
-  inhibit-startup-message t
-  ; move window one line at a time when point approaches edge
-  scroll-conservatively 101
-  ; start scrolling 5 lines from edge
-  scroll-margin 5
-  ; Audible bell is cancer, but visible bell works okay
-  visible-bell t
-  ; Tell emacs we're okay with functions being given advice
-  ad-redefinition-action 'accept
-  ; Follow symlinks to vcs controlled files
-  vc-follow-symlinks t
-  ; copy actions copy to clipboard
-  select-enable-clipboard t
-  ; copy actions also copy to primary
-  select-enable-primary t
-  ; highlighting a section causes it to get copied (linux default behavior)
-  mouse-drag-copy-region t
-  ; unprettify symbols when the point hits them so we can edit them
-  prettify-symbols-unprettify-at-point t
-  ; Move backups to a temporary dir
-  backup-directory-alist `((".*" . ,temporary-file-directory))
-  ; Move auto saves to a temporary dir
-  auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
-
-(setq-default
-  ; in fill-mode, what column do we wrap at?
-  fill-column 80
-  ; disable line wrapping
-  truncate-lines t
-  ; use spaces over tabs everywhere
-  indent-tabs-mode nil
-  ; but when encountering a tab, how large is it?
-  tab-width 2
-  ; and what are the tabstop points when shifting?
-  tab-stop-list (number-sequence 3 120 2))
-
-; Stop killing windows by fatfingering this
-(global-unset-key (kbd "C-x C-c"))
-
-; Don't make me type out "yes" or "no" - even if it is important
-(defalias 'yes-or-no-p 'y-or-n-p)
-
 (use-package general)
+
+(use-package emacs
+  :custom (custom-file null-device "disable customizations")
+          (initial-scratch-message "" "disable the scratch message")
+          (inhibit-startup-message t "disable the startup screen")
+          (scroll-conservatively 101 "move window one line at a time when point approaches edge")
+          (scroll-margin 5 "start scrolling 5 lines from edge")
+          (visible-bell t "Audible bell is cancer, but visible bell works okay")
+          (ad-redefinition-action 'accept "Tell emacs we're okay with functions being given advice")
+          (vc-follow-symlinks t "Follow symlinks to vcs controlled files")
+          (select-enable-clipboard t "copy actions copy to clipboard")
+          (select-enable-primary t "copy actions also copy to primary")
+          (mouse-drag-copy-region t "highlighting a section causes it to get copied (linux default behavior)")
+          (prettify-symbols-unprettify-at-point t "unprettify symbols when the point hits them so we can edit them")
+          (backup-directory-alist `((".*" . ,temporary-file-directory)) "Move backups to a temporary dir")
+          (auto-save-file-name-transforms `((".*" ,temporary-file-directory t)) "Move auto saves to a temporary dir")
+
+  :init
+    (defun bb-prog-mode-setup ()
+      (prettify-symbols-mode 1)      ; show ligatures
+      (show-paren-mode 1)            ; highlight matching brackets
+      (global-hl-line-mode 1)        ; highlight the active line
+      (display-line-numbers-mode)    ; Show line numbers
+      (hs-minor-mode))               ; Add hide-show
+
+    (defun bb-after-init-hook ()
+      (defalias 'yes-or-no-p 'y-or-n-p)  ; I don't ever want to type out "yes" or "no" - even if it is important
+      (global-unset-key (kbd "C-x C-c")) ; Stop killing windows by fatfingering this bind.
+
+      (setq-default
+        fill-column 80                            ; in fill-mode, what column do we wrap at?
+        truncate-lines t                          ; disable line wrapping
+        indent-tabs-mode nil                      ; use spaces over tabs everywhere
+        tab-width 2                               ; but when encountering a tab, how large is it?
+        tab-stop-list (number-sequence 3 120 2))) ; and what are the tabstop points when shifting?
+
+    :general (
+       :prefix bb-default-leader-key
+       "p" #'tabspaces-open-existing-project-and-workspace
+       "b" #'find-file
+       bb-default-leader-key #'project-find-file)
+
+  :hook ((prog-mode . bb-prog-mode-setup)
+        (after-init . bb-after-init-hook)))
+
+(use-package textsize
+  :commands textsize-mode
+  :init (textsize-mode))
 
 (use-package exec-path-from-shell
   :if (memq window-system '(mac ns))
@@ -132,13 +121,6 @@
 
 (use-package rainbow-delimiters
     :hook (prog-mode . rainbow-delimiters-mode))
-
-(add-hook 'prog-mode-hook (function(lambda ()
-    (prettify-symbols-mode 1)      ; show ligatures
-    (show-paren-mode 1)            ; highlight matching brackets
-    (global-hl-line-mode 1)        ; highlight the active line
-    (display-line-numbers-mode)    ; Show line numbers
-    (hs-minor-mode))))             ; Add hide-show
 
 (use-package git-gutter
   :hook (prog-mode . git-gutter-mode)
