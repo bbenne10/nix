@@ -4,7 +4,6 @@
 ;; -*- lexical-binding: t -*-
 
 (eval-when-compile (require 'use-package))
-;; (defvar bb-font-family "ShureTechMono Nerd Font")
 (defvar bb-default-leader-key "<f13>")
 
 (set-face-attribute 'default nil :family "ShureTechMono Nerd Font")
@@ -31,6 +30,8 @@
           (prettify-symbols-unprettify-at-point t "unprettify symbols when the point hits them so we can edit them")
           (backup-directory-alist `((".*" . ,temporary-file-directory)) "Move backups to a temporary dir")
           (auto-save-file-name-transforms `((".*" ,temporary-file-directory t)) "Move auto saves to a temporary dir")
+          (read-process-output-max (* 1024 1024) "Up amount of output we can read from a subprocess buffer; should improve LSP")
+          (gc-cons-threshold 100000000 "Increase garbage collection-threshold")
 
   :init
     (defun bb-prog-mode-setup ()
@@ -43,6 +44,7 @@
     (defun bb-after-init-hook ()
       (defalias 'yes-or-no-p 'y-or-n-p)  ; I don't ever want to type out "yes" or "no" - even if it is important
       (global-unset-key (kbd "C-x C-c")) ; Stop killing windows by fatfingering this bind.
+      (global-unset-key (kbd "C-h h"))   ; I have *never* wanted to see the hello file.
 
       (setq-default
         fill-column 80                            ; in fill-mode, what column do we wrap at?
@@ -53,16 +55,16 @@
 
     :general (
        :prefix bb-default-leader-key
-       "p" #'tabspaces-open-existing-project-and-workspace
+       "p" #'tabspaces-open-or-create-project-and-workspace
        "b" #'find-file
        bb-default-leader-key #'project-find-file)
 
   :hook ((prog-mode . bb-prog-mode-setup)
-        (after-init . bb-after-init-hook)))
+         (after-init . bb-after-init-hook)))
 
 (use-package textsize
-  :commands textsize-mode
-  :init (textsize-mode))
+  :custom (textsize-default-points 18)
+  :config (textsize-mode))
 
 (use-package exec-path-from-shell
   :if (memq window-system '(mac ns))
@@ -75,21 +77,25 @@
   :config (exec-path-from-shell-initialize))
 
 (use-package doom-themes
+  :init
+    (defun bb-toggle-theme ()
+      (interactive)
+
+      (if (eq (car custom-enabled-themes) 'doom-earl-grey)
+          (disable-theme 'doom-earl-grey)
+        (enable-theme 'doom-earl-grey)))
     :config
-      (load-theme 'doom-gruvbox t)
+      (load-theme 'doom-nord t)
       (doom-themes-visual-bell-config)
-      (doom-themes-org-config))
+      (doom-themes-org-config)
+  :general ("<f5>" 'bb-toggle-theme))
 
 (use-package doom-modeline
     :init (setq doom-modeline-env-version nil)
     :config (doom-modeline-mode))
 
-(use-package undo-tree
-  :config (global-undo-tree-mode))
-
 (use-package evil
-    :after (undo-tree)
-    :init (setq evil-undo-system 'undo-tree
+    :init (setq evil-undo-system 'undo-redo
                 evil-want-keybinding nil
                 evil-echo-state nil
                 evil-want-integration t)
@@ -99,6 +105,10 @@
     :after (evil)
     :config (evil-collection-init '(magit magit-todos consult)))
 
+(use-package evil-commentary
+  :after (evil)
+  :config (evil-commentary-mode))
+
 (use-package evil-matchit
     :after evil
     :config (global-evil-matchit-mode 1))
@@ -107,20 +117,21 @@
     :after evil
     :config (global-evil-surround-mode 1))
 
+(use-package eldoc-box
+  :config (eldoc-box-hover-mode))
+
 (use-package corfu
   :custom (corfu-auto t)
-  :init (corfu-global-mode))
+  :init (global-corfu-mode))
 
 (use-package magit
-    :commands (magit-status)
     :hook (after-save . magit-after-save-refresh-status)
     :general (:prefix bb-default-leader-key
               "g" 'magit)
     :custom (magit-popup-show-common-commands nil
-             magit-display-buffer-function 'magit-display-buffer-same-window-except-diff-v1))
-
-(use-package rainbow-delimiters
-    :hook (prog-mode . rainbow-delimiters-mode))
+             magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1
+             git-commit-fill-column 72
+             git-commit-summary-max-length 50))
 
 (use-package git-gutter
   :hook (prog-mode . git-gutter-mode)
@@ -142,11 +153,6 @@
 
 (use-package nix-mode)
 
-(use-package nix-sandbox)
-
-(use-package editorconfig
-  :config (editorconfig-mode 1))
-
 (use-package fic-mode
     :commands (fic-mode)
     :init (setq fic-highlighted-words '("FIXME" "TODO" "BUG" "NOTE" "XXX"))
@@ -155,78 +161,98 @@
 (use-package rainbow-mode
   :hook (prog-mode . rainbow-mode))
 
-(use-package flycheck
-  :custom (flycheck-highlighting-mode nil
-           flycheck-indication-mode 'left-margin)
-  :config
-    (global-flycheck-mode)
-    (add-to-list 'display-buffer-alist
-      `(,(rx bos "*Flycheck errors*" eos)
-         (display-buffer-reuse-window display-buffer-in-side-window)
-         (side . bottom)
-         (resulable-frames . visible)
-         (window-height . 15)))
-   :hook (flycheck-mode . flycheck-set-indication-mode))
+;; (use-package flycheck
+;;   :custom (flycheck-highlighting-mode nil
+;;            flycheck-indication-mode 'left-margin)
+;;   :config
+;;     (global-flycheck-mode)
+;;     (add-to-list 'display-buffer-alist
+;;       `(,(rx bos "*Flycheck errors*" eos)
+;;          (display-buffer-reuse-window display-buffer-in-side-window)
+;;          (side . bottom)
+;;          (resulable-frames . visible)
+;;          (window-height . 15)))
+;;    :hook (flycheck-mode . flycheck-set-indication-mode))
 
 (use-package which-key
   :config (which-key-mode 1))
 
-(use-package lsp-mode
-  :config
-  (defun bb/lsp-setup()
-    (let ((current (nix-current-sandbox)))
-      (when current (setq lsp-pyls-server-command (nix-executable-find (nix-current-sandbox) "pyls"))))
+(use-package yasnippet
+  :hook (prog-mode . yas-minor-mode))
 
-    (setq
-      lsp-idle-delay 0.5
-      lsp-pyls-configuration-sources ["flake8"]
-      ;; enable things we want!
-      lsp-pyls-plugins-flake8-enabled t
-      lsp-pyls-plugins-pydocstyle-enabled t
-      ;; and now disable stuff we don't want
-      lsp-pyls-plugins-pycodestyle-enabled nil
-      lsp-pyls-plugins-mccabe-enabled nil
-      lsp-pyls-plugins-pyflakes-enabled nil
-      lsp-pyls-plugins-autopep8-enabled nil
-      ;; and now just set a few variables to better defaults
-      lsp-pyls-plugins-flake8-max-line-length 88
-      )
+;; (use-package lsp-mode
+;;   :config
+;;   (defun bb/lsp-setup()
+;;     (setq lsp-idle-delay 0.5)
+;;           ;; lsp-disabled-clients (js-mode . (list eslist)))
+;;
+;;     (setq lsp-pyls-configuration-sources ["flake8"]
+;;           lsp-pyls-plugins-autopep8-enabled nil
+;;           lsp-pyls-plugins-flake8-max-line-length 88
+;;           lsp-pyls-plugins-mccabe-enabled nil
+;;           lsp-pyls-plugins-pycodestyle-enabled nil
+;;           lsp-pyls-plugins-pydocstyle-enabled t
+;;           lsp-pyls-plugins-pyflakes-enabled nil
+;;           lsp-pyls-plugins-flake8-enabled t)
+;;
+;;     (lsp-register-custom-settings
+;;      '(("pyls.plugins.pyls_black.enabled" t t)
+;;        ("pyls.plugins.pyls_isort.enabled" t t))))
+;;
+;;   :hook ((python-mode . lsp)
+;;          (reason-mode . lsp)
+;;          (rust-mode . lsp)
+;;          (js-mode . lsp)
+;;          (lsp-mode . lsp-enable-which-key-integration)
+;;          (lsp-before-initialize . bb/lsp-setup)))
+;;
+;; (use-package lsp-treemacs
+;;   :config (lsp-treemacs-sync-mode 1))
+;;
+;; (use-package lsp-ui
+;;   :after (tree-sitter)
+;;   :config
+;;   (defun bb/lsp-ui-setup ()
+;;     (lsp-headerline-breadcrumb-mode 1)
+;;     (setq lsp-ui-sideline-enable t
+;;           lsp-ui-sideline-delay 0.5
+;;           lsp-ui-sideline-ignore-duplicate t
+;;           lsp-ui-doc-delay 1
+;;           lsp-eldoc-enable-hover t
+;;           lsp-signature-doc-lines 2
+;;           lsp-signature-auto-activate t
+;;           lsp-ui-doc-position 'top
+;;           lsp-ui-doc-alignment 'window))
+;;   :commands lsp-ui-mode
+;;   :hook ((lsp-before-initialize . bb/lsp-ui-setup))
+;;   :general (:states 'normal
+;;     "gd" 'lsp-ui-peek-find-definitions
+;;     "gr" 'lsp-ui-peek-find-references
+;;     "C-E" 'flycheck-list-errors
+;;     "C-e" 'flycheck-next-error))
+;;
+;; (use-package consult-lsp
+;;   :config
+;;     (define-key lsp-mode-map [remap xref-find-apropos] #'consult-lsp-symbols))
 
-    (lsp-register-custom-settings
-     '(("pyls.plugins.pyls_black.enabled" t t)
-       ("pyls.plugins.pyls_isort.enabled" t t))))
-  :hook
-  ((python-mode . lsp)
-   (reason-mode . lsp)
-   (web-mode . lsp)
-   (lsp-mode . lsp-enable-which-key-integration)
-   (lsp-before-initialize . bb/lsp-setup)))
-
-(use-package lsp-ui
-  :config
-  (defun bb/lsp-ui-setup ()
-    (lsp-headerline-breadcrumb-mode 1)
-    (setq lsp-ui-sideline-enable t
-          lsp-ui-sideline-delay 0.5
-          lsp-ui-sideline-ignore-duplicate t
-          lsp-ui-doc-delay 1
-          lsp-eldoc-enable-hover t
-          lsp-signature-doc-lines 2
-          lsp-signature-auto-activate t
-          lsp-ui-doc-position 'top
-          lsp-ui-doc-alignment 'window))
-  :commands lsp-ui-mode
-  :hook ((lsp-before-initialize . bb/lsp-ui-setup))
+(use-package eglot
+  :hook ((python-mode . eglot-ensure)
+         (rust-mode . eglot-ensure)
+         (js-mode . eglot-ensure))
+  :custom (eglot-extend-to-xref t)
   :general (:states 'normal
-    "gd" 'lsp-ui-peek-find-definitions
-    "gr" 'lsp-ui-peek-find-references
-    "C-E" 'flycheck-list-errors
-    "C-e" 'flycheck-next-error))
+		    :prefix bb-default-leader-key
+                    "gd" #'xref-find-definitions
+                    "gr" #'xref-find-references
+                    "la" #'eglot-code-actions
+                    "ll" #'eglot
+                    "lq" #'eglot-shutdown
+                    "lQ" #'eglot-reconnect
+                    "lr" #'eglot-rename
+                    "l=" #'eglot-format))
 
-(use-package consult-lsp
-  :config
-    (consult-lsp-marginalia-mode)
-    (define-key lsp-mode-map [remap xref-find-apropos] #'consult-lsp-symbols))
+(use-package flymake-diagnostic-at-point
+  :hook (flymake-mode . #'flymake-diagnostic-at-point-mode))
 
 (use-package consult
   :general (:prefix bb-default-leader-key
@@ -234,8 +260,7 @@
   :custom (register-preview-delay 0
            register-preview-function #'consult-register-format
            xref-show-xrefs-function #'consult-xref
-           xref-show-definitions-function #'consult-xref
-           consult-project-function #'projectile-project-root)
+           xref-show-definitions-function #'consult-xref)
 
   :init
     (advice-add #'register-preview :override #'consult-register-preview)
@@ -251,19 +276,38 @@
 
 (use-package consult-project-extra)
 
+(use-package project
+  :config
+    (cl-defmethod project-root ((project (head local))) (cdr project))
+    (defun bb-project-find (dir)
+    ;; https://michael.stapelberg.ch/posts/2021-04-02-emacs-project-override/
+      (let ((local (locate-dominating-file dir ".project-root")))
+        (if local
+            (cons 'local local)
+          nil)))
+
+    ;; Can't use :hook as 'project-find-functions doesn't end in "-hook"
+    (add-hook 'project-find-functions #'bb-project-find -90))
+
 (use-package tabspaces
   :hook (after-init . tabspaces-mode)
+  :custom (tabspaces-use-filtered-buffers-as-default t)
+          (tab-bar-show nil)
   :commands (tabspaces-create-workspace
              tabspaces-create-new-project-and-workspace
              tabspaces-open-existing-project-and-workspace
              tabspaces-switch-workspace)
-  :custom (tabspaces-use-filtered-buffers-as-default t))
+  :general (
+    :prefix bb-default-leader-key
+    "p" #'tabspaces-open-or-create-project-and-workspace))
 
 (use-package vertico
    :init (vertico-mode))
 
 (use-package orderless
-   :custom (completion-styles '(orderless)))
+  :custom (completion-styles '(orderless basic))
+          (completion-category-defaults nil)
+          (completion-category-overrides '((file (styles partial-completion)))))
 
 (use-package marginalia
   :general (:map minibuffer-local-map "M-A" 'marginalia-cycle)
@@ -273,64 +317,59 @@
   :custom (vterm-shell (concat (getenv "HOME") "/.nix-profile/bin/zsh")))
 
 (use-package multi-vterm
-  ;; Stolen directly from https://github.com/suonlight/multi-vterm
-  :config
-    (add-hook 'vterm-mode-hook
-              (lambda ()
-                (setq-local evil-insert-state-cursor 'box)
-                (evil-insert-state)))
-    (define-key vterm-mode-map [return] #'vterm-send-return)
-    (setq vterm-keymap-exceptions nil)
+  ;; Stolen and modified from https://github.com/suonlight/multi-vterm
+  :general (:prefix bb-default-leader-key "!" #'multi-vterm-project)
 
-    (evil-define-key 'insert vterm-mode-map (kbd "C-e")      #'vterm--self-insert)
-    (evil-define-key 'insert vterm-mode-map (kbd "C-f")      #'vterm--self-insert)
-    (evil-define-key 'insert vterm-mode-map (kbd "C-a")      #'vterm--self-insert)
-    (evil-define-key 'insert vterm-mode-map (kbd "C-v")      #'vterm--self-insert)
-    (evil-define-key 'insert vterm-mode-map (kbd "C-b")      #'vterm--self-insert)
-    (evil-define-key 'insert vterm-mode-map (kbd "C-w")      #'vterm--self-insert)
-    (evil-define-key 'insert vterm-mode-map (kbd "C-u")      #'vterm--self-insert)
-    (evil-define-key 'insert vterm-mode-map (kbd "C-d")      #'vterm--self-insert)
-    (evil-define-key 'insert vterm-mode-map (kbd "C-n")      #'vterm--self-insert)
-    (evil-define-key 'insert vterm-mode-map (kbd "C-m")      #'vterm--self-insert)
-    (evil-define-key 'insert vterm-mode-map (kbd "C-p")      #'vterm--self-insert)
-    (evil-define-key 'insert vterm-mode-map (kbd "C-j")      #'vterm--self-insert)
-    (evil-define-key 'insert vterm-mode-map (kbd "C-k")      #'vterm--self-insert)
-    (evil-define-key 'insert vterm-mode-map (kbd "C-r")      #'vterm--self-insert)
-    (evil-define-key 'insert vterm-mode-map (kbd "C-t")      #'vterm--self-insert)
-    (evil-define-key 'insert vterm-mode-map (kbd "C-g")      #'vterm--self-insert)
-    (evil-define-key 'insert vterm-mode-map (kbd "C-c")      #'vterm--self-insert)
-    (evil-define-key 'insert vterm-mode-map (kbd "C-SPC")    #'vterm--self-insert)
-    (evil-define-key 'normal vterm-mode-map (kbd "C-d")      #'vterm--self-insert)
+           (:keymaps 'vterm-mode-map
+            "<return>" #'vterm-send-return)
 
-    ;; (evil-define-key 'normal vterm-mode-map (kbd ",c")       #'multi-vterm)
-    ;; (evil-define-key 'normal vterm-mode-map (kbd ",n")       #'multi-vterm-next)
-    ;; (evil-define-key 'normal vterm-mode-map (kbd ",p")       #'multi-vterm-prev)
+           (:keymaps 'vterm-mode-map
+            :states 'insert
+            "C-e"      #'vterm--self-insert
+            "C-f"      #'vterm--self-insert
+            "C-a"      #'vterm--self-insert
+            "C-v"      #'vterm--self-insert
+            "C-b"      #'vterm--self-insert
+            "C-w"      #'vterm--self-insert
+            "C-u"      #'vterm--self-insert
+            "C-d"      #'vterm--self-insert
+            "C-n"      #'vterm--self-insert
+            "C-m"      #'vterm--self-insert
+            "C-p"      #'vterm--self-insert
+            "C-j"      #'vterm--self-insert
+            "C-k"      #'vterm--self-insert
+            "C-r"      #'vterm--self-insert
+            "C-t"      #'vterm--self-insert
+            "C-g"      #'vterm--self-insert
+            "C-c"      #'vterm--self-insert
+            "C-SPC"    #'vterm--self-insert
+            "C-d"      #'vterm--self-insert)
 
-    (evil-define-key 'normal vterm-mode-map (kbd "i")        #'evil-insert-resume)
-    (evil-define-key 'normal vterm-mode-map (kbd "o")        #'evil-insert-resume)
-    (evil-define-key 'normal vterm-mode-map (kbd "<return>") #'evil-insert-resume))
+           (:keymaps 'vterm-mode-map
+            :states 'normal
+            "i" #'evil-insert-resume
+            "o" #'evil-insert-resume
+            "<return>" #'evil-insert-resume)
+
+  :custom (vterm-keymap-exceptions nil)
+
+  :init (defun bb-vterm-mode-setup ()
+          (setq-local evil-insert-state-cursor 'box)
+          (evil-insert-state))
+
+  :hook (vterm-mode . bb-vterm-mode-setup))
 
 ;; languages
-
-(use-package rust-mode :mode ("\\.rs'"))
-
-(use-package yaml-mode :mode ("\\.yaml'" "\\.yml'"))
-
 (use-package markdown-mode
   :config (setq markdown-command "pandoc")
   :mode (("\\.md'" . gfm-mode)))
 
-(use-package lua-mode :mode (".lua$"))
+(use-package python-mode
+  :hook (python-mode . (lambda () (add-hook 'before-save-hook 'eglot-format-buffer nil t))))
 
-(use-package zig-mode :mode ("\\.zig\\'"))
+(use-package rust-mode :mode ("\\.rs'")
+  :hook (rust-mode . (lambda () (add-hook 'before-save-hook 'eglot-format-buffer nil t))))
 
-;; Experimental java settings
-(use-package lsp-java
-  :hook (java-mode . lsp)
-  :custom (lsp-java-completion-import-order '("javax" "java" "" "edu.gatech.gtri.cipher" "blackforest" "#")))
+(use-package yaml-mode :mode ("\\.yaml'" "\\.yml'"))
 
-(use-package dap-mode
-  :after lsp-mode
-  :config (dap-auto-configure-mode))
-
-(use-package dap-java :ensure nil)
+;;; emacs.el ends here
