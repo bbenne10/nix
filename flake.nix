@@ -1,6 +1,7 @@
 {
   inputs = {
-    nixpkgs = { url = "github:nixos/nixpkgs"; };
+    # TODO: get this working with multiple architectures.
+    nixpkgs = { url = "github:nixos/nixpkgs/nixpkgs-22.05-darwin"; };
 
     nix-direnv = {
       url = "github:nix-community/nix-direnv";
@@ -8,12 +9,12 @@
     };
 
     darwin = {
-      url = "github:bbenne10/nix-darwin";
+      url = "github:lnl7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     home-manager = {
-      url = "github:nix-community/home-manager";
+      url = "github:nix-community/home-manager/release-22.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -25,6 +26,11 @@
     # emacs + plugins
     emacs = {
       url = "github:nix-community/emacs-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    emacsOsx = {
+      url = "github:cmacrae/emacs";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -45,30 +51,30 @@
     };
   };
 
-  outputs = { self, nixpkgs, darwin, home-manager, nix-direnv, sops-nix, emacs
+  outputs = { self, nixpkgs, darwin, home-manager, nix-direnv, sops-nix, emacs, emacsOsx
     , zsh-fzf_tab, zsh-fast_syntax_highlighting, zsh-fzf_marks }:
     let
       genAttrs = list: f: nixpkgs.lib.genAttrs list f;
       systems = [ "x86_64-darwin" "x86_64-linux" ];
       pkgsBySystem = (let
         mkPkgs = system:
-          import nixpkgs {
-            inherit system;
-            overlays = [
-              emacs.overlay
-              (self: super: {
-                weechat = super.weechat.override {
-                  configure = { availablePlugins, ... }: {
-                    scripts = with super.weechatScripts; [
-                      weechat-matrix
-                      colorize_nicks
-                    ];
+            import nixpkgs {
+              inherit system;
+              overlays = [
+                emacs.overlay
+                (self: super: {
+                  weechat = super.weechat.override {
+                    configure = { availablePlugins, ... }: {
+                      scripts = with super.weechatScripts; [
+                        weechat-matrix
+                        colorize_nicks
+                      ];
+                    };
                   };
-                };
-              })
-            ];
-            config = { allowUnfree = true; };
-          };
+                })
+              ] ++ (if system == "x86_64-darwin" then [ emacsOsx.overlay ] else []);
+              config = { allowUnfree = true; };
+            };
       in genAttrs systems mkPkgs);
       darwinPkgs = pkgsBySystem.x86_64-darwin;
       linuxPkgs = pkgsBySystem.x86_64-linux;
@@ -121,6 +127,7 @@
           modules = [
             home-manager.darwinModules.home-manager
             ./lib/common.nix
+            ./lib/darwin.nix
             ./hosts/cipher-4590.nix
           ];
         };

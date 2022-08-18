@@ -1,9 +1,16 @@
 { config, lib, pkgsForSystem, home-manager, nix-direnv, system, userName
-, zsh-fzf_tab, zsh-fast_syntax_highlighting, zsh-fzf_marks, ... }: {
+, zsh-fzf_tab, zsh-fast_syntax_highlighting, zsh-fzf_marks, ... }:
+let
+  homePath = (if pkgsForSystem.stdenv.isDarwin then "/Users/${userName}" else "/home/${userName}");
+in {
   # system.stateVersion = 4;
   nix = {
-    trustedUsers = [ userName ];
+    trustedUsers = [ "root" userName ];
     package = pkgsForSystem.nix;
+    binaryCaches = [
+      "https://cache.nixos.org"
+      "https://nix-community.cachix.org"
+    ];
     binaryCachePublicKeys = [
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
@@ -11,7 +18,6 @@
     extraOptions = ''
       experimental-features = nix-command flakes
     '';
-    binaryCaches = [ "https://cache.nixos.org" ];
   };
 
   programs.gnupg.agent = {
@@ -20,10 +26,7 @@
   };
 
   users.users.${userName} = {
-    home = if pkgsForSystem.stdenv.isDarwin then
-      "/Users/${userName}"
-    else
-      "/home/${userName}";
+    home = homePath;
     # TODO: Fix this? I guess?
     # openssh.authorizedKeys.keys = [
     #   "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDQtmdA5vhoNcN14PeFS80Y++BVPSBJKajg1hlqdr5dwhr+Ug6zvUHVpJy36FZvM6VL0t/cB4GwFpv9B+tHkECTfHQgQLvQ1pQIua5ByEf3hhc5owVWA3WOQa9E92F+PFR/AjNJHaQqSAZevYobxRT03r4fCkwaODXWuttz0314hV0HJMZPXZQxHrPEpBBmm7AcetWsu4zExCwwEODK1aT7WvDUp6CvIQaAqRSkfZQhirD//E7XgChTvVcVbjVV2E6akSOPr0cAZb08P6/XjXemddV3ohJtgzGVB8zixCf34Z53etD4j6MaVWjiRmv5J2Pffc7Kzwwdjs+LFkSr328L cardno:000606534762"
@@ -31,8 +34,7 @@
   };
 
   fonts = {
-    enableFontDir = true;
-    # fontDir.enable = true;
+    fontDir.enable = true;
     fonts = with pkgsForSystem; [
       (nerdfonts.override { fonts = [ "ShareTechMono" ]; })
       noto-fonts
@@ -41,17 +43,17 @@
   programs.zsh.enable = true;
 
   home-manager.users.${userName} = {
-    home.stateVersion = "21.11";
+    home.enableNixpkgsReleaseCheck = true;
+    home.stateVersion = "22.05";
     home.packages = with pkgsForSystem; [
-      # neovim
       colima
       curl
-      # docker
+      docker
       docker-compose
       exa
       fd
-      git
       gawk
+      git
       gnupg
       htop
       manix
@@ -60,6 +62,7 @@
       pass
       ripgrep
       tmux
+      tree
       weechat
     ];
 
@@ -106,7 +109,7 @@
       aliases = {
         graph = "log --graph --oneline --decorate";
         up = "!git pull --ff-only && git submodule update --init --recursive";
-        wip = "commit --no-sign -am WIP";
+        wip = "commit --no-sign -am WIP --no-verify";
         unwip = "!git log --pretty=%B -1 | grep -iq wip && git reset HEAD~";
       };
       lfs = { enable = true; };
@@ -144,6 +147,7 @@
         };
         push = {
           default = "current";
+          autoSetupRemote = "true";
         };
       };
     };
