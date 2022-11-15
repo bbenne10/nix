@@ -91,7 +91,15 @@
   :general ("<f5>" 'bb-toggle-theme))
 
 (use-package doom-modeline
-    :init (setq doom-modeline-env-version nil)
+  :after (evil)
+  :custom (doom-modeline-env-version nil)
+          (doom-modeline-modal-icon nil)
+          (evil-normal-state-tag (propertize "⬤" 'face '((:background 'doom-modeline-info))))
+          (evil-insert-state-tag (propertize "⬤" 'face '((:background 'doom-modeline-urgent))))
+          (evil-motion-state-tag (propertize "⬤" 'face '((:background 'doom-modeline-buffer-path))))
+          (evil-operator-state-tag (propertize "⬤" 'face '((:background 'doom-modeline-buffer-path))))
+          (evil-visual-state-tag (propertize "⬤" 'face '((:background 'doom-modeline-buffer-file))))
+          (evil-emacs-state-tag (propertize "⬤" 'face '((:background 'doom-modeline-warning))))
     :config (doom-modeline-mode))
 
 (use-package evil
