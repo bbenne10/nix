@@ -68,12 +68,12 @@
 
 (use-package exec-path-from-shell
   :if (memq window-system '(mac ns))
-  :custom (exec-path-from-shell-check-startup-files nil
-           ;; Launch a login shell; Nix is good at putting stuff in the right place
-           exec-path-from-shell-arguments nil
-           exec-path-from-shell-variables '("PATH" "MANPATH" "SSL_CERT_FILE")
-           ;; Use Nix path for locally managed zsh install so we get correct...everything
-           exec-path-from-shell-shell-name (concat (getenv "HOME") "/.nix-profile/bin/zsh"))
+  :custom (exec-path-from-shell-check-startup-files nil)
+          ;; Launch a login shell; Nix is good at putting stuff in the right place
+          (exec-path-from-shell-arguments nil)
+          (exec-path-from-shell-variables '("PATH" "MANPATH" "SSL_CERT_FILE"))
+          ;; Use Nix path for locally managed zsh install so we get correct...everything
+          (exec-path-from-shell-shell-name (concat (getenv "HOME") "/.nix-profile/bin/zsh"))
   :config (exec-path-from-shell-initialize))
 
 (use-package doom-themes
@@ -104,10 +104,10 @@
     :config (doom-modeline-mode))
 
 (use-package evil
-    :init (setq evil-undo-system 'undo-redo
-                evil-want-keybinding nil
-                evil-echo-state nil
-                evil-want-integration t)
+    :custom (evil-undo-system 'undo-redo)
+            (evil-want-keybinding nil)
+            (evil-echo-state nil)
+            (evil-want-integration t)
     :config (evil-mode 1))
 
 (use-package evil-collection
@@ -163,7 +163,7 @@
 
 (use-package fic-mode
     :commands (fic-mode)
-    :init (setq fic-highlighted-words '("FIXME" "TODO" "BUG" "NOTE" "XXX"))
+    :custom (fic-highlighted-words '("FIXME" "TODO" "BUG" "NOTE" "XXX"))
     :hook (prog-mode . fic-mode))
 
 (use-package rainbow-mode
@@ -193,11 +193,10 @@
 (use-package consult
   :general (:prefix bb-default-leader-key
             "/" 'consult-ripgrep)
-  :custom (register-preview-delay 0
-           register-preview-function #'consult-register-format
-           xref-show-xrefs-function #'consult-xref
-           xref-show-definitions-function #'consult-xref)
-
+  :custom (register-preview-delay 0)
+          (register-preview-function #'consult-register-format)
+          (xref-show-xrefs-function #'consult-xref)
+          (xref-show-definitions-function #'consult-xref)
   :init
     (advice-add #'register-preview :override #'consult-register-preview)
     (advice-add #'completing-read-multiple :override #'consult-completing-read-multiple)
