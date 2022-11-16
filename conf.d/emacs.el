@@ -127,7 +127,7 @@
     :config (global-evil-surround-mode 1))
 
 (use-package eldoc-box
-  :config (eldoc-box-hover-mode))
+  :hook (prog-mode . eldoc-box-hover-mode))
 
 (use-package corfu
   :custom (corfu-auto t)
