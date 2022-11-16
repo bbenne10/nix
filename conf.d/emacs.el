@@ -308,4 +308,6 @@
 
 (use-package yaml-mode :mode ("\\.yaml'" "\\.yml'"))
 
+(use-package web-mode)
+
 ;;; emacs.el ends here
