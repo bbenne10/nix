@@ -77,13 +77,14 @@
   :config (exec-path-from-shell-initialize))
 
 (use-package doom-themes
+  :defer nil
   :init
     (defun bb-toggle-theme ()
       (interactive)
 
       (if (eq (car custom-enabled-themes) 'doom-earl-grey)
           (disable-theme 'doom-earl-grey)
-        (enable-theme 'doom-earl-grey)))
+        (load-theme 'doom-earl-grey t)))
     :config
       (load-theme 'doom-nord t)
       (doom-themes-visual-bell-config)
