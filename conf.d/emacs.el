@@ -157,7 +157,6 @@
   :config (ws-butler-global-mode))
 
 (use-package direnv
-  :after lsp
   :config (direnv-mode))
 
 (use-package nix-mode)
@@ -170,95 +169,23 @@
 (use-package rainbow-mode
   :hook (prog-mode . rainbow-mode))
 
-;; (use-package flycheck
-;;   :custom (flycheck-highlighting-mode nil
-;;            flycheck-indication-mode 'left-margin)
-;;   :config
-;;     (global-flycheck-mode)
-;;     (add-to-list 'display-buffer-alist
-;;       `(,(rx bos "*Flycheck errors*" eos)
-;;          (display-buffer-reuse-window display-buffer-in-side-window)
-;;          (side . bottom)
-;;          (resulable-frames . visible)
-;;          (window-height . 15)))
-;;    :hook (flycheck-mode . flycheck-set-indication-mode))
-
 (use-package which-key
   :config (which-key-mode 1))
 
 (use-package yasnippet
   :hook (prog-mode . yas-minor-mode))
 
-;; (use-package lsp-mode
-;;   :config
-;;   (defun bb/lsp-setup()
-;;     (setq lsp-idle-delay 0.5)
-;;           ;; lsp-disabled-clients (js-mode . (list eslist)))
-;;
-;;     (setq lsp-pyls-configuration-sources ["flake8"]
-;;           lsp-pyls-plugins-autopep8-enabled nil
-;;           lsp-pyls-plugins-flake8-max-line-length 88
-;;           lsp-pyls-plugins-mccabe-enabled nil
-;;           lsp-pyls-plugins-pycodestyle-enabled nil
-;;           lsp-pyls-plugins-pydocstyle-enabled t
-;;           lsp-pyls-plugins-pyflakes-enabled nil
-;;           lsp-pyls-plugins-flake8-enabled t)
-;;
-;;     (lsp-register-custom-settings
-;;      '(("pyls.plugins.pyls_black.enabled" t t)
-;;        ("pyls.plugins.pyls_isort.enabled" t t))))
-;;
-;;   :hook ((python-mode . lsp)
-;;          (reason-mode . lsp)
-;;          (rust-mode . lsp)
-;;          (js-mode . lsp)
-;;          (lsp-mode . lsp-enable-which-key-integration)
-;;          (lsp-before-initialize . bb/lsp-setup)))
-;;
-;; (use-package lsp-treemacs
-;;   :config (lsp-treemacs-sync-mode 1))
-;;
-;; (use-package lsp-ui
-;;   :after (tree-sitter)
-;;   :config
-;;   (defun bb/lsp-ui-setup ()
-;;     (lsp-headerline-breadcrumb-mode 1)
-;;     (setq lsp-ui-sideline-enable t
-;;           lsp-ui-sideline-delay 0.5
-;;           lsp-ui-sideline-ignore-duplicate t
-;;           lsp-ui-doc-delay 1
-;;           lsp-eldoc-enable-hover t
-;;           lsp-signature-doc-lines 2
-;;           lsp-signature-auto-activate t
-;;           lsp-ui-doc-position 'top
-;;           lsp-ui-doc-alignment 'window))
-;;   :commands lsp-ui-mode
-;;   :hook ((lsp-before-initialize . bb/lsp-ui-setup))
-;;   :general (:states 'normal
-;;     "gd" 'lsp-ui-peek-find-definitions
-;;     "gr" 'lsp-ui-peek-find-references
-;;     "C-E" 'flycheck-list-errors
-;;     "C-e" 'flycheck-next-error))
-;;
-;; (use-package consult-lsp
-;;   :config
-;;     (define-key lsp-mode-map [remap xref-find-apropos] #'consult-lsp-symbols))
-
 (use-package eglot
-  :hook ((python-mode . eglot-ensure)
-         (rust-mode . eglot-ensure)
-         (js-mode . eglot-ensure))
   :custom (eglot-extend-to-xref t)
-  :general (:states 'normal
-		    :prefix bb-default-leader-key
-                    "gd" #'xref-find-definitions
-                    "gr" #'xref-find-references
-                    "la" #'eglot-code-actions
-                    "ll" #'eglot
-                    "lq" #'eglot-shutdown
-                    "lQ" #'eglot-reconnect
-                    "lr" #'eglot-rename
-                    "l=" #'eglot-format))
+  :config (setcdr (assq 'java-mode eglot-server-programs) '("jdt-language-server"))
+  :general (:prefix bb-default-leader-key
+            "/" 'consult-ripgrep)
+           ("<A-return>" #'eglot-code-actions)
+  :hook (
+         (python-mode . eglot-ensure)
+         (java-mode . eglot-ensure)
+         (rust-mode . eglot-ensure)
+         (nix-mode . eglot-ensure)))
 
 (use-package flymake-diagnostic-at-point
   :hook (flymake-mode . #'flymake-diagnostic-at-point-mode))
