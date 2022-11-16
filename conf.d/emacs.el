@@ -200,7 +200,6 @@
           (xref-show-definitions-function #'consult-xref)
   :init
     (advice-add #'register-preview :override #'consult-register-preview)
-    (advice-add #'completing-read-multiple :override #'consult-completing-read-multiple)
   :config
     (consult-customize
      consult-theme
