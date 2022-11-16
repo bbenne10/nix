@@ -137,10 +137,10 @@
     :hook (after-save . magit-after-save-refresh-status)
     :general (:prefix bb-default-leader-key
               "g" 'magit)
-    :custom (magit-popup-show-common-commands nil
-             magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1
-             git-commit-fill-column 72
-             git-commit-summary-max-length 50))
+    :custom (magit-popup-show-common-commands nil)
+            (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1)
+            (git-commit-fill-column 72)
+            (git-commit-summary-max-length 50))
 
 (use-package git-gutter
   :hook (prog-mode . git-gutter-mode)
