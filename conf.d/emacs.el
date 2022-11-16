@@ -188,7 +188,8 @@
          (nix-mode . eglot-ensure)))
 
 (use-package flymake-diagnostic-at-point
-  :hook (flymake-mode . #'flymake-diagnostic-at-point-mode))
+  :after flymake
+  :hook (flymake-mode . #'flymake-disagnostic-at-point-mode))
 
 (use-package consult
   :general (:prefix bb-default-leader-key
