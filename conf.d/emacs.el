@@ -6,8 +6,8 @@
 (eval-when-compile (require 'use-package))
 (defvar bb-default-leader-key "<f13>")
 
-(set-face-attribute 'default nil :family "ShureTechMono Nerd Font")
-(set-face-attribute 'line-number-current-line nil :family "ShureTechMono Nerd Font")
+(set-face-attribute 'default nil :family "Recursive Mono Linear Static" :weight 'light)
+(set-face-attribute 'line-number-current-line nil :family "Recursive Mono Linear Static" :weight 'light)
 
 (push '(menu-bar-lines . 0) default-frame-alist)
 (push '(tool-bar-lines . 0) default-frame-alist)
