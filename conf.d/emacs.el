@@ -178,11 +178,31 @@
 (use-package eglot
   :custom (eglot-extend-to-xref t)
   :config (setcdr (assq 'java-mode eglot-server-programs) '("jdt-language-server"))
+          (define-transient-command bb-transient-eglot
+            "Eglot"
+            [["Find"
+              ("d" "Declaration" eglot-find-declaration)
+              ("i" "Implementation" eglot-find-implementation)
+              ("D" "Type Definition" eglot-find-typeDefinition)]
+             ["Edit"
+              ("r" "Rename" eglot-rename)
+              ("a" "Code Actions" eglot-code-actions)]
+             ["Format"
+              ("=" "Format Buffer" eglot-format-buffer)
+              ("R" "Format Region" eglot-format)]
+             ["Refactor"
+              ("r" "Rename" eglot-rename)
+              ("a" "Code Actions" eglot-code-actions)]
+             ["Manage"
+              ("X" "Shutdown" eglot-shutdown)
+              ("C" "Reconnect" eglot-reconnect)
+              ("E" "Display Events Buffer" eglot-events-buffer)]
+             ])
   :general (:prefix bb-default-leader-key
-            "/" 'consult-ripgrep)
-           ("<A-return>" #'eglot-code-actions)
-  :hook (
-         (python-mode . eglot-ensure)
+            "/" 'consult-ripgrep
+            "e" 'bb-transient-eglot)
+           ("<M-RET>" #'eglot-code-actions)
+  :hook ((python-mode . eglot-ensure)
          (java-mode . eglot-ensure)
          (rust-mode . eglot-ensure)
          (nix-mode . eglot-ensure)))
