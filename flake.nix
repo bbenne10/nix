@@ -1,8 +1,9 @@
 {
   inputs = {
     # TODO: get this working with multiple architectures.
-    nixpkgs = { url = "github:nixos/nixpkgs/nixpkgs-22.05-darwin"; };
-
+    nixpkgs = {
+      url = "github:nixos/nixpkgs/nixos-22.11";
+    };
     nix-direnv = {
       url = "github:nix-community/nix-direnv";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -14,7 +15,7 @@
     };
 
     home-manager = {
-      url = "github:nix-community/home-manager/release-22.05";
+      url = "github:nix-community/home-manager/release-22.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -84,16 +85,16 @@
           system = "x86_64-linux";
           modules = [
             home-manager.nixosModules.home-manager
-            ./hardware/laptop.nix
+            ./lib/nixos.nix
             ./lib/common.nix
-            ./lib/linux.nix
+            ./hardware/laptop.nix
             ./hosts/bennett-laptop.nix
           ];
           specialArgs = {
             pkgsForSystem = linuxPkgs;
             userName = "bryan";
             system = "x86_64-linux";
-            inherit home-manager nix-direnv zsh-fzf_tab
+            inherit home-manager nix-direnv nixpkgs zsh-fzf_tab
               zsh-fast_syntax_highlighting zsh-fzf_marks;
           };
         };
@@ -102,6 +103,7 @@
           system = "x86_64-linux";
           modules = [
             sops-nix.nixosModules.sops
+            ./lib/nixos.nix
             ./lib/common.nix
             ./hosts/bennett-server.nix
           ];

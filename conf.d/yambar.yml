@@ -12,7 +12,8 @@ bar:
   margin: 20
 
   # Default font
-  font: ShareTechMono:style=regular:size=24
+  # font: ShareTechMono:style=regular:size=24
+  font: Recursive Mono Linear Static:weight=Light:size=24
 
   foreground: FBF1C7FF
   background: 282828FF

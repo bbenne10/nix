@@ -8,6 +8,9 @@
 # See the river(1), riverctl(1), and rivertile(1) man pages for complete
 # documentation.
 
+# First start kanshi so that the display flickers as early as possible
+kanshi &
+
 # Use the "logo" key as the primary modifier
 mod="Mod4"
 
@@ -150,24 +153,37 @@ done
 riverctl background-color 0x1d2021
 riverctl border-color-focused 0x98971A
 riverctl border-color-unfocused 0x504945
-riverctl border-width 8
+riverctl border-width 2
 
 # Set keyboard repeat rate
 riverctl set-repeat 50 300
+
+# Set up synaptics touchpads
+touchpad_name=$(riverctl list-inputs | grep Synaptics)
+if [ -n "$touchpad_name" ]; then
+    riverctl input "$touchpad_name" events disabled-on-external-mouse
+    riverctl input "$touchpad_name" tap enabled
+    riverctl input "$touchpad_name" accel-profile flat
+    riverctl input "$touchpad_name" drag enabled
+fi
 
 # Make certain views start floating
 riverctl float-filter-add app-id float
 riverctl float-filter-add title "popup title with spaces"
 
 # Set app-ids and titles of views which should use client side decorations
-riverctl csd-filter-add app-id "gedit"
+# riverctl csd-filter-add app-id "gedit"
 
 yambar &
-firefox &
-emacs &
-foot &
+mako &
+riverctl spawn firefox
+riverctl set-focused-tags 2
+riverctl spawn foot
+riverctl set-focused-tags 3
+riverctl spawn emacs
+riverctl set-focused-tags 1
 
 # Set and exec into the default layout generator, rivertile.
 # River will send the process group of the init executable SIGTERM on exit.
 riverctl default-layout rivertile
-exec rivertile -view-padding 20 -outer-padding 20
+exec rivertile -view-padding 10 -outer-padding 10

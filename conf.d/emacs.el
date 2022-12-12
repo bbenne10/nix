@@ -9,9 +9,12 @@
 (set-face-attribute 'default nil :family "Recursive Mono Linear Static" :weight 'light)
 (set-face-attribute 'line-number-current-line nil :family "Recursive Mono Linear Static" :weight 'light)
 
-(push '(menu-bar-lines . 0) default-frame-alist)
-(push '(tool-bar-lines . 0) default-frame-alist)
-(push '(vertical-scroll-bars) default-frame-alist)
+;; Disable all window chrome
+(setq default-frame-alist
+      '((undecorated . t)
+        (menu-bar-lines . 0)
+        (tool-bar-lines . 0)
+        (vertical-scroll-bars)))
 
 (use-package general)
 
@@ -63,7 +66,7 @@
          (after-init . bb-after-init-hook)))
 
 (use-package textsize
-  :custom (textsize-default-points 18)
+  :custom (textsize-default-points 15)
   :config (textsize-mode))
 
 (use-package exec-path-from-shell
