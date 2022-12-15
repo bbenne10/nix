@@ -224,6 +224,66 @@
 (use-package consult-project-extra)
 
 (use-package project
+  :after transient
+  :defer nil
+  :init
+    ;; Below transient stolen from
+    ;; https://github.com/jojojames/matcha/blob/master/matcha-project.el
+    (defun project-recentf ()
+      "Show a list of recently visited files in a project."
+      (interactive)
+      (if (boundp 'recentf-list)
+          (let* ((recent-project-files (project-recentf-files))
+                 (completion-ignore-case read-file-name-completion-ignore-case)
+                 (file (funcall project-read-file-name-function
+                                "Find recent file" recent-project-files nil nil
+                                (thing-at-point 'filename))))
+            (if (string= file "")
+                (user-error "You didn't specify the file")
+              (find-file file)))
+        (message "recentf is not enabled")))
+    (defun project-recentf-files ()
+      "Return a list of recently visited files in a project."
+      (and (boundp 'recentf-list)
+           (let* ((pr (project-current t))
+                  (project-root (expand-file-name (project-root pr))))
+             (cl-remove-if-not
+              (lambda (f)
+                (string-prefix-p project-root (expand-file-name f)))
+              recentf-list))))
+    (defun project-multi-occur (&optional nlines)
+      "Do a `multi-occur' in the project's buffers.
+       With a prefix argument, show NLINES of context."
+      (interactive "P")
+      (let ((pr (project-current t)))
+        (multi-occur (project--buffer-list pr)
+                     (car (occur-read-primary-args))
+                     nlines)))
+    (transient-define-prefix bb-transient-project ()
+     "Project"
+     [["Find"
+       ("f" "File" project-find-file)
+       ("F" "File or External" project-or-external-find-file)
+       ("r" "Recent File" project-recentf)]
+      ["Buffers"
+       ("b" "Buffer" project-switch-to-buffer)
+       ("K" "Kill Project Buffers" project-kill-buffers)]
+      ["Actions"
+       ("R" "Replace Regexp" project-query-replace-regexp)
+       ("m" "Compile Project" project-compile)
+       ("c" "Shell Command &" project-async-shell-command)
+       ("C" "Shell Command" project-shell-command)]]
+     [["Modes"
+       ("g" "Version Control" project-vc-dir)
+       ("h" "Dired" project-dired)
+       ("e" "Eshell" project-eshell)
+       ("y" "Shell" project-shell)]
+      ["Search"
+       ("a" "Find REGEXP" project-find-regexp)
+       ("A" "Find REGEXP or External" project-or-external-find-regexp)
+       ("s" "Multi Occur" project-multi-occur)]
+      ["Manage"
+       ("p" "Switch Project" tabspaces-open-or-create-project-and-workspace)]])
   :config
     (cl-defmethod project-root ((project (head local))) (cdr project))
     (defun bb-project-find (dir)
@@ -234,7 +294,9 @@
           nil)))
 
     ;; Can't use :hook as 'project-find-functions doesn't end in "-hook"
-    (add-hook 'project-find-functions #'bb-project-find -90))
+    (add-hook 'project-find-functions #'bb-project-find -90)
+
+     :general (:prefix bb-default-leader-key "P" 'bb-transient-project))
 
 (use-package tabspaces
   :hook (after-init . tabspaces-mode)
