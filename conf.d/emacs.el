@@ -60,7 +60,8 @@
        bb-default-leader-key #'project-find-file)
 
   :hook ((prog-mode . bb-prog-mode-setup)
-         (after-init . bb-after-init-hook)))
+         (after-init . bb-after-init-hook)
+         (before-save . 'whitespace-cleanup)))
 
 (use-package textsize
   :custom (textsize-default-points 18)
@@ -152,9 +153,6 @@
   (define-fringe-bitmap 'git-gutter-fr:added [224] nil nil '(center repeated))
   (define-fringe-bitmap 'git-gutter-fr:modified [224] nil nil '(center repeated))
   (define-fringe-bitmap 'git-gutter-fr:deleted [128 192 224 240] nil nil 'bottom))
-
-(use-package ws-butler
-  :config (ws-butler-global-mode))
 
 (use-package direnv
   :config (direnv-mode))
