@@ -161,10 +161,13 @@
 (use-package yasnippet
   :hook (prog-mode . yas-minor-mode))
 
+(use-package transient)
+
 (use-package eglot
+  :after transient
   :custom (eglot-extend-to-xref t)
   :config (setcdr (assq 'java-mode eglot-server-programs) '("jdt-language-server"))
-          (define-transient-command bb-transient-eglot
+          (transient-define-prefix bb-transient-eglot
             "Eglot"
             [["Find"
               ("d" "Declaration" eglot-find-declaration)
