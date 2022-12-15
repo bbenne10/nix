@@ -373,7 +373,12 @@
   :config (setq markdown-command "pandoc")
   :mode (("\\.md'" . gfm-mode)))
 
-(use-package python-mode
+(use-package python
+  ;; set ensure nil to use packaged version of python.el
+  ;; rather than grabbing from elpa
+  :ensure nil
+  :mode ("\\.py\\'" . python-mode)
+  :interpreter ("python" . python-mode)
   :hook (python-mode . (lambda () (add-hook 'before-save-hook 'eglot-format-buffer nil t))))
 
 (use-package rust-mode :mode ("\\.rs'")
