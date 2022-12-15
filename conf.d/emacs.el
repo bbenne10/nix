@@ -196,9 +196,12 @@
          (rust-mode . eglot-ensure)
          (nix-mode . eglot-ensure)))
 
-(use-package flymake-diagnostic-at-point
-  :after flymake
-  :hook (flymake-mode . #'flymake-disagnostic-at-point-mode))
+(use-package sideline
+  :hook (flymake-mode . sideline-mode))
+
+(use-package sideline-flymake
+  :custom (sideline-flymake-display-errors-whole-line 'line)
+          (sideline-backends-right '((sideline-flymake . up))))
 
 (use-package consult
   :general (:prefix bb-default-leader-key
