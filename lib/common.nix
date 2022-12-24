@@ -21,6 +21,14 @@ in {
     nixUnstable
   ];
 
+  services.mopidy = {
+    enable = true;
+    extensionPackages = with pkgs; [
+      mopidy-ytmusic
+      mopidy-iris
+      mopidy-somafm
+      mopidy-bandcamp
+      mopidy-soundcloud
     ];
   };
 
