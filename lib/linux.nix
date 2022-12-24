@@ -4,6 +4,7 @@
       brightnessctl
       firefox
       foot
+      kanshi
       pamixer
       playerctl
       river
@@ -14,5 +15,6 @@
     home.file.".config/river/init".source = ./../conf.d/river_init;
     home.file.".config/foot/foot.ini".source = ./../conf.d/foot.ini;
     home.file.".config/yambar/config.yml".source = ./../conf.d/yambar.yml;
+    home.file.".config/kanshi/config".source = ./../conf.d/kanshi_config;
   };
 }
