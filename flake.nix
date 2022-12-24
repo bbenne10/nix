@@ -1,8 +1,8 @@
 {
   inputs = {
-    # TODO: get this working with multiple architectures.
-    nixpkgs = { url = "github:nixos/nixpkgs/nixpkgs-22.05-darwin"; };
-
+    nixpkgs = {
+      url = "github:nixos/nixpkgs/nixpkgs-22.11-darwin";
+    };
     nix-direnv = {
       url = "github:nix-community/nix-direnv";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -14,7 +14,7 @@
     };
 
     home-manager = {
-      url = "github:nix-community/home-manager/release-22.05";
+      url = "github:nix-community/home-manager/release-22.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
