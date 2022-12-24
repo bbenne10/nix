@@ -133,8 +133,7 @@
 
 (use-package git-gutter
   :hook (prog-mode . git-gutter-mode)
-  :config
-  (setq git-gutter:update-interval 2))
+  :custom (git-gutter:update-interval 2))
 
 (use-package git-gutter-fringe
   :config
@@ -370,7 +369,7 @@
 
 ;; languages
 (use-package markdown-mode
-  :config (setq markdown-command "pandoc")
+  :custom (markdown-command "pandoc")
   :mode (("\\.md'" . gfm-mode)))
 
 (use-package python
