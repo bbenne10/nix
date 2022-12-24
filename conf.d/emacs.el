@@ -144,8 +144,6 @@
 (use-package direnv
   :config (direnv-mode))
 
-(use-package nix-mode)
-
 (use-package fic-mode
     :commands (fic-mode)
     :custom (fic-highlighted-words '("FIXME" "TODO" "BUG" "NOTE" "XXX"))
@@ -371,6 +369,9 @@
 (use-package markdown-mode
   :custom (markdown-command "pandoc")
   :mode (("\\.md'" . gfm-mode)))
+
+(use-package nix-mode
+  :hook (nix-mode . (lambda () (add-hook 'before-save-hook 'eglot-format-buffer nil t))))
 
 (use-package python
   ;; set ensure nil to use packaged version of python.el
