@@ -2,6 +2,7 @@
 , zsh-fzf_tab, zsh-fast_syntax_highlighting, zsh-fzf_marks, ...}:
 let
   homePath = (if pkgs.stdenv.isDarwin then "/Users/${userName}" else "/home/${userName}");
+  themesh = (pkgs.callPackage ../derivations/themesh.nix {});
 in {
   fonts = {
     fontDir.enable = true;
@@ -55,6 +56,7 @@ in {
       pandoc
       ripgrep
       tree
+      themesh
     ];
 
     programs.emacs = {
@@ -254,6 +256,7 @@ in {
       };
 
       initExtra = ''
+        theme.sh nord
         setopt noclobber
         setopt chasedots
         setopt no_histverify
