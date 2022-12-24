@@ -47,14 +47,17 @@ in {
       colima
       curl
       docker
+      dtach
       exa
       fd
       gawk
       gnupg
       manix
+      nixUnstable
       nixfmt
       pandoc
       ripgrep
+      rnix-lsp
       tree
       themesh
     ];

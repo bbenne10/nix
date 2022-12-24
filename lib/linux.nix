@@ -1,4 +1,5 @@
 { pkgs, home-manager, userName, ...}: {
+  system.stateVersion = "22.11";
   home-manager.users.${userName} = {
     home.packages = with pkgs; [
       brightnessctl
