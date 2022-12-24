@@ -267,6 +267,7 @@ in {
         rmr = "rm -r";
         ls = "exa";
         cat = "bat";
+        gpgreset = "gpg-connect-agent killagent /bye; gpg-connect-agent updatestartuptty /bye; gpg-connect-agent /bye";
       };
 
       initExtra = ''
