@@ -75,6 +75,7 @@
           modules = [
             home-manager.nixosModules.home-manager
             ./hardware/laptop.nix
+            ./lib/nix.nix
             ./lib/common.nix
             ./lib/linux.nix
             ./hosts/bennett-laptop.nix
@@ -86,6 +87,7 @@
           system = "x86_64-linux";
           modules = [
             sops-nix.nixosModules.sops
+            ./lib/nix.nix
             ./lib/common.nix
             ./hosts/bennett-server.nix
           ];
@@ -104,7 +106,7 @@
             home-manager.darwinModules.home-manager
             ./lib/common.nix
             ./lib/darwin.nix
-            ./hosts/cipher-4590.nix
+            ./lib/nix.nix
           ];
         };
       };
