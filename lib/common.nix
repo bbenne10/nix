@@ -3,7 +3,24 @@
 let
   homePath = (if pkgs.stdenv.isDarwin then "/Users/${userName}" else "/home/${userName}");
 in {
+  fonts = {
+    fontDir.enable = true;
+    fonts = with pkgs; [
+      (nerdfonts.override { fonts = [ "ShareTechMono" ]; })
+      noto-fonts
+      recursive
     ];
+  };
+  users.users.${userName} = {
+    home = homePath;
+  };
+
+  environment.systemPackages = with pkgs; [
+    bash
+    cachix
+    nixUnstable
+  ];
+
     ];
   };
 
@@ -12,17 +29,6 @@ in {
     enableSSHSupport = true;
   };
 
-  users.users.${userName} = {
-    home = homePath;
-  };
-
-  fonts = {
-    fontDir.enable = true;
-    fonts = with pkgsForSystem; [
-      (nerdfonts.override { fonts = [ "ShareTechMono" ]; })
-      noto-fonts
-    ];
-  };
   programs.zsh.enable = true;
 
   home-manager.users.${userName} = {
