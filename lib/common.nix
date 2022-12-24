@@ -38,21 +38,15 @@ in {
       colima
       curl
       docker
-      docker-compose
       exa
       fd
       gawk
-      git
       gnupg
-      htop
       manix
       nixfmt
       pandoc
-      pass
       ripgrep
-      tmux
       tree
-      weechat
     ];
 
     programs.emacs = {
@@ -121,7 +115,6 @@ in {
         "*.log"
         ".DS_Store"
         "**/*.elc"
-        ".projectile"
         ".direnv/"
         ".envrc"
       ];
@@ -131,7 +124,7 @@ in {
         init = {
           defaultBranch = "main";
         };
-        pull = { 
+        pull = {
           rebase = true;
         };
         push = {
@@ -226,13 +219,6 @@ in {
       controlMaster = "yes";
       controlPersist = "10m";
       forwardAgent = true;
-      matchBlocks = {
-        "desktop" = {
-          hostname = "tia-bxb-d02";
-          user = "bbennett37";
-
-        };
-      };
     };
 
     programs.starship = {

@@ -1,7 +1,5 @@
 { pkgs, userName, ...}: {
   environment.systemPackages = with pkgs; [
-    bash
-    cachix
     pmutils
     terminus_font
   ];
@@ -31,14 +29,12 @@
       enable = true;
     };
   };
-
   sound.enable = true;
 
   hardware.pulseaudio.enable = true;
 
   environment.variables = {
     GDK_SCALE = "2";
-    _JAVA_OPTIONA = "-Dsun.java2d.uiScale=2";
   };
 
   services.upower.enable = true;
