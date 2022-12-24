@@ -1,6 +1,6 @@
-{ pkgsForSystem, home-manager, userName, ...}: {
+{ pkgs, home-manager, userName, ...}: {
   home-manager.users.${userName} = {
-    home.packages = with pkgsForSystem; [
+    home.packages = with pkgs; [
       brightnessctl
       firefox
       foot

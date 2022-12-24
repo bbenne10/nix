@@ -1,7 +1,7 @@
-{ config, lib, pkgsForSystem, home-manager, nix-direnv, system, userName
-, zsh-fzf_tab, zsh-fast_syntax_highlighting, zsh-fzf_marks, ... }:
+{ config, lib, pkgs, home-manager, nix-direnv, system, userName, environment
+, zsh-fzf_tab, zsh-fast_syntax_highlighting, zsh-fzf_marks, ...}:
 let
-  homePath = (if pkgsForSystem.stdenv.isDarwin then "/Users/${userName}" else "/home/${userName}");
+  homePath = (if pkgs.stdenv.isDarwin then "/Users/${userName}" else "/home/${userName}");
 in {
   # system.stateVersion = 4;
   nix = {
@@ -45,7 +45,7 @@ in {
   home-manager.users.${userName} = {
     home.enableNixpkgsReleaseCheck = true;
     home.stateVersion = "22.05";
-    home.packages = with pkgsForSystem; [
+    home.packages = with pkgs; [
       colima
       curl
       docker
@@ -68,9 +68,9 @@ in {
 
     programs.emacs = {
       enable = true;
-      package = pkgsForSystem.emacsWithPackagesFromUsePackage {
+      package = pkgs.emacsWithPackagesFromUsePackage {
         config = ./../conf.d/emacs.el;
-        package = pkgsForSystem.emacs;
+        package = pkgs.emacsGit;
         alwaysEnsure = true;
       };
     };

@@ -1,4 +1,4 @@
-{ config, lib, pkgs, pkgsForSystem, ... }:
+{ config, lib, pkgs, ... }:
 
 {
   imports =
@@ -10,7 +10,7 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   hardware.enableRedistributableFirmware = true;
-  users.defaultUserShell = pkgsForSystem.zsh;
+  users.defaultUserShell = pkgs.zsh;
   boot.kernelParams = [
     # Does not work to fix flicker
     # "i915.enable_fbc=0"

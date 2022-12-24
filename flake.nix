@@ -29,11 +29,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    emacsOsx = {
-      url = "github:cmacrae/emacs";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     # zsh plugins
     zsh-fzf_tab = {
       url = "github:aloxaf/fzf-tab";
@@ -51,7 +46,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, darwin, home-manager, nix-direnv, sops-nix, emacs, emacsOsx
+  outputs = { self, nixpkgs, darwin, home-manager, nix-direnv, sops-nix, emacs
     , zsh-fzf_tab, zsh-fast_syntax_highlighting, zsh-fzf_marks }:
     let
       genAttrs = list: f: nixpkgs.lib.genAttrs list f;
@@ -60,24 +55,19 @@
         mkPkgs = system:
             import nixpkgs {
               inherit system;
-              overlays = [
-                emacs.overlay
-                (self: super: {
-                  weechat = super.weechat.override {
-                    configure = { availablePlugins, ... }: {
-                      scripts = with super.weechatScripts; [
-                        weechat-matrix
-                        colorize_nicks
-                      ];
-                    };
-                  };
-                })
-              ] ++ (if system == "x86_64-darwin" then [ emacsOsx.overlay ] else []);
+              overlays = [ emacs.overlay ];
               config = { allowUnfree = true; };
             };
       in genAttrs systems mkPkgs);
       darwinPkgs = pkgsBySystem.x86_64-darwin;
       linuxPkgs = pkgsBySystem.x86_64-linux;
+      specialArgs = {
+        inherit home-manager nixpkgs nix-direnv zsh-fzf_tab
+          zsh-fast_syntax_highlighting zsh-fzf_marks;
+        userName = "bryan";
+        system = "x86_64-linux";
+        pkgs = linuxPkgs;
+      };
     in {
       nixosConfigurations = {
         "bennett-laptop" = nixpkgs.lib.nixosSystem {
@@ -89,13 +79,7 @@
             ./lib/linux.nix
             ./hosts/bennett-laptop.nix
           ];
-          specialArgs = {
-            pkgsForSystem = linuxPkgs;
-            userName = "bryan";
-            system = "x86_64-linux";
-            inherit home-manager nix-direnv zsh-fzf_tab
-              zsh-fast_syntax_highlighting zsh-fzf_marks;
-          };
+          inherit specialArgs;
         };
 
         "bennett-server" = nixpkgs.lib.nixosSystem {
@@ -105,24 +89,16 @@
             ./lib/common.nix
             ./hosts/bennett-server.nix
           ];
-          specialArgs = {
-            pkgsForSystem = linuxPkgs;
-            userName = "bryan";
-            system = "x86_64-linux";
-            inherit home-manager nix-direnv zsh-fzf_tab
-              zsh-fast_syntax_highlighting zsh-fzf_marks;
-          };
+          inherit specialArgs;
         };
       };
       darwinConfigurations = {
         "cipher-4590" = darwin.lib.darwinSystem {
           system = "x86_64-darwin";
-          specialArgs = {
-            pkgsForSystem = darwinPkgs;
+          specialArgs = specialArgs // {
+            pkgs = darwinPkgs;
             userName = "bbennett37";
             system = "x86_64-darwin";
-            inherit home-manager nix-direnv zsh-fzf_tab
-              zsh-fast_syntax_highlighting zsh-fzf_marks;
           };
           modules = [
             home-manager.darwinModules.home-manager
