@@ -1,9 +1,21 @@
-{ config, lib, pkgs, home-manager, nix-direnv, system, userName, environment
-, zsh-fzf_tab, zsh-fast_syntax_highlighting, zsh-fzf_marks, ...}:
+{ config
+, lib
+, pkgs
+, home-manager
+, nix-direnv
+, system
+, userName
+, environment
+, zsh-fzf_tab
+, zsh-fast_syntax_highlighting
+, zsh-fzf_marks
+, ...
+}:
 let
   homePath = (if pkgs.stdenv.isDarwin then "/Users/${userName}" else "/home/${userName}");
-  themesh = (pkgs.callPackage ../derivations/themesh.nix {});
-in {
+  themesh = (pkgs.callPackage ../derivations/themesh.nix { });
+in
+{
   fonts = {
     fontDir.enable = true;
     fonts = with pkgs; [
@@ -66,7 +78,7 @@ in {
       enable = true;
       package = pkgs.emacsWithPackagesFromUsePackage {
         config = ./../conf.d/emacs.el;
-        package = pkgs.emacsGit;
+        package = pkgs.emacsPgtk;
         alwaysEnsure = true;
       };
     };
