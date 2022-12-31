@@ -1,7 +1,7 @@
 {pkgs, ...}: {
   system.stateVersion = 4;
   services.mopidy.mediakeys.enable = true;
-  services.karabiner-elements.enable = false;
+  services.nix-daemon.enable = true;
   system.keyboard = {
     enableKeyMapping = true;
     userKeyMapping = [
