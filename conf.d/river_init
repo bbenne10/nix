@@ -125,8 +125,7 @@ riverctl map passthrough $mod F11 enter-mode normal
 
 # Various media key mapping examples for both normal and locked mode which do
 # not have a modifier
-for mode in normal locked
-do
+for mode in normal locked; do
     # Eject the optical drive (well if you still have one that is)
     riverctl map $mode None XF86Eject spawn 'eject -T'
 
@@ -155,10 +154,10 @@ if [ ! "${synaptics_identifier}" == "" ]; then
 fi
 
 # Set background and border color
-riverctl background-color 0x1d2021
+riverctl background-color 0x2E3440
 riverctl border-color-focused 0x98971A
 riverctl border-color-unfocused 0x504945
-riverctl border-width 8
+riverctl border-width 2
 
 # Set keyboard repeat rate
 riverctl set-repeat 50 300
@@ -178,4 +177,4 @@ foot &
 # Set and exec into the default layout generator, rivertile.
 # River will send the process group of the init executable SIGTERM on exit.
 riverctl default-layout rivertile
-exec rivertile -view-padding 20 -outer-padding 20
+exec rivertile -view-padding 10 -outer-padding 10
