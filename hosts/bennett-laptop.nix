@@ -31,6 +31,17 @@ let riverSession = pkgs.writeScriptBin "river-session" ''
       "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDQtmdA5vhoNcN14PeFS80Y++BVPSBJKajg1hlqdr5dwhr+Ug6zvUHVpJy36FZvM6VL0t/cB4GwFpv9B+tHkECTfHQgQLvQ1pQIua5ByEf3hhc5owVWA3WOQa9E92F+PFR/AjNJHaQqSAZevYobxRT03r4fCkwaODXWuttz0314hV0HJMZPXZQxHrPEpBBmm7AcetWsu4zExCwwEODK1aT7WvDUp6CvIQaAqRSkfZQhirD//E7XgChTvVcVbjVV2E6akSOPr0cAZb08P6/XjXemddV3ohJtgzGVB8zixCf34Z53etD4j6MaVWjiRmv5J2Pffc7Kzwwdjs+LFkSr328L cardno:000606534762"
     ];
   };
+
+  users.groups.keyd = { };
+  systemd.services.keyd = {
+    description = "System-wide remapping daemon";
+    requires = [ "local-fs.target" ];
+    after = [ "local-fs.target" ];
+    wantedBy = [ "sysinit.target" ];
+    serviceConfig = {
+      ExecStart = "${pkgs.keyd}/bin/keyd";
+      Type = "simple";
+    };
   };
 
   time.timeZone = "America/New_York";
@@ -238,6 +249,7 @@ let riverSession = pkgs.writeScriptBin "river-session" ''
     home.file.".config/river/init".source = ./../conf.d/river_init;
   };
 
+  environment.etc."keyd/default.conf".source = ../conf.d/keyd_config;
   services.greetd = {
     enable = true;
     settings = {
