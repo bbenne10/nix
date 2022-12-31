@@ -57,7 +57,7 @@ settings:
   colors.tabs.selected.odd.fg:
     global: '#282828'
   colors.webpage.darkmode.enabled:
-    global: true
+    global: false
   fonts.default_family:
     global: Recursive Mono Linear Static
   fonts.tabs.selected:
