@@ -70,7 +70,7 @@
          (before-save . 'whitespace-cleanup)))
 
 (use-package textsize
-  :custom (textsize-default-points 18)
+  :custom (textsize-default-points 12)
   :config (textsize-mode))
 
 (use-package exec-path-from-shell
