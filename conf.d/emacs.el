@@ -9,9 +9,15 @@
 (set-face-attribute 'default nil :family "Recursive Mono Linear Static" :weight 'light)
 (set-face-attribute 'line-number-current-line nil :family "Recursive Mono Linear Static" :weight 'light)
 
-(push '(menu-bar-lines . 0) default-frame-alist)
-(push '(tool-bar-lines . 0) default-frame-alist)
-(push '(vertical-scroll-bars) default-frame-alist)
+(setq default-frame-alist
+      '((menu-bar-lines . 0)
+        (tool-bar-lines . 0) 
+        (vertical-scroll-bars . nil)))
+
+;; CSD is the devil...
+(when (eq window-system 'pgtk)
+  (add-to-list 'default-frame-alist '(undecorated . t)))
+
 
 (use-package general)
 
