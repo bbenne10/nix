@@ -203,6 +203,34 @@ let riverSession = pkgs.writeScriptBin "river-session" ''
       };
       style = ../conf.d/waybar_style.css;
     };
+    services.kanshi = {
+      enable = true;
+      systemdTarget = "river-session.target";
+      profiles = {
+        undocked = {
+          outputs = [
+            {
+              criteria = "eDP-1";
+              scale = 2.0;
+            }
+          ];
+        };
+        docked_home = {
+          outputs = [
+            {
+              criteria = "eDP-1";
+              scale = 2.0;
+            }
+            {
+              criteria = "Goldstar Company Ltd LG ULTRAWIDE 0x00001FB7";
+              status = "enable";
+              position = "3200,0";
+              scale = 1.0;
+            }
+          ];
+        };
+      };
+    };
     home.file.".config/river/init".source = ./../conf.d/river_init;
   };
 
