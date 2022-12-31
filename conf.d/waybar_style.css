@@ -1,0 +1,85 @@
+* {
+    /* `otf-font-awesome` is required to be installed for icons */
+    font-family: FontAwesome, "Recursive Mono Static Linear";
+    font-size: 10pt;
+    min-height: 0;
+    border-radius: 0;
+    border: none;
+}
+
+window#waybar {
+    background-color: transparent;
+    color: #d8dee9;
+    transition-property: background-color;
+    transition-duration: .5s;
+}
+
+#tags {
+    background-color: #2E3440;
+    border-radius: 1rem;
+    color: #d8dee9;
+}
+
+#tags button {
+    box-shadow: inset 0 -3px transparent;
+    border: none;
+    border-radius: 0;
+    color: #d8dee9;
+}
+
+#tags button.focused:first-child {
+    border-radius: 1rem 0 0 1rem;
+}
+
+#tags button.focused:last-child {
+    border-radius: 0 1rem 1rem 0;
+}
+
+#tags button.focused {
+    color: #2E3440;
+    background-color: #5E81AC;
+}
+
+#tags button.urgent{
+    color: red;
+    background-color:white;
+}
+
+#clock,
+#battery,
+#cpu,
+#memory,
+#disk,
+#temperature,
+#backlight,
+#network,
+#pulseaudio,
+#wireplumber,
+#custom-media,
+#tray,
+#mode,
+#idle_inhibitor,
+#scratchpad,
+#mpd {
+    padding: 0.5rem 1rem;
+    margin: 0 0.25rem;
+}
+
+#battery,
+#cpu,
+#memory,
+#disk,
+#temperature,
+#backlight,
+#network,
+#pulseaudio,
+#wireplumber,
+#custom-media,
+#tray,
+#mode,
+#idle_inhibitor,
+#scratchpad,
+#mpd {
+    background-color: #2E3440;
+    border-radius: 1rem;
+}
