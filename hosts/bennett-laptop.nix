@@ -19,6 +19,17 @@
     font = "${pkgs.terminus_font}/share/consolefonts/ter-u28n.psf.gz";
     keyMap = "us";
   };
+    programs.foot = {
+      enable = true;
+      settings = {
+        main = {
+          font = "Recursive Mono Linear Static:size=10";
+        };
+        scrollback = {
+          lines = 10000;
+        };
+      };
+    };
 
   services.pcscd.enable = true;
 
