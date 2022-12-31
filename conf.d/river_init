@@ -177,4 +177,7 @@ foot &
 # Set and exec into the default layout generator, rivertile.
 # River will send the process group of the init executable SIGTERM on exit.
 riverctl default-layout rivertile
+
+dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY
+systemctl --user start river-session.target
 exec rivertile -view-padding 10 -outer-padding 10

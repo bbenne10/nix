@@ -1,15 +1,31 @@
-{ pkgs, userName, ...}: {
+{ pkgs, userName, ... }:
+let riverSession = pkgs.writeScriptBin "river-session" ''
+  # Session
+  export XDG_SESSION_TYPE=wayland
+  export XDG_SESSION_DESKTOP=river
+  export XDG_CURRENT_DESKTOP=river
+
+  # Wayland stuff
+  export MOZ_ENABLE_WAYLAND=1
+  export QT_QPA_PLATFORM=wayland
+  export SDL_VIDEODRIVER=wayland
+  export _JAVA_AWT_WM_NONREPARENTING=1
+
+  dbus-update-activation-environment --systemd XDG_CURRENT_DESKTOP XDG_SESSION_TYPE
+  exec "${pkgs.river}/bin/river"
+''; in
+{
   environment.systemPackages = with pkgs; [
     pmutils
     terminus_font
   ];
 
-  networking.hostName = "bennett-laptop"; 
+  networking.hostName = "bennett-laptop";
   networking.nameservers = [ "192.168.1.142" ];
 
   users.users.${userName} = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "docker" "vboxusers" "video"];
+    extraGroups = [ "wheel" "docker" "vboxusers" "video" ];
     hashedPassword = "$6$hc672tTQXjHQV$xOGejAjJAdP3VhKMAHCZ2J8G0mj2mjrYS7l4hkq6fVRlLygWplZeem4LX0MEdGGBsGaqClLUc6Z4fkRsfROYB/";
   };
 
@@ -19,6 +35,18 @@
     font = "${pkgs.terminus_font}/share/consolefonts/ter-u28n.psf.gz";
     keyMap = "us";
   };
+  home-manager.users.${userName} = {
+    # Set up a graphical target session for river 
+    systemd.user.targets.river-session = {
+      Unit = {
+        Description = "river compositor session";
+        Documentation = [ "man:systemd.special(7)" ];
+        BindsTo = [ "graphical-session.target" ];
+        Wants = [ "graphical-session-pre.target" ];
+        After = [ "graphical-session-pre.target" ];
+      };
+    };
+
     programs.foot = {
       enable = true;
       settings = {
@@ -175,7 +203,22 @@
       };
       style = ../conf.d/waybar_style.css;
     };
+    home.file.".config/river/init".source = ./../conf.d/river_init;
   };
+
+  services.greetd = {
+    enable = true;
+    settings = {
+      default_session = {
+        command = "${pkgs.cage}/bin/cage -s -- ${pkgs.greetd.gtkgreet}/bin/gtkgreet";
+      };
+    };
+  };
+
+  environment.etc."greetd/environments".text = ''
+    ${riverSession}/bin/river-session 
+    zsh
+  '';
 
   services.pcscd.enable = true;
 
