@@ -69,9 +69,30 @@
          (after-init . bb-after-init-hook)
          (before-save . 'whitespace-cleanup)))
 
+(use-package hydra)
+
+(use-package use-package-hydra)
+
 (use-package textsize
   :custom (textsize-default-points 12)
-  :config (textsize-mode))
+  :config (textsize-mode)
+  :general ("C-x t" 'bb-hydra-textsize/body)
+  :hydra (bb-hydra-textsize (:exit nil :foreign-keys warn :hint nil)
+                         "
+┌───────────────┐
+│ Text Size     │
+│───────────────│
+│ [_+_]: Increase │
+│ [_-_]: Decrease │
+│ [_r_]: Reset    │
+│ [_x_]: Exit     │
+└───────────────┘
+"
+          ("+" textsize-increment )
+          ("-" textsize-decrement)
+          ("r" textsize-reset)
+          ("x" nil))
+  )
 
 (use-package exec-path-from-shell
   :if (memq window-system '(mac ns))
@@ -164,35 +185,33 @@
 (use-package yasnippet
   :hook (prog-mode . yas-minor-mode))
 
-(use-package transient)
-
 (use-package eglot
-  :after transient
   :custom (eglot-extend-to-xref t)
   :config (setcdr (assq 'java-mode eglot-server-programs) '("jdt-language-server"))
-          (transient-define-prefix bb-transient-eglot
-            "Eglot"
-            [["Find"
-              ("d" "Declaration" eglot-find-declaration)
-              ("i" "Implementation" eglot-find-implementation)
-              ("D" "Type Definition" eglot-find-typeDefinition)]
-             ["Edit"
-              ("r" "Rename" eglot-rename)
-              ("a" "Code Actions" eglot-code-actions)]
-             ["Format"
-              ("=" "Format Buffer" eglot-format-buffer)
-              ("R" "Format Region" eglot-format)]
-             ["Refactor"
-              ("r" "Rename" eglot-rename)
-              ("a" "Code Actions" eglot-code-actions)]
-             ["Manage"
-              ("X" "Shutdown" eglot-shutdown)
-              ("C" "Reconnect" eglot-reconnect)
-              ("E" "Display Events Buffer" eglot-events-buffer)]
-             ])
+  :hydra (bb-hydra-eglot (:exit t :foreign-keys warn :hint nil)
+                         "
+┌──────────────────────┐┌───────────────┐┌─────────────┐┌───────────────────┐
+│ Find                 ││ Edit          ││ Format      ││ Manage            │
+│──────────────────────││───────────────││─────────────││───────────────────│
+│ [_d_]: Declaration     ││ [_r_]: Rename   ││ [_=_]: Buffer ││ [_X_]: Shutdown     │
+│ [_i_]: Implementation  ││ [_a_]: Actions  ││ [_R_]: Region ││ [_C_]: Reconnect    │
+│ [_D_]: Type definition ││               ││             ││ [_E_]: Event Buffer │
+└──────────────────────┘└───────────────┘└─────────────┘└───────────────────┘
+  [_X_]: Shutdown  [_C_]: Re-connect [_E_]: Display Events Buffer
+"
+              ("d" eglot-find-declaration)
+              ("i" eglot-find-implementation)
+              ("D" eglot-find-typeDefinition)
+              ("r" eglot-rename)
+              ("a" eglot-code-actions)
+              ("=" eglot-format-buffer)
+              ("R" eglot-format)
+              ("X" eglot-shutdown)
+              ("C" eglot-reconnect)
+              ("E" eglot-events-buffer))
   :general (:prefix bb-default-leader-key
             "/" 'consult-ripgrep
-            "e" 'bb-transient-eglot)
+            "e" 'bb-hydra-eglot/body)
            ("<M-RET>" #'eglot-code-actions)
   :hook ((python-mode . eglot-ensure)
          (java-mode . eglot-ensure)
@@ -227,11 +246,10 @@
 (use-package consult-project-extra)
 
 (use-package project
-  :after transient
   :defer nil
   :init
-    ;; Below transient stolen from
-    ;; https://github.com/jojojames/matcha/blob/master/matcha-project.el
+    ;; I stole the transient from https://github.com/jojojames/matcha/blob/master/matcha-project.el
+    ;; And then made it a hydra
     (defun project-recentf ()
       "Show a list of recently visited files in a project."
       (interactive)
@@ -262,31 +280,32 @@
         (multi-occur (project--buffer-list pr)
                      (car (occur-read-primary-args))
                      nlines)))
-    (transient-define-prefix bb-transient-project ()
-     "Project"
-     [["Find"
-       ("f" "File" project-find-file)
-       ("F" "File or External" project-or-external-find-file)
-       ("r" "Recent File" project-recentf)]
-      ["Buffers"
-       ("b" "Buffer" project-switch-to-buffer)
-       ("K" "Kill Project Buffers" project-kill-buffers)]
-      ["Actions"
-       ("R" "Replace Regexp" project-query-replace-regexp)
-       ("m" "Compile Project" project-compile)
-       ("c" "Shell Command &" project-async-shell-command)
-       ("C" "Shell Command" project-shell-command)]]
-     [["Modes"
-       ("g" "Version Control" project-vc-dir)
-       ("h" "Dired" project-dired)
-       ("e" "Eshell" project-eshell)
-       ("y" "Shell" project-shell)]
-      ["Search"
-       ("a" "Find REGEXP" project-find-regexp)
-       ("A" "Find REGEXP or External" project-or-external-find-regexp)
-       ("s" "Multi Occur" project-multi-occur)]
-      ["Manage"
-       ("p" "Switch Project" tabspaces-open-or-create-project-and-workspace)]])
+  :hydra (bb-hydra-project (:exit t :foreign-keys warn :hint nil)
+                           "
+┌────────────────────┐┌─────────────┐┌────────────────────┐┌──────────────────────┐┌────────────────────┐
+│ Find               ││ Buffers     ││ Actions            ││ Modes                ││ Search             │
+│────────────────────││─────────────││────────────────────││──────────────────────││────────────────────│
+│ [_f_]: File          ││ [_b_]: Buffer ││ [_R_]: Replace       ││ [_g_]: Version Control ││ [_\/_]: Find Regexp   │
+│ [_F_]: File (or Ext) ││ [_K_]: Kill   ││ [_m_]: Compile       ││ [_h_]: Dired           ││ [_s_]: Multi-Occur   │
+│ [_r_]: Recent File   ││             ││                    ││ [_t_]: Term            ││ [_p_]: Switch Proj   │
+└────────────────────┘└─────────────┘└────────────────────┘└──────────────────────┘└────────────────────┘
+"
+       ("f" project-find-file)
+       ("F" project-or-external-find-file)
+       ("r" project-recentf)
+       ("b" project-switch-to-buffer)
+       ("K" project-kill-buffers)
+       ("R" project-query-replace-regexp)
+       ("m" project-compile)
+       ("c" project-async-shell-command)
+       ("C" project-shell-command)
+       ("g" project-vc-dir)
+       ("h" project-dired)
+       ("t" multi-vterm-project)
+       ("\/" project-find-regexp)
+       ("A" project-or-external-find-regexp)
+       ("s" project-multi-occur)
+       ("p" tabspaces-open-or-create-project-and-workspace))
   :config
     (cl-defmethod project-root ((project (head local))) (cdr project))
     (defun bb-project-find (dir)
@@ -299,7 +318,7 @@
     ;; Can't use :hook as 'project-find-functions doesn't end in "-hook"
     (add-hook 'project-find-functions #'bb-project-find -90)
 
-     :general (:prefix bb-default-leader-key "P" 'bb-transient-project))
+     :general (:prefix bb-default-leader-key "P" 'bb-hydra-project/body))
 
 (use-package tabspaces
   :hook (after-init . tabspaces-mode)
