@@ -6,8 +6,12 @@
 (eval-when-compile (require 'use-package))
 (defvar bb-default-leader-key "<f13>")
 
-(set-face-attribute 'default nil :family "Recursive Mono Linear Static" :weight 'light)
-(set-face-attribute 'line-number-current-line nil :family "Recursive Mono Linear Static" :weight 'light)
+(set-face-attribute 'default nil
+                    :family "Recursive Mono Linear Static"
+                    :weight 'light)
+(set-face-attribute 'line-number-current-line nil
+                    :family "Recursive Mono Linear Static"
+                    :weight 'light)
 
 (setq default-frame-alist
       '((menu-bar-lines . 0)
@@ -17,7 +21,6 @@
 ;; CSD is the devil...
 (when (eq window-system 'pgtk)
   (add-to-list 'default-frame-alist '(undecorated . t)))
-
 
 (use-package general)
 
@@ -172,7 +175,6 @@
   :config (direnv-mode))
 
 (use-package fic-mode
-    :commands (fic-mode)
     :custom (fic-highlighted-words '("FIXME" "TODO" "BUG" "NOTE" "XXX"))
     :hook (prog-mode . fic-mode))
 
