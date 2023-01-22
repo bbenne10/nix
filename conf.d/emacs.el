@@ -53,12 +53,20 @@
 
   :init
     (defun bb-prog-mode-setup ()
+      (display-line-numbers-mode)
+      (prettify-symbols-mode 1)
+      (hs-minor-mode))
 
     (defun bb-after-init-hook ()
       (global-unset-key (kbd "C-x C-c"))
       (global-unset-key (kbd "C-h h"))
+      (global-hl-line-mode 1)
+      (show-paren-mode 1)
+      (defalias 'yes-or-no-p 'y-or-n-p)
 
       (setq-default
+        truncate-lines t
+        indent-tabs-mode nil))
 
     :general (
        :prefix bb-default-leader-key
