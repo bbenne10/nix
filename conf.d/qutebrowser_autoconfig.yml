@@ -9,53 +9,51 @@ settings:
   auto_save.session:
     global: true
   colors.completion.category.bg:
-    global: '#282828'
+    global: '#2E3440'
   colors.completion.category.border.bottom:
-    global: '#282828'
+    global: '#2E3440'
   colors.completion.category.border.top:
-    global: '#282828'
+    global: '#2E3440'
   colors.completion.even.bg:
-    global: '#313131'
+    global: '#3B4252'
   colors.completion.fg:
-    global: '#ebdbb2'
+    global: '#D8DEE9'
   colors.completion.item.selected.bg:
-    global: '#d79921'
+    global: '#EBCB8B'
   colors.completion.item.selected.border.bottom:
-    global: '#d79921'
+    global: '#EBCB8B'
   colors.completion.item.selected.border.top:
-    global: '#d79921'
+    global: '#EBCB8B'
   colors.completion.item.selected.fg:
-    global: '#282828'
+    global: '#2E3440'
   colors.completion.match.fg:
-    global: '#cc241d'
+    global: '#BF616A'
   colors.completion.odd.bg:
-    global: '#282828'
+    global: '#2E3440'
   colors.statusbar.command.bg:
-    global: '#282828'
+    global: '#2E3440'
   colors.statusbar.normal.bg:
-    global: '#282828'
+    global: '#2E3440'
   colors.statusbar.url.success.http.fg:
-    global: '#98971A'
+    global: '#A3BE8C'
   colors.statusbar.url.success.https.fg:
-    global: '#98971A'
-  colors.tabs.bar.bg:
-    global: '#FF00FF'
+    global: '#A3BE8C'
   colors.tabs.even.bg:
-    global: '#282828'
+    global: '#2E3440'
   colors.tabs.even.fg:
-    global: '#ebdbb2'
+    global: '#D8DEE9'
   colors.tabs.odd.bg:
-    global: '#282828'
+    global: '#2E3440'
   colors.tabs.odd.fg:
-    global: '#ebdbb2'
+    global: '#D8DEE9'
   colors.tabs.selected.even.bg:
-    global: '#98971A'
+    global: '#A3BE8C'
   colors.tabs.selected.even.fg:
-    global: '#282828'
+    global: '#2E3440'
   colors.tabs.selected.odd.bg:
-    global: '#98971A'
+    global: '#A3BE8C'
   colors.tabs.selected.odd.fg:
-    global: '#282828'
+    global: '#2E3440'
   colors.webpage.darkmode.enabled:
     global: false
   fonts.default_family:
@@ -72,7 +70,7 @@ settings:
       top: 3
   tabs.padding:
     global:
-      bottom: 5
-      left: 5
-      right: 5
-      top: 5
+      bottom: 10
+      left: 10
+      right: 10
+      top: 10
