@@ -56,6 +56,7 @@ in
     home.enableNixpkgsReleaseCheck = true;
     home.stateVersion = "22.05";
     home.packages = with pkgs; [
+      bitwarden-cli
       colima
       curl
       docker
