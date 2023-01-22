@@ -70,7 +70,6 @@
 
     :general (
        :prefix bb-default-leader-key
-       "p" #'tabspaces-open-or-create-project-and-workspace
        "b" #'find-file
        bb-default-leader-key #'project-find-file)
 
