@@ -43,6 +43,7 @@ let riverSession = pkgs.writeScriptBin "river-session" ''
       Type = "simple";
     };
   };
+  programs.dconf.enable = true;
 
   time.timeZone = "America/New_York";
   i18n.defaultLocale = "en_US.UTF-8";
@@ -51,6 +52,33 @@ let riverSession = pkgs.writeScriptBin "river-session" ''
     keyMap = "us";
   };
   home-manager.users.${userName} = {
+    home.packages = with pkgs; [
+      brightnessctl
+      pamixer
+      pavucontrol
+      playerctl
+      qutebrowser
+      river
+      wofi
+    ];
+
+    gtk = {
+      enable = true;
+      theme = {
+        name = "Nordic";
+        package = pkgs.nordic;
+      };
+      cursorTheme = {
+        name = "Vanilla-DMZ";
+        package = pkgs.vanilla-dmz;
+      };
+
+      font = {
+        name = "Recursive Mono Linear Static";
+        size = 10;
+      };
+    };
+
     # Set up a graphical target session for river 
     systemd.user.targets.river-session = {
       Unit = {
@@ -212,7 +240,7 @@ let riverSession = pkgs.writeScriptBin "river-session" ''
               car = "";
               default = [ "" "" "" ];
             };
-            on-click = "pavucontrol";
+            on-click = "${pkgs.pavucontrol}";
           };
         };
       };
