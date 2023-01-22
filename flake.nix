@@ -3,6 +3,7 @@
     nixpkgs = {
       url = "github:nixos/nixpkgs/nixpkgs-22.11-darwin";
     };
+
     nix-direnv = {
       url = "github:nix-community/nix-direnv";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -18,8 +19,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    sops-nix = {
-      url = "github:Mic92/sops-nix";
+    # Server specific
+    deploy-rs.url = "github:serokell/deploy-rs";
+
+    website = {
+      url = "github:bbenne10/website";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -29,7 +33,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    emacs_themes= {
+    emacs_themes = {
       url = "github:bbenne10/emacs_themes";
       flake = false;
     };
@@ -52,18 +56,7 @@
   };
 
   outputs =
-    { self
-    , nixpkgs
-    , darwin
-    , home-manager
-    , nix-direnv
-    , sops-nix
-    , emacs
-    , emacs_themes
-    , zsh-fzf_tab
-    , zsh-fast_syntax_highlighting
-    , zsh-fzf_marks
-    }:
+    { self, nixpkgs, deploy-rs, emacs, darwin, ... }@inputs:
     let
       genAttrs = list: f: nixpkgs.lib.genAttrs list f;
       systems = [ "x86_64-darwin" "x86_64-linux" ];
@@ -80,8 +73,7 @@
       );
       darwinPkgs = pkgsBySystem.x86_64-darwin;
       linuxPkgs = pkgsBySystem.x86_64-linux;
-      specialArgs = {
-        inherit emacs_themes home-manager nixpkgs nix-direnv zsh-fzf_tab zsh-fast_syntax_highlighting zsh-fzf_marks;
+      specialArgs = inputs // {
         userName = "bryan";
         system = "x86_64-linux";
         pkgs = linuxPkgs;
@@ -92,10 +84,11 @@
         "bennett-laptop" = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           modules = [
-            home-manager.nixosModules.home-manager
+            inputs.home-manager.nixosModules.home-manager
             ./hardware/laptop.nix
             ./lib/nix.nix
             ./lib/common.nix
+            ./lib/graphical.nix
             ./lib/linux.nix
             ./hosts/bennett-laptop.nix
           ];
@@ -105,9 +98,10 @@
         "bennett-server" = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           modules = [
-            sops-nix.nixosModules.sops
+            inputs.home-manager.nixosModules.home-manager
             ./lib/nix.nix
             ./lib/common.nix
+            ./lib/linux.nix
             ./hosts/bennett-server.nix
           ];
           inherit specialArgs;
@@ -122,12 +116,30 @@
             system = "x86_64-darwin";
           };
           modules = [
-            home-manager.darwinModules.home-manager
+            inputs.home-manager.darwinModules.home-manager
             ./lib/common.nix
             ./lib/nix.nix
+            ./lib/graphical.nix
             ./lib/darwin.nix
           ];
         };
       };
+      deploy.nodes = {
+        server = {
+          hostname = "bryan-bennett.com";
+          user = "root";
+          sshUser = "bryan";
+          magicRollback = false;
+          sshOpts = [ "-t" ];
+
+          profiles = {
+            system = {
+              path = deploy-rs.lib.x86_64-linux.activate.nixos
+                self.nixosConfigurations.bennett-server;
+            };
+          };
+        };
+      };
+      checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
     };
 }
