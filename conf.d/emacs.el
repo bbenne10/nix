@@ -24,6 +24,15 @@
 
 (use-package general)
 
+(use-package hydra)
+
+(use-package use-package-hydra)
+
+(use-package minions
+  :custom (minions-mode-line-delimiters '("" . ""))
+          (minions-mode-line-lighter "◆")
+  :config (minions-mode))
+
 (use-package emacs
   :custom (custom-file null-device)
           (initial-scratch-message "")
@@ -60,10 +69,6 @@
   :hook ((prog-mode . bb-prog-mode-setup)
          (after-init . bb-after-init-hook)
          (before-save . 'whitespace-cleanup)))
-
-(use-package hydra)
-
-(use-package use-package-hydra)
 
 (use-package textsize
   :custom (textsize-default-points (if (eq system-type 'darwin) 18 12))
