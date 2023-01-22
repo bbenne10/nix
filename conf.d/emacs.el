@@ -73,7 +73,9 @@
 (use-package textsize
   :custom (textsize-default-points (if (eq system-type 'darwin) 18 12))
   :config (textsize-mode)
-  :general ("C-x t" 'bb-hydra-textsize/body)
+  :general (:prefix bb-default-leader-key
+                    "t" 'bb-hydra-textsize/body)
+           ("C-x t" nil)
   :hydra (bb-hydra-textsize (:exit nil :foreign-keys warn :hint nil)
                          "
 ┌───────────────┐
