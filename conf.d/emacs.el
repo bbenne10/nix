@@ -89,7 +89,7 @@
 "
           ("+" textsize-increment )
           ("-" textsize-decrement)
-          ("r" textsize-reset)
+          ("r" textsize-reset :color blue)
           ("x" nil))
   )
 
