@@ -1,6 +1,7 @@
 * {
     /* `otf-font-awesome` is required to be installed for icons */
-    font-family: FontAwesome, "Recursive Mono Static Linear";
+
+    font-family: FontAwesome, "Recursive Mono Linear Static";
     font-size: 10pt;
     min-height: 0;
     border-radius: 0;
@@ -35,6 +36,13 @@ window#waybar {
     border-radius: 0 1rem 1rem 0;
 }
 
+#tags button.focused:first-child {
+    border-radius: 1rem 0 0 1rem;
+}
+
+#tags button.focused:last-child {
+    border-radius: 0 1rem 1rem 0;
+}
 #tags button.focused {
     color: #2E3440;
     background-color: #5E81AC;
