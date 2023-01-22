@@ -25,42 +25,31 @@
 (use-package general)
 
 (use-package emacs
-  :custom (custom-file null-device "disable customizations")
-          (initial-scratch-message "" "disable the scratch message")
-          (inhibit-startup-message t "disable the startup screen")
-          (scroll-conservatively 101 "move window one line at a time when point approaches edge")
-          (scroll-margin 5 "start scrolling 5 lines from edge")
-          (visible-bell t "Audible bell is cancer, but visible bell works okay")
-          (ad-redefinition-action 'accept "Tell emacs we're okay with functions being given advice")
-          (vc-follow-symlinks t "Follow symlinks to vcs controlled files")
-          (select-enable-clipboard t "copy actions copy to clipboard")
-          (select-enable-primary t "copy actions also copy to primary")
-          (mouse-drag-copy-region t "highlighting a section causes it to get copied (linux default behavior)")
-          (prettify-symbols-unprettify-at-point t "unprettify symbols when the point hits them so we can edit them")
-          (backup-directory-alist `((".*" . ,temporary-file-directory)) "Move backups to a temporary dir")
-          (auto-save-file-name-transforms `((".*" ,temporary-file-directory t)) "Move auto saves to a temporary dir")
-          (read-process-output-max (* 1024 1024) "Up amount of output we can read from a subprocess buffer; should improve LSP")
-          (gc-cons-threshold 100000000 "Increase garbage collection-threshold")
+  :custom (custom-file null-device)
+          (initial-scratch-message "")
+          (inhibit-startup-message t)
+          (scroll-conservatively 101)
+          (scroll-margin 5)
+          (visible-bell t)
+          (ad-redefinition-action 'accept)
+          (vc-follow-symlinks t)
+          (select-enable-clipboard t)
+          (select-enable-primary t)
+          (mouse-drag-copy-region t)
+          (prettify-symbols-unprettify-at-point t)
+          (backup-directory-alist `((".*" . ,temporary-file-directory)))
+          (auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
+          (read-process-output-max (* 1024 1024))
+          (gc-cons-threshold 100000000)
 
   :init
     (defun bb-prog-mode-setup ()
-      (prettify-symbols-mode 1)      ; show ligatures
-      (show-paren-mode 1)            ; highlight matching brackets
-      (global-hl-line-mode 1)        ; highlight the active line
-      (display-line-numbers-mode)    ; Show line numbers
-      (hs-minor-mode))               ; Add hide-show
 
     (defun bb-after-init-hook ()
-      (defalias 'yes-or-no-p 'y-or-n-p)  ; I don't ever want to type out "yes" or "no" - even if it is important
-      (global-unset-key (kbd "C-x C-c")) ; Stop killing windows by fatfingering this bind.
-      (global-unset-key (kbd "C-h h"))   ; I have *never* wanted to see the hello file.
+      (global-unset-key (kbd "C-x C-c"))
+      (global-unset-key (kbd "C-h h"))
 
       (setq-default
-        fill-column 80                            ; in fill-mode, what column do we wrap at?
-        truncate-lines t                          ; disable line wrapping
-        indent-tabs-mode nil                      ; use spaces over tabs everywhere
-        tab-width 2                               ; but when encountering a tab, how large is it?
-        tab-stop-list (number-sequence 3 120 2))) ; and what are the tabstop points when shifting?
 
     :general (
        :prefix bb-default-leader-key
