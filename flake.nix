@@ -46,19 +46,32 @@
     };
   };
 
-  outputs = { self, nixpkgs, darwin, home-manager, nix-direnv, sops-nix, emacs
-    , zsh-fzf_tab, zsh-fast_syntax_highlighting, zsh-fzf_marks }:
+  outputs =
+    { self
+    , nixpkgs
+    , darwin
+    , home-manager
+    , nix-direnv
+    , sops-nix
+    , emacs
+    , zsh-fzf_tab
+    , zsh-fast_syntax_highlighting
+    , zsh-fzf_marks
+    }:
     let
       genAttrs = list: f: nixpkgs.lib.genAttrs list f;
       systems = [ "x86_64-darwin" "x86_64-linux" ];
-      pkgsBySystem = (let
-        mkPkgs = system:
+      pkgsBySystem = (
+        let
+          mkPkgs = system:
             import nixpkgs {
               inherit system;
               overlays = [ emacs.overlay ];
               config = { allowUnfree = true; };
             };
-      in genAttrs systems mkPkgs);
+        in
+        genAttrs systems mkPkgs
+      );
       darwinPkgs = pkgsBySystem.x86_64-darwin;
       linuxPkgs = pkgsBySystem.x86_64-linux;
       specialArgs = {
@@ -68,7 +81,8 @@
         system = "x86_64-linux";
         pkgs = linuxPkgs;
       };
-    in {
+    in
+    {
       nixosConfigurations = {
         "bennett-laptop" = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
@@ -105,8 +119,8 @@
           modules = [
             home-manager.darwinModules.home-manager
             ./lib/common.nix
-            ./lib/darwin.nix
             ./lib/nix.nix
+            ./lib/darwin.nix
           ];
         };
       };

@@ -1,4 +1,4 @@
-{pkgs, ...}: {
+{ pkgs, userName, ... }: {
   system.stateVersion = 4;
   services.mopidy.mediakeys.enable = true;
   services.nix-daemon.enable = true;
@@ -15,7 +15,7 @@
         HIDKeyboardModifierMappingSrc = 30064771129;
         HIDKeyboardModifierMappingDst = 30064771176;
       }
-      ];
+    ];
   };
   system.defaults = {
     dock = {
@@ -23,13 +23,13 @@
       orientation = "left";
     };
     NSGlobalDomain = {
-      NSDocumentSaveNewDocumentsToCloud = false;    # Do not save new documents to iCloud
+      NSDocumentSaveNewDocumentsToCloud = false; # Do not save new documents to iCloud
       NSAutomaticPeriodSubstitutionEnabled = false; # Turn off auto-add of periods.
-      NSAutomaticQuoteSubstitutionEnabled = false;  # Do not substitute "smart" quotes
-      NSAutomaticCapitalizationEnabled = false;     # Do not autocorrect my capitalization
+      NSAutomaticQuoteSubstitutionEnabled = false; # Do not substitute "smart" quotes
+      NSAutomaticCapitalizationEnabled = false; # Do not autocorrect my capitalization
 
-      "com.apple.swipescrolldirection" = false;     # disable "natural" scolling
-      "com.apple.mouse.tapBehavior" = 1;            # enable tap-to-click
+      "com.apple.swipescrolldirection" = false; # disable "natural" scolling
+      "com.apple.mouse.tapBehavior" = 1; # enable tap-to-click
     };
   };
 }
