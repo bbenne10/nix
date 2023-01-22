@@ -252,6 +252,7 @@
 
 (use-package project
   :defer nil
+  :custom (project-vc-extra-root-markers '(".project"))
   :init
     ;; I stole the transient from https://github.com/jojojames/matcha/blob/master/matcha-project.el
     ;; And then made it a hydra
@@ -312,17 +313,6 @@
        ("s" project-multi-occur)
        ("p" tabspaces-open-or-create-project-and-workspace))
   :config
-    (cl-defmethod project-root ((project (head local))) (cdr project))
-    (defun bb-project-find (dir)
-    ;; https://michael.stapelberg.ch/posts/2021-04-02-emacs-project-override/
-      (let ((local (locate-dominating-file dir ".project-root")))
-        (if local
-            (cons 'local local)
-          nil)))
-
-    ;; Can't use :hook as 'project-find-functions doesn't end in "-hook"
-    (add-hook 'project-find-functions #'bb-project-find -90)
-
      :general (:prefix bb-default-leader-key "P" 'bb-hydra-project/body))
 
 (use-package tabspaces
