@@ -311,4 +311,8 @@ let riverSession = pkgs.writeScriptBin "river-session" ''
   };
 
   services.upower.enable = true;
+
+  hardware.video.hidpi.enable = true;
+  console.earlySetup = true;
 }
+
