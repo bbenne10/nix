@@ -17,9 +17,7 @@ let
   themesh = (pkgs.callPackage ../derivations/themesh.nix { });
 in
 {
-  users.users.${userName} = {
-    home = homePath;
-  };
+  system.stateVersion = "22.11";
 
   environment.systemPackages = with pkgs; [
     bash
@@ -33,6 +31,12 @@ in
   };
 
   programs.zsh.enable = true;
+  users.users.${userName} = {
+    home = homePath;
+    isNormalUser = true;
+    extraGroups = [ "wheel" "docker" "vboxusers" "video" ];
+    hashedPassword = "$6$hc672tTQXjHQV$xOGejAjJAdP3VhKMAHCZ2J8G0mj2mjrYS7l4hkq6fVRlLygWplZeem4LX0MEdGGBsGaqClLUc6Z4fkRsfROYB/";
+  };
 
   home-manager.users.${userName} = {
     home.enableNixpkgsReleaseCheck = true;
