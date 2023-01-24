@@ -17,14 +17,6 @@ let
   themesh = (pkgs.callPackage ../derivations/themesh.nix { });
 in
 {
-  fonts = {
-    fontDir.enable = true;
-    fonts = with pkgs; [
-      (nerdfonts.override { fonts = [ "ShareTechMono" ]; })
-      noto-fonts
-      recursive
-    ];
-  };
   users.users.${userName} = {
     home = homePath;
   };
@@ -34,17 +26,6 @@ in
     cachix
     nixUnstable
   ];
-
-  services.mopidy = {
-    enable = true;
-    extensionPackages = with pkgs; [
-      mopidy-ytmusic
-      mopidy-iris
-      mopidy-somafm
-      mopidy-bandcamp
-      mopidy-soundcloud
-    ];
-  };
 
   programs.gnupg.agent = {
     enable = true;
@@ -58,9 +39,7 @@ in
     home.stateVersion = "22.05";
     home.packages = with pkgs; [
       bitwarden-cli
-      colima
       curl
-      docker
       dtach
       exa
       fd
@@ -69,36 +48,12 @@ in
       manix
       nixUnstable
       nixfmt
-      pandoc
       ripgrep
       rnix-lsp
-      tree
+      rsync
       themesh
+      tree
     ];
-
-    programs.emacs = {
-      enable = true;
-      package = pkgs.emacsWithPackagesFromUsePackage {
-        config = ./../conf.d/emacs.el;
-        package = pkgs.emacsPgtk;
-        alwaysEnsure = true;
-        override = epkgs: epkgs // {
-          bennett-themes = epkgs.trivialBuild {
-            pname = "bennett-themes";
-            version = emacs_themes.rev;
-            src = emacs_themes;
-            postBuild = ''
-              emacs -L . --batch -f batch-byte-compile themes/*.el
-            '';
-            postInstall = ''
-              install themes/*.el themes/*.elc $out/share/emacs/site-lisp
-            '';
-          };
-        };
-      };
-    };
-
-    home.file.".config/emacs/init.el".source = ./../conf.d/emacs.el;
 
     programs.bat = { enable = true; };
 
