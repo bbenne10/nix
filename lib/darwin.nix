@@ -32,4 +32,8 @@
       "com.apple.mouse.tapBehavior" = 1; # enable tap-to-click
     };
   };
+
+  home-manager.users.${userName}.home.packages = with pkgs; [
+    colima
+  ];
 }
