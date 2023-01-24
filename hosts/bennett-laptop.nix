@@ -267,7 +267,7 @@ let riverSession = pkgs.writeScriptBin "river-session" ''
             {
               criteria = "Goldstar Company Ltd LG ULTRAWIDE 0x00001FB7";
               status = "enable";
-              position = "3200,0";
+              position = "1600,0"; # logical pixels - not phsyical ones - account for 2x scale
               scale = 1.0;
             }
           ];
