@@ -4,7 +4,6 @@
 ;; -*- lexical-binding: t -*-
 
 (eval-when-compile (require 'use-package))
-(defvar bb-default-leader-key "<f13>")
 
 (set-face-attribute 'default nil
                     :family "Recursive Mono Linear Static"
@@ -18,8 +17,11 @@
         (tool-bar-lines . 0) 
         (vertical-scroll-bars . nil)))
 
-;; CSD is the devil...
+(defvar my/leader "<f13>")
 (when (eq window-system 'pgtk)
+  (setq my/leader "<Tools>")
+
+  ;; CSD is the devil...
   (add-to-list 'default-frame-alist '(undecorated . t)))
 
 (use-package general)
@@ -47,13 +49,13 @@
           (gc-cons-threshold 100000000)
 
   :init
-    (defun bb-prog-mode-setup ()
+    (defun my/prog-mode-setup ()
       (display-line-numbers-mode)
       (column-number-mode 1)
       (prettify-symbols-mode 1)
       (hs-minor-mode))
 
-    (defun bb-after-init-hook ()
+    (defun my/after-init-hook ()
       (global-unset-key (kbd "C-x C-c"))
       (global-unset-key (kbd "C-h h"))
       (global-hl-line-mode 1)
@@ -65,21 +67,21 @@
         indent-tabs-mode nil))
 
     :general (
-       :prefix bb-default-leader-key
+       :prefix my/leader
        "b" #'find-file
-       bb-default-leader-key #'project-find-file)
+       my/leader #'project-find-file)
 
-  :hook ((prog-mode . bb-prog-mode-setup)
-         (after-init . bb-after-init-hook)
+  :hook ((prog-mode . my/prog-mode-setup)
+         (after-init . my/after-init-hook)
          (before-save . 'whitespace-cleanup)))
 
 (use-package textsize
   :custom (textsize-default-points (if (eq system-type 'darwin) 18 12))
   :config (textsize-mode)
-  :general (:prefix bb-default-leader-key
-                    "t" 'bb-hydra-textsize/body)
+  :general (:prefix my/leader
+                    "t" 'my/hydra-textsize/body)
            ("C-x t" nil)
-  :hydra (bb-hydra-textsize (:exit nil :foreign-keys warn :hint nil)
+  :hydra (my/hydra-textsize (:exit nil :foreign-keys warn :hint nil)
                          "
 ┌───────────────┐
 │ Text Size     │
@@ -143,7 +145,7 @@
 
 (use-package magit
     :hook (after-save . magit-after-save-refresh-status)
-    :general (:prefix bb-default-leader-key
+    :general (:prefix my/leader
               "g" 'magit)
     :custom (magit-popup-show-common-commands nil)
             (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1)
@@ -179,7 +181,7 @@
 (use-package eglot
   :custom (eglot-extend-to-xref t)
   :config (setcdr (assq 'java-mode eglot-server-programs) '("jdt-language-server"))
-  :hydra (bb-hydra-eglot (:exit t :foreign-keys warn :hint nil)
+  :hydra (my/hydra-eglot (:exit t :foreign-keys warn :hint nil)
                          "
 ┌──────────────────────┐┌───────────────┐┌─────────────┐┌───────────────────┐
 │ Find                 ││ Edit          ││ Format      ││ Manage            │
@@ -200,9 +202,9 @@
               ("X" eglot-shutdown)
               ("C" eglot-reconnect)
               ("E" eglot-events-buffer))
-  :general (:prefix bb-default-leader-key
+  :general (:prefix my/leader
             "/" 'consult-ripgrep
-            "e" 'bb-hydra-eglot/body)
+            "e" 'my/hydra-eglot/body)
            ("<M-RET>" #'eglot-code-actions)
   :hook ((python-mode . eglot-ensure)
          (java-mode . eglot-ensure)
@@ -217,7 +219,7 @@
           (sideline-backends-right '((sideline-flymake . up))))
 
 (use-package consult
-  :general (:prefix bb-default-leader-key
+  :general (:prefix my/leader
             "/" 'consult-ripgrep)
   :custom (register-preview-delay 0)
           (register-preview-function #'consult-register-format)
@@ -272,7 +274,7 @@
         (multi-occur (project--buffer-list pr)
                      (car (occur-read-primary-args))
                      nlines)))
-  :hydra (bb-hydra-project (:exit t :foreign-keys warn :hint nil)
+  :hydra (my/hydra-project (:exit t :foreign-keys warn :hint nil)
                            "
 ┌────────────────────┐┌─────────────┐┌────────────────────┐┌──────────────────────┐┌────────────────────┐
 │ Find               ││ Buffers     ││ Actions            ││ Modes                ││ Search             │
@@ -299,7 +301,7 @@
        ("s" project-multi-occur)
        ("p" tabspaces-open-or-create-project-and-workspace))
   :config
-     :general (:prefix bb-default-leader-key "P" 'bb-hydra-project/body))
+     :general (:prefix my/leader "P" 'my/hydra-project/body))
 
 (use-package tabspaces
   :hook (after-init . tabspaces-mode)
@@ -310,7 +312,7 @@
              tabspaces-open-existing-project-and-workspace
              tabspaces-switch-workspace)
   :general (
-    :prefix bb-default-leader-key
+    :prefix my/leader
     "p" #'tabspaces-open-or-create-project-and-workspace))
 
 (use-package vertico
@@ -330,7 +332,7 @@
 
 (use-package multi-vterm
   ;; Stolen and modified from https://github.com/suonlight/multi-vterm
-  :general (:prefix bb-default-leader-key "!" #'multi-vterm-project)
+  :general (:prefix my/leader "!" #'multi-vterm-project)
 
            (:keymaps 'vterm-mode-map
             "<return>" #'vterm-send-return)
@@ -365,11 +367,11 @@
 
   :custom (vterm-keymap-exceptions nil)
 
-  :init (defun bb-vterm-mode-setup ()
+  :init (defun my/vterm-mode-setup ()
           (setq-local evil-insert-state-cursor 'box)
           (evil-insert-state))
 
-  :hook (vterm-mode . bb-vterm-mode-setup))
+  :hook (vterm-mode . my/vterm-mode-setup))
 
 ;; languages
 (use-package markdown-mode
