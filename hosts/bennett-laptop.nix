@@ -274,7 +274,8 @@ let riverSession = pkgs.writeScriptBin "river-session" ''
         };
       };
     };
-    home.file.".config/river/init".source = ./../conf.d/river_init;
+    home.file.".config/river/init".source = ../conf.d/river_init;
+    home.file.".config/qutebrowser/autoconfig.yml".source = ../conf.d/qutebrowser_autoconfig.yml;
   };
 
   environment.etc."keyd/default.conf".source = ../conf.d/keyd_config;
