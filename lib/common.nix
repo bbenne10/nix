@@ -1,4 +1,5 @@
 { config
+, emacs_themes
 , lib
 , pkgs
 , home-manager
@@ -81,6 +82,19 @@ in
         config = ./../conf.d/emacs.el;
         package = pkgs.emacsPgtk;
         alwaysEnsure = true;
+        override = epkgs: epkgs // {
+          bennett-themes = epkgs.trivialBuild {
+            pname = "bennett-themes";
+            version = emacs_themes.rev;
+            src = emacs_themes;
+            postBuild = ''
+              emacs -L . --batch -f batch-byte-compile themes/*.el
+            '';
+            postInstall = ''
+              install themes/*.el themes/*.elc $out/share/emacs/site-lisp
+            '';
+          };
+        };
       };
     };
 

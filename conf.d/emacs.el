@@ -106,20 +106,10 @@
           (exec-path-from-shell-shell-name (concat (getenv "HOME") "/.nix-profile/bin/zsh"))
   :config (exec-path-from-shell-initialize))
 
-(use-package doom-themes
-  :defer nil
-  :init
-    (defun bb-toggle-theme ()
-      (interactive)
-
-      (if (eq (car custom-enabled-themes) 'doom-earl-grey)
-          (disable-theme 'doom-earl-grey)
-        (load-theme 'doom-earl-grey t)))
-    :config
-      (load-theme 'doom-nord t)
-      (doom-themes-visual-bell-config)
-      (doom-themes-org-config)
-  :general ("<f5>" 'bb-toggle-theme))
+(use-package bennett-themes
+  ;; Note: These are provided via nix here
+  ;; Themes come from https://github.com/bbenne10/emacs_themes
+  :config (load-theme 'nordique t))
 
 (use-package doom-modeline
   :after (evil)

@@ -29,6 +29,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    emacs_themes= {
+      url = "github:bbenne10/emacs_themes";
+      flake = false;
+    };
+
     # zsh plugins
     zsh-fzf_tab = {
       url = "github:aloxaf/fzf-tab";
@@ -54,6 +59,7 @@
     , nix-direnv
     , sops-nix
     , emacs
+    , emacs_themes
     , zsh-fzf_tab
     , zsh-fast_syntax_highlighting
     , zsh-fzf_marks
@@ -75,8 +81,7 @@
       darwinPkgs = pkgsBySystem.x86_64-darwin;
       linuxPkgs = pkgsBySystem.x86_64-linux;
       specialArgs = {
-        inherit home-manager nixpkgs nix-direnv zsh-fzf_tab
-          zsh-fast_syntax_highlighting zsh-fzf_marks;
+        inherit emacs_themes home-manager nixpkgs nix-direnv zsh-fzf_tab zsh-fast_syntax_highlighting zsh-fzf_marks;
         userName = "bryan";
         system = "x86_64-linux";
         pkgs = linuxPkgs;
