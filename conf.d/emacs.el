@@ -49,6 +49,7 @@
   :init
     (defun bb-prog-mode-setup ()
       (display-line-numbers-mode)
+      (column-number-mode 1)
       (prettify-symbols-mode 1)
       (hs-minor-mode))
 
