@@ -28,11 +28,6 @@
 
 (use-package use-package-hydra)
 
-(use-package minions
-  :custom (minions-mode-line-delimiters '("" . ""))
-          (minions-mode-line-lighter "◆")
-  :config (minions-mode))
-
 (use-package emacs
   :custom (custom-file null-device)
           (initial-scratch-message "")
@@ -125,20 +120,17 @@
       (doom-themes-org-config)
   :general ("<f5>" 'bb-toggle-theme))
 
-(use-package mood-line
-  :custom (mood-line-evil-state-alist '((normal . ("⬤" . 'font-lock-variable-name-face))
-                                        (insert . ("⬤" . 'font-lock-string-face))
-                                        (visual . ("⬤" . 'font-lock-keyword-face))
-                                        (replace . ("⬤" . 'font-lock-type-face))
-                                        (motion . ("⬤" . 'font-lock-constant-face))
-                                        (operator . ("⬤" . 'font-lock-function-name-face))
-                                        (emacs . ("⬤" . 'font-lock-builtin-face))))
-          (mood-line-glyph-alist mood-line-glyphs-fira-code)
-  :config
-    (defun mood-line-segment-major-mode ()
-      "Override default segment. Display major mode in mode line"
-      (concat (format-mode-line minions-mode-line-modes 'mood-line-major-mode) " "))
-  :hook (after-init . mood-line-mode))
+(use-package doom-modeline
+  :after (evil)
+  :custom (doom-modeline-env-version nil)
+    (doom-modeline-modal-icon nil)
+    (evil-normal-state-tag (propertize "⬤" 'face '((:background 'doom-modeline-info))))
+    (evil-insert-state-tag (propertize "⬤" 'face '((:background 'doom-modeline-urgent))))
+    (evil-motion-state-tag (propertize "⬤" 'face '((:background 'doom-modeline-buffer-path))))
+    (evil-operator-state-tag (propertize "⬤" 'face '((:background 'doom-modeline-buffer-path))))
+    (evil-visual-state-tag (propertize "⬤" 'face '((:background 'doom-modeline-buffer-file))))
+    (evil-emacs-state-tag (propertize "⬤" 'face '((:background 'doom-modeline-warning))))
+  :config (doom-modeline-mode))
 
 (use-package evil
     :custom (evil-undo-system 'undo-redo)
