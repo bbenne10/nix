@@ -390,7 +390,4 @@
   :hook (rust-mode . (lambda () (add-hook 'before-save-hook 'eglot-format-buffer nil t))))
 
 (use-package yaml-mode :mode ("\\.yaml'" "\\.yml'"))
-
-(use-package web-mode)
-
 ;;; emacs.el ends here
