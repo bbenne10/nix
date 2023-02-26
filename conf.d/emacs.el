@@ -145,7 +145,9 @@
   :init (global-corfu-mode))
 
 (use-package magit
-    :hook (after-save . magit-after-save-refresh-status)
+    :hook ((after-save . magit-after-save-refresh-status)
+           (magit-pre-refresh . 'diff-hl-magit-pre-refresh)
+           (magit-post-refresh-hook . 'diff-hl-magit-post-refresh))
     :general (:prefix my/leader
               "g" 'magit)
     :custom (magit-popup-show-common-commands nil)
@@ -153,15 +155,8 @@
             (git-commit-fill-column 72)
             (git-commit-summary-max-length 50))
 
-(use-package git-gutter
-  :hook (prog-mode . git-gutter-mode)
-  :custom (git-gutter:update-interval 2))
-
-(use-package git-gutter-fringe
-  :config
-  (define-fringe-bitmap 'git-gutter-fr:added [224] nil nil '(center repeated))
-  (define-fringe-bitmap 'git-gutter-fr:modified [224] nil nil '(center repeated))
-  (define-fringe-bitmap 'git-gutter-fr:deleted [128 192 224 240] nil nil 'bottom))
+(use-package diff-hl
+  :config (global-diff-hl-mode))
 
 (use-package direnv
   :config (direnv-mode))
