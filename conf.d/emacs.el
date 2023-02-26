@@ -237,6 +237,7 @@
 (use-package project
   :defer nil
   :custom (project-vc-extra-root-markers '(".project"))
+          (project-vc-ignores '("node_modules"))
   :init
     ;; I stole the transient from https://github.com/jojojames/matcha/blob/master/matcha-project.el
     ;; And then made it a hydra
