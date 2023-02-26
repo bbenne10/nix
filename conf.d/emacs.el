@@ -31,6 +31,7 @@
 (use-package use-package-hydra)
 
 (use-package emacs
+  :ensure nil
   :custom (custom-file null-device)
           (initial-scratch-message "")
           (inhibit-startup-message t)
