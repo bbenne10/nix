@@ -51,6 +51,7 @@ in
       manix
       nixUnstable
       nixfmt
+      openssh
       ripgrep
       rnix-lsp
       rsync
