@@ -16,8 +16,6 @@ let
   themesh = (pkgs.callPackage ../derivations/themesh.nix { });
 in
 {
-  system.stateVersion = "22.11";
-
   environment.systemPackages = with pkgs; [
     bash
     cachix
