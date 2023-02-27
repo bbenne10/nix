@@ -13,7 +13,6 @@
 , ...
 }:
 let
-  homePath = (if pkgs.stdenv.isDarwin then "/Users/${userName}" else "/home/${userName}");
   themesh = (pkgs.callPackage ../derivations/themesh.nix { });
 in
 {
@@ -31,12 +30,6 @@ in
   };
 
   programs.zsh.enable = true;
-  users.users.${userName} = {
-    home = homePath;
-    isNormalUser = true;
-    extraGroups = [ "wheel" "docker" "vboxusers" "video" ];
-    hashedPassword = "$6$hc672tTQXjHQV$xOGejAjJAdP3VhKMAHCZ2J8G0mj2mjrYS7l4hkq6fVRlLygWplZeem4LX0MEdGGBsGaqClLUc6Z4fkRsfROYB/";
-  };
 
   home-manager.users.${userName} = {
     home.enableNixpkgsReleaseCheck = true;

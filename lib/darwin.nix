@@ -1,5 +1,8 @@
 { pkgs, userName, ... }: {
   system.stateVersion = 4;
+  users.users.${userName} = {
+    home = "/Users/${userName}";
+  };
   services.mopidy.mediakeys.enable = true;
   services.nix-daemon.enable = true;
   system.keyboard = {
