@@ -4,11 +4,6 @@
       url = "github:nixos/nixpkgs/nixpkgs-22.11-darwin";
     };
 
-    nix-direnv = {
-      url = "github:nix-community/nix-direnv";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     darwin = {
       url = "github:bbenne10/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";

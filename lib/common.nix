@@ -3,7 +3,6 @@
 , lib
 , pkgs
 , home-manager
-, nix-direnv
 , system
 , userName
 , environment
@@ -58,7 +57,7 @@ in
     programs.direnv = {
       enable = true;
       enableZshIntegration = true;
-      nix-direnv = { enable = false; };
+      nix-direnv = { enable = true; };
       stdlib = ''
         # Centralize direnv layouts in $HOME/.cache/direnv/layouts
         : ''${XDG_CACHE_HOME:=$HOME/.cache}
@@ -69,7 +68,6 @@ in
             echo -n "$PWD" | shasum | cut -d ' ' -f 1
           )}"
         }
-        source ${nix-direnv}/direnvrc
       '';
     };
 
