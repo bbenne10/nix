@@ -45,7 +45,6 @@ in
       bitwarden-cli
       curl
       dtach
-      exa
       fd
       gawk
       gnupg
@@ -59,7 +58,10 @@ in
       tree
     ];
 
-    programs.bat = { enable = true; };
+
+    programs.bat = {
+      enable = true;
+    };
 
     programs.direnv = {
       enable = true;
@@ -238,8 +240,8 @@ in
       enableAutosuggestions = true;
       shellAliases = {
         rmr = "rm -r";
-        ls = "exa";
-        cat = "bat";
+        ls = "${pkgs.exa}/bin/exa";
+        cat = "${pkgs.bat}/bin/bat";
         gpgreset = "gpg-connect-agent killagent /bye; gpg-connect-agent updatestartuptty /bye; gpg-connect-agent /bye";
       };
 
