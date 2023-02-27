@@ -2,9 +2,11 @@
 , pkgs
 , home-manager
 , userName
-, emacs_themes
 , ...
 }:
+let
+  bennett-themes = (pkgs.callPackage ../derivations/emacs_themes.nix { });
+in
 {
   fonts = {
     fontDir.enable = true;
@@ -42,16 +44,7 @@
         package = pkgs.emacsPgtk;
         alwaysEnsure = true;
         override = epkgs: epkgs // {
-          bennett-themes = epkgs.trivialBuild {
-            pname = "bennett-themes";
-            src = emacs_themes;
-            postBuild = ''
-              emacs -L . --batch -f batch-byte-compile themes/*.el
-            '';
-            postInstall = ''
-              install themes/*.el themes/*.elc $out/share/emacs/site-lisp
-            '';
-          };
+          inherit bennett-themes;
         };
       };
     };
