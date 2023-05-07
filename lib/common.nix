@@ -1,4 +1,5 @@
 { config
+, deploy-rs
 , emacs_themes
 , lib
 , pkgs
@@ -13,12 +14,14 @@
 }:
 let
   themesh = (pkgs.callPackage ../derivations/themesh.nix { });
+  deploy-rs-bin = deploy-rs.packages.${system}.deploy-rs;
 in
 {
   environment.systemPackages = with pkgs; [
     bash
     cachix
     nixUnstable
+    deploy-rs-bin
   ];
 
   programs.gnupg.agent = {
@@ -41,6 +44,7 @@ in
       manix
       nixUnstable
       nixfmt
+      nix-tree
       openssh
       ripgrep
       rnix-lsp
