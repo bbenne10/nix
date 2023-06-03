@@ -17,6 +17,8 @@ let
   '';
 in
 {
+  boot.kernelPackages = pkgs.linuxPackages_zen;
+  hardware.system76.enableAll = true;
   environment.systemPackages = with pkgs; [
     pmutils
     terminus_font
@@ -147,7 +149,6 @@ in
 
   services.upower.enable = true;
 
-  hardware.video.hidpi.enable = true;
   console.earlySetup = true;
 }
 
