@@ -1,7 +1,7 @@
 {
   inputs = {
     nixpkgs = {
-      url = "github:nixos/nixpkgs/nixpkgs-22.11-darwin";
+      url = "github:nixos/nixpkgs/nixos-23.05";
     };
 
     darwin = {
@@ -10,7 +10,8 @@
     };
 
     home-manager = {
-      url = "github:nix-community/home-manager/release-22.11";
+      # Home-Manager hasn't yet cut their release-23.05 branch
+      url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
