@@ -1,24 +1,49 @@
 { pkgs, userName, ... }:
-let riverSession = pkgs.writeScriptBin "river-session" ''
-  # Session
-  export XDG_SESSION_TYPE=wayland
-  export XDG_SESSION_DESKTOP=river
-  export XDG_CURRENT_DESKTOP=river
+let
+  riverSession = pkgs.writeScriptBin "river-session" ''
+    # Session
+    export XDG_SESSION_TYPE=wayland
+    export XDG_SESSION_DESKTOP=river
+    export XDG_CURRENT_DESKTOP=river
 
-  # Wayland stuff
-  export MOZ_ENABLE_WAYLAND=1
-  export QT_QPA_PLATFORM=wayland
-  export SDL_VIDEODRIVER=wayland
-  export _JAVA_AWT_WM_NONREPARENTING=1
+    # Wayland stuff
+    export MOZ_ENABLE_WAYLAND=1
+    export QT_QPA_PLATFORM=wayland
+    export SDL_VIDEODRIVER=wayland
+    export _JAVA_AWT_WM_NONREPARENTING=1
 
-  dbus-update-activation-environment --systemd XDG_CURRENT_DESKTOP XDG_SESSION_TYPE
-  exec "${pkgs.river}/bin/river"
-''; in
+    dbus-update-activation-environment --systemd XDG_CURRENT_DESKTOP XDG_SESSION_TYPE
+    exec "${pkgs.river}/bin/river"
+  '';
+in
 {
   environment.systemPackages = with pkgs; [
     pmutils
     terminus_font
+    gnomeExtensions.pop-shell
+    gnomeExtensions.gsconnect
+    gnomeExtensions.caffeine
+    gnomeExtensions.media-controls
+    gnome.gnome-tweaks
+    gthumb
   ];
+  environment.gnome.excludePackages = (with pkgs; [
+    gnome-photos
+    gnome-tour
+  ]) ++ (with pkgs.gnome; [
+    eog
+    epiphany
+    geary
+    gedit
+    gnome-characters
+    gnome-initial-setup
+    gnome-music
+    iagno
+    tali
+    yelp
+  ]);
+  programs.dconf.enable = true;
+  services.gnome.gnome-keyring.enable = true;
 
   networking.hostName = "bennett-laptop";
   networking.nameservers = [ "192.168.1.142" ];
@@ -43,7 +68,19 @@ let riverSession = pkgs.writeScriptBin "river-session" ''
       Type = "simple";
     };
   };
-  programs.dconf.enable = true;
+
+  networking.firewall.allowedTCPPortRanges = [
+    {
+      from = 1714;
+      to = 1764;
+    }
+  ];
+  networking.firewall.allowedUDPPortRanges = [
+    {
+      from = 1714;
+      to = 1764;
+    }
+  ];
 
   time.timeZone = "America/New_York";
   i18n.defaultLocale = "en_US.UTF-8";
@@ -53,13 +90,10 @@ let riverSession = pkgs.writeScriptBin "river-session" ''
   };
   home-manager.users.${userName} = {
     home.packages = with pkgs; [
-      brightnessctl
-      pamixer
-      pavucontrol
-      playerctl
-      qutebrowser
-      river
-      wofi
+      firefox
+      libnotify
+      spot
+      xdg-utils
     ];
 
     gtk = {
@@ -72,226 +106,27 @@ let riverSession = pkgs.writeScriptBin "river-session" ''
         name = "Vanilla-DMZ";
         package = pkgs.vanilla-dmz;
       };
-
       font = {
-        name = "Recursive Mono Linear Static";
+        name = "Recursive Sans Linear Static";
         size = 10;
       };
-    };
-
-    # Set up a graphical target session for river 
-    systemd.user.targets.river-session = {
-      Unit = {
-        Description = "river compositor session";
-        Documentation = [ "man:systemd.special(7)" ];
-        BindsTo = [ "graphical-session.target" ];
-        Wants = [ "graphical-session-pre.target" ];
-        After = [ "graphical-session-pre.target" ];
+      iconTheme = {
+        name = "Zafiro-icons-Dark";
+        package = pkgs.zafiro-icons;
       };
     };
 
-    programs.foot = {
+    services.syncthing = {
       enable = true;
-      settings = {
-        main = {
-          font = "Recursive Mono Linear Static:size=10";
-        };
-        scrollback = {
-          lines = 10000;
-        };
-      };
     };
-    programs.waybar = {
-      enable = true;
-      systemd = {
-        enable = true;
-        target = "river-session.target";
-      };
-      settings = {
-        mainBar = {
-          spacing = 4;
-          margin = "10";
-          modules-left = [
-            "clock"
-            "river/tags"
-          ];
-          modules-center = [ ];
-          modules-right = [
-            "pulseaudio"
-            "network"
-            "cpu"
-            "memory"
-            "temperature"
-            "backlight"
-            "battery"
-          ];
-
-          keyboard-state = {
-            numlock = true;
-            capslock = true;
-            format = "{icon} {name}";
-            format-icons = {
-              locked = "";
-              unlocked = "";
-            };
-          };
-          "river/mode" = {
-            format = "<span style=\"italic\">{}</span>";
-          };
-          "river/tags" = {
-            num-tags = 4;
-            tag-labels = [
-              ""
-              ""
-              ""
-              ""
-            ];
-          };
-          mpd = {
-            format = " {stateIcon} {consumeIcon}{randomIcon}{repeatIcon}{singleIcon}{artist} - {album} - {title} ({elapsedTime:%M:%S}/{totalTime:%M:%S}) ⸨{songPosition}|{queueLength}⸩ {volume}%";
-            format-disconnected = " Disconnected";
-            format-stopped = " {consumeIcon}{randomIcon}{repeatIcon}{singleIcon}Stopped";
-            unknown-tag = "N/A";
-            interval = 2;
-            consume-icons = {
-              on = " ";
-            };
-            random-icons = {
-              off = "<span color=\"#f53c3c\"></span> ";
-              on = " ";
-            };
-            repeat-icons = {
-              on = " ";
-            };
-            single-icons = {
-              on = "1 ";
-            };
-            state-icons = {
-              paused = "";
-              playing = "";
-            };
-            tooltip-format = "MPD (connected)";
-            tooltip-format-disconnected = "MPD (disconnected)";
-          };
-          clock = {
-            timezone = "America/New_York";
-            tooltip-format = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
-            format-alt = "{:%Y-%m-%d}";
-            format = "{:%a; %b %e @ %I:%M %p}";
-          };
-          cpu = {
-            format = " {usage}%";
-            tooltip = false;
-          };
-          memory = {
-            format = " {}%";
-          };
-          temperature = {
-            # thermal-zone = 2;
-            # hwmon-path = "/sys/class/hwmon/hwmon2/temp1_input";
-            # format-critical = "{temperatureC}°C {icon}";
-            critical-threshold = 80;
-            format = "{icon} {temperatureC}°C";
-            format-icons = [ "" "" "" ];
-          };
-          backlight = {
-            # device = "acpi_video1";
-            format = "{icon} {percent}%";
-            format-icons = [ "" "" "" "" "" "" "" "" "" ];
-          };
-          battery = {
-            states = {
-              # good = 95;
-              warning = 30;
-              critical = 15;
-            };
-            format = "{icon} {capacity}%";
-            format-charging = " {capacity}% ";
-            format-plugged = " {capacity}% ";
-            format-alt = "{icon} {icon}";
-            # format-good = ""; 
-            # format-full = "";
-            format-icons = [ "" "" "" "" "" ];
-          };
-          network = {
-            # interface = "wlp2*";
-            # (Optional) To force the use of this interface
-            format-wifi = "{essid} ({signalStrength}%) ";
-            format-ethernet = "{ipaddr}/{cidr} ";
-            tooltip-format = "{ifname} via {gwaddr} ";
-            format-linked = "{ifname} (No IP) ";
-            format-disconnected = "Disconnected ⚠";
-            format-alt = "{ifname}: {ipaddr}/{cidr}";
-          };
-          pulseaudio = {
-            # scroll-step = 1; # %, can be a float
-            format = "{icon} {volume}% {format_source}";
-            format-bluetooth = "{icon} {volume}% {format_source}";
-            format-bluetooth-muted = "{icon}  {format_source}";
-            format-muted = " {format_source}";
-            format-source = " {volume}% ";
-            format-source-muted = "";
-            format-icons = {
-              headphone = "";
-              hands-free = "";
-              headset = "";
-              phone = "";
-              portable = "";
-              car = "";
-              default = [ "" "" "" ];
-            };
-            on-click = "${pkgs.pavucontrol}";
-          };
-        };
-      };
-      style = ../conf.d/waybar_style.css;
-    };
-    services.kanshi = {
-      enable = true;
-      systemdTarget = "river-session.target";
-      profiles = {
-        undocked = {
-          outputs = [
-            {
-              criteria = "eDP-1";
-              scale = 2.0;
-            }
-          ];
-        };
-        docked_home = {
-          outputs = [
-            {
-              criteria = "eDP-1";
-              scale = 2.0;
-            }
-            {
-              criteria = "Goldstar Company Ltd LG ULTRAWIDE 0x00001FB7";
-              status = "enable";
-              position = "1600,0"; # logical pixels - not phsyical ones - account for 2x scale
-              scale = 1.0;
-            }
-          ];
-        };
-      };
-    };
-    home.file.".config/river/init".source = ../conf.d/river_init;
-    home.file.".config/qutebrowser/autoconfig.yml".source = ../conf.d/qutebrowser_autoconfig.yml;
   };
+
+  services.xserver.enable = true;
+  services.xserver.displayManager.gdm.enable = true;
+  security.pam.services.gdm.enableGnomeKeyring = true;
+  services.xserver.desktopManager.gnome.enable = true;
 
   environment.etc."keyd/default.conf".source = ../conf.d/keyd_config;
-  services.greetd = {
-    enable = true;
-    settings = {
-      default_session = {
-        command = "${pkgs.cage}/bin/cage -s -- ${pkgs.greetd.gtkgreet}/bin/gtkgreet";
-      };
-    };
-  };
-
-  environment.etc."greetd/environments".text = ''
-    ${riverSession}/bin/river-session 
-    zsh
-  '';
 
   services.pcscd.enable = true;
 
