@@ -149,8 +149,8 @@ done
 riverctl focus-follows-cursor normal
 input_name=$(riverctl list-inputs | grep Synaptics)
 if [ -n "${input_name}" ]; then
-  riverctl input "${synaptics_identifier}" tap enabled
-  riverctl input "${synaptics_identifier}" accel-profile none
+  riverctl input "${input_name}" tap enabled
+  riverctl input "${input_name}" accel-profile none
 fi
 
 # Set background and border color
