@@ -159,6 +159,9 @@ riverctl border-color-focused 0x98971A
 riverctl border-color-unfocused 0x504945
 riverctl border-width 2
 
+# Set the cursor
+riverctl xcursor-theme "Vanilla-DMZ"
+
 # Set keyboard repeat rate
 riverctl set-repeat 50 300
 
