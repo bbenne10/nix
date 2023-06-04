@@ -48,7 +48,7 @@ in
   services.gnome.gnome-keyring.enable = true;
 
   networking.hostName = "bennett-laptop";
-  networking.nameservers = [ "192.168.1.142" ];
+  networking.nameservers = [ "192.168.1.142" "1.1.1.1" ];
 
   users.users.${userName} = {
     isNormalUser = true;
