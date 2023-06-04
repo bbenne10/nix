@@ -51,6 +51,8 @@ in
   networking.nameservers = [ "192.168.1.142" "1.1.1.1" ];
   networking.networkmanager.enable = true;
 
+  hardware.pulseaudio.enable = false;
+
   users.users.${userName} = {
     isNormalUser = true;
     extraGroups = [ "wheel" "docker" "vboxusers" "video" ];
@@ -140,9 +142,13 @@ in
       enable = true;
     };
   };
-  sound.enable = true;
 
-  hardware.pulseaudio.enable = true;
+  hardware.bluetooth.enable = true;
+  security.rtkit.enable = true;
+  services.pipewire = {
+    enable = true;
+    pulse.enable = true;
+  };
 
   environment.variables = {
     GDK_SCALE = "2";
