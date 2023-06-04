@@ -102,6 +102,17 @@
           ];
           inherit specialArgs;
         };
+
+        "home-server" = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = [
+            inputs.home-manager.nixosModules.home-manager
+            ./lib/nix.nix
+            ./lib/common.nix
+            ./lib/linux.nix
+            ./hosts/home-server.nix
+          ];
+        };
       };
       darwinConfigurations = {
         "cipher-4590" = darwin.lib.darwinSystem {
@@ -133,6 +144,16 @@
             system = {
               path = deploy-rs.lib.x86_64-linux.activate.nixos
                 self.nixosConfigurations.bennett-server;
+            };
+          };
+        };
+        home-server = {
+          hostname = "home-server";
+          user = "bryan";
+          profiles = {
+            system = {
+              path = deploy-rs.lib.x86_64-linux.activate.nixos
+                self.nixosConfigurations.home-server;
             };
           };
         };
