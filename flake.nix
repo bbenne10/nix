@@ -127,6 +127,7 @@
           sshUser = "bryan";
           magicRollback = false;
           sshOpts = [ "-t" ];
+          profilesOrder = [ "system" ];
 
           profiles = {
             system = {
