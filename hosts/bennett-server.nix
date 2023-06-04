@@ -49,6 +49,16 @@ in
         };
       };
 
+      "files.${hostName}" = {
+        forceSSL = true;
+        enableACME = true;
+        locations = {
+          "/" = {
+            proxyPass = "http://localhost:8384/";
+          };
+        };
+      };
+
     };
   };
 
@@ -58,7 +68,28 @@ in
     DOMAIN = "https:////pass.${hostName}";
   };
 
-  networking.firewall.allowedTCPPorts = [ 80 443 ];
+  services.syncthing = {
+    enable = true;
+    user = "${userName}";
+    dataDir = "/home/${userName}/sync";
+    configDir = "/home/${userName}/sync/.config/syncthing";
+    # Allow access from remote hosts (via proxypass)
+    guiAddress = "0.0.0.0:8384";
+  };
+
+  networking.firewall.allowedTCPPorts = [
+    # nginx
+    80
+    443
+    # syncthing
+    22000
+  ];
+
+  networking.firewall.allowedUDPPorts = [
+    # syncthing
+    22000
+    21027
+  ];
 
   security.acme = {
     defaults = {
@@ -67,7 +98,7 @@ in
     acceptTerms = true;
     certs = {
       "${hostName}" = {
-        extraDomainNames = [ "pass.${hostName}" ];
+        extraDomainNames = [ "pass.${hostName}" "files.${hostName}" ];
       };
     };
   };
