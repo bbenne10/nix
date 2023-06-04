@@ -44,24 +44,7 @@
   powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
   hardware.opengl.enable = true;
 
-  networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-  networking.wireless.extraConfig = ''
-    ctrl_interface=/run/wpa_supplicant
-    ctrl_interface_group=wheel
-  '';
-  networking.wireless.networks.Bennett-Wireless.pskRaw = "06d6f78b406ec252570423e6cc3892ae48a8f79567374ae5421161124e6f9850";
-  networking.wireless.networks."CenturyLink4779-5G".pskRaw = "01ea6ec30d029c7600d46529b2d25876127b9fad30940ecb2c23600eb75e7007";
-
-  # The global useDHCP flag is deprecated, therefore explicitly set to false here.
-  # Per-interface useDHCP will be mandatory in the future, so this generated config
-  # replicates the default behaviour.
-  networking.useDHCP = false;
   networking.interfaces.enp58s0f1.useDHCP = true;
   networking.interfaces.wlp59s0.useDHCP = true;
-  
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
+
 }

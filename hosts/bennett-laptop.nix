@@ -49,6 +49,7 @@ in
 
   networking.hostName = "bennett-laptop";
   networking.nameservers = [ "192.168.1.142" "1.1.1.1" ];
+  networking.networkmanager.enable = true;
 
   users.users.${userName} = {
     isNormalUser = true;
