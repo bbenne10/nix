@@ -12,23 +12,40 @@
                     :family "Recursive Mono Linear Static"
                     :weight 'light)
 
+(defun set-theme-from-dbus (preference)
+  "Set the theme based on the dbus preference.
+If xdg-desktop-portal is installed, preference will be a string.
+Else it'll be an int."
+  (cond
+   ((stringp preference)
+    (cond
+      ((string-equal preference "default") (load-theme 'modus-operandi t))
+      ((string-equal preference "prefer-dark") (load-theme 'modus-vivendi t))
+      ((string-equal preference "prefer-light") (load-theme 'modus-operandi))
+      (t (message "Don't know how to handle preference: %s" preference))))
+   ((integerp preference)
+    (cond
+     ((equal preference 0) (load-theme 'modus-operandi t))
+     ((equal preference 1) (load-theme 'modus-vivendi t))
+     ((equal preference 2) (load-theme 'modus-operandi))
+     (t (message "Don't know how to handle preference: %s" preference))))
+   (t (message "Don't know how to handle preference with type %s" (type-of preference)))))
+
 (setq default-frame-alist
       '((menu-bar-lines . 0)
         (tool-bar-lines . 0) 
         (vertical-scroll-bars . nil)))
 
 (defvar my/leader "<f13>")
-(when (eq window-system 'pgtk)
-  (setq my/leader "<Tools>")
-
-  ;; CSD is the devil...
-  (add-to-list 'default-frame-alist '(undecorated . t)))
 
 (use-package general)
 
 (use-package hydra)
 
 (use-package use-package-hydra)
+
+(use-package dbus
+  :ensure nil)
 
 (use-package emacs
   :ensure nil
@@ -66,6 +83,44 @@
       (setq-default
         truncate-lines t
         indent-tabs-mode nil))
+
+    (when (eq window-system 'pgtk)
+      (setq my/leader "<MenuKB>")
+      (if (string-equal "gnome" (getenv "DESKTOP_SESSION"))
+          (progn
+            (defun theme--handle-dbus-event (a setting values)
+              "Handler for color variety changes via DBus"
+              (when (string= setting "color-scheme")
+                (let ((scheme (car values)))
+                  (set-theme-from-dbus scheme))))
+
+            ;; Setup the handler above
+            (dbus-register-signal
+             :session
+             "org.freedesktop.portal"
+             "/org/freedesktop/portal/desktop"
+             "org.freedesktop.impl.portal.Settings"
+             "SettingChanged"
+             #'theme--handle-dbus-event))
+
+        ;; CSD is the devil, but is necessary under gnome
+        (add-to-list 'default-frame-alist '(undecorated . t))))
+
+    ;; If compiled with dbus, query for our preferred color variety
+    ;; and set theme based on that
+    (if (string-match "DBUS" system-configuration-features)
+      (let ((color-preference
+             (car (car (dbus-call-method
+                        :session
+                        "org.freedesktop.portal.Desktop"
+                        "/org/freedesktop/portal/desktop"
+                        "org.freedesktop.portal.Settings"
+                        "Read"
+                        "org.freedesktop.appearance"
+                        "color-scheme")))))
+        (set-theme-from-dbus color-preference))
+      ;; 1 is magic int for dark scheme - use it as fallback here
+      (set-theme-from-dbus 1))
 
     :general (
        :prefix my/leader
