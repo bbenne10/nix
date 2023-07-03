@@ -12,6 +12,10 @@
                     :family "Recursive Mono Linear Static"
                     :weight 'light)
 
+(defvar my/leader "<f13>")
+(defconst my/light-theme 'ef-light)
+(defconst my/dark-theme 'ef-dark)
+
 (defun set-theme-from-dbus (preference)
   "Set the theme based on the dbus preference.
 If xdg-desktop-portal is installed, preference will be a string.
@@ -19,15 +23,15 @@ Else it'll be an int."
   (cond
    ((stringp preference)
     (cond
-      ((string-equal preference "default") (load-theme 'modus-operandi t))
-      ((string-equal preference "prefer-dark") (load-theme 'modus-vivendi t))
-      ((string-equal preference "prefer-light") (load-theme 'modus-operandi))
+      ((string-equal preference "default") (load-theme my/light-theme t))
+      ((string-equal preference "prefer-dark") (load-theme my/dark-theme t))
+      ((string-equal preference "prefer-light") (load-theme my/light-theme t))
       (t (message "Don't know how to handle preference: %s" preference))))
    ((integerp preference)
     (cond
-     ((equal preference 0) (load-theme 'modus-operandi t))
-     ((equal preference 1) (load-theme 'modus-vivendi t))
-     ((equal preference 2) (load-theme 'modus-operandi))
+     ((equal preference 0) (load-theme my/light-theme t))
+     ((equal preference 1) (load-theme my/dark-theme t))
+     ((equal preference 2) (load-theme my/light-theme t))
      (t (message "Don't know how to handle preference: %s" preference))))
    (t (message "Don't know how to handle preference with type %s" (type-of preference)))))
 
@@ -36,7 +40,12 @@ Else it'll be an int."
         (tool-bar-lines . 0) 
         (vertical-scroll-bars . nil)))
 
-(defvar my/leader "<f13>")
+
+;; Note: These are provided via nix in here
+;; Themes come from https://github.com/bbenne10/emacs_themes
+(use-package bennett-themes)
+
+(use-package ef-themes)
 
 (use-package general)
 
@@ -163,11 +172,6 @@ Else it'll be an int."
           ;; Use Nix path for locally managed zsh install so we get correct...everything
           (exec-path-from-shell-shell-name (concat (getenv "HOME") "/.nix-profile/bin/zsh"))
   :config (exec-path-from-shell-initialize))
-
-(use-package bennett-themes
-  ;; Note: These are provided via nix here
-  ;; Themes come from https://github.com/bbenne10/emacs_themes
-  :config (load-theme 'nordique t))
 
 (use-package doom-modeline
   :after (evil)
