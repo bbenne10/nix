@@ -53,7 +53,6 @@ in
       tree
     ];
 
-
     programs.bat = {
       enable = true;
     };

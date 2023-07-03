@@ -18,7 +18,7 @@ in
   };
 
   services.mopidy = {
-    enable = true;
+    enable = false;
     extensionPackages = with pkgs; [
       mopidy-ytmusic
       mopidy-iris
@@ -35,6 +35,7 @@ in
       colima
       docker
       pandoc
+      signal-desktop
     ];
 
     programs.emacs = {
@@ -50,5 +51,11 @@ in
     };
 
     home.file.".config/emacs/init.el".source = ./../conf.d/emacs.el;
+
+    programs.firefox = {
+      # TODO: nur for addons
+      enable = true;
+    };
+
   };
 }
