@@ -1,22 +1,4 @@
-{ pkgs, userName, ... }:
-let
-  riverSession = pkgs.writeScriptBin "river-session" ''
-    # Session
-    export XDG_SESSION_TYPE=wayland
-    export XDG_SESSION_DESKTOP=river
-    export XDG_CURRENT_DESKTOP=river
-
-    # Wayland stuff
-    export MOZ_ENABLE_WAYLAND=1
-    export QT_QPA_PLATFORM=wayland
-    export SDL_VIDEODRIVER=wayland
-    export _JAVA_AWT_WM_NONREPARENTING=1
-
-    dbus-update-activation-environment --systemd XDG_CURRENT_DESKTOP XDG_SESSION_TYPE
-    exec "${pkgs.river}/bin/river"
-  '';
-in
-{
+{ pkgs, userName, ... }: {
   boot.kernelPackages = pkgs.linuxPackages_zen;
   hardware.system76.enableAll = true;
   environment.systemPackages = with pkgs; [
@@ -26,6 +8,8 @@ in
     gnomeExtensions.gsconnect
     gnomeExtensions.caffeine
     gnomeExtensions.media-controls
+    gnomeExtensions.workspace-indicator-2
+    gnomeExtensions.status-area-horizontal-spacing
     gnome.gnome-tweaks
     gthumb
   ];
@@ -45,7 +29,6 @@ in
     yelp
   ]);
   programs.dconf.enable = true;
-  services.gnome.gnome-keyring.enable = true;
 
   networking.hostName = "bennett-laptop";
   networking.nameservers = [ "192.168.1.142" "1.1.1.1" ];
@@ -99,12 +82,16 @@ in
       libnotify
       spot
       xdg-utils
+      xdg-desktop-portal
+      blackbox-terminal
+      tootle
+      fractal
     ];
 
     gtk = {
       enable = true;
       theme = {
-        name = "Nordic";
+        name = "Nordic-darker";
         package = pkgs.nordic;
       };
       cursorTheme = {
