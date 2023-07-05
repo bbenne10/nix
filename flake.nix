@@ -10,8 +10,7 @@
     };
 
     home-manager = {
-      # Home-Manager hasn't yet cut their release-23.05 branch
-      url = "github:nix-community/home-manager";
+      url = "github:nix-community/home-manager/release-23.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
