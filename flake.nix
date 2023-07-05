@@ -128,6 +128,7 @@
             ./lib/nix.nix
             ./lib/graphical.nix
             ./lib/darwin.nix
+            ./hosts/cipher-4590.nix
           ];
         };
       };

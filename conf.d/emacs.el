@@ -447,6 +447,11 @@ Else it'll be an int."
        (:name "Archive" :query "tag:archive" :key "a")
        (:name "Trash" :query "tag:deleted" :key "t"))))
 
+(use-package emms
+  :config
+    (emms-standard)
+    (emms-default-players))
+
 ;; languages
 (use-package markdown-mode
   :custom (markdown-command "pandoc")
