@@ -241,9 +241,13 @@ Else it'll be an int."
 
 (use-package eglot
   :custom (eglot-extend-to-xref t)
-  :config (setcdr (assq 'java-mode eglot-server-programs) '("jdt-language-server"))
-  :hydra (my/hydra-eglot (:exit t :foreign-keys warn :hint nil)
-                         "
+  :config
+    (setcdr (assq 'java-mode eglot-server-programs) '("jdt-language-server"))
+    (add-to-list 'eglot-server-programs '(java-ts-mode . ("jdt-language-server")))
+    ;; TODO: use `eglot-alternatives` here to add new stuff when I need it?
+    (add-to-list 'eglot-server-programs '(js-ts-mode . ("flow" "lsp")))
+    :hydra (my/hydra-eglot (:exit t :foreign-keys warn :hint nil)
+			   "
 ┌──────────────────────┐┌───────────────┐┌─────────────┐┌───────────────────┐
 │ Find                 ││ Edit          ││ Format      ││ Manage            │
 │──────────────────────││───────────────││─────────────││───────────────────│
@@ -267,9 +271,9 @@ Else it'll be an int."
             "/" 'consult-ripgrep
             "e" 'my/hydra-eglot/body)
            ("<M-RET>" #'eglot-code-actions)
-  :hook ((python-mode . eglot-ensure)
+  :hook ((python-ts-mode . eglot-ensure)
          (java-mode . eglot-ensure)
-         (rust-mode . eglot-ensure)
+         (rust-ts-mode . eglot-ensure)
          (nix-mode . eglot-ensure)))
 
 (use-package sideline
@@ -444,12 +448,12 @@ Else it'll be an int."
   :hook (nix-mode . (lambda () (add-hook 'before-save-hook 'eglot-format-buffer nil t))))
 
 (use-package python
-  ;; set ensure nil to use packaged version of python.el
+  ;; set ensure nil to use bundled version of python.el
   ;; rather than grabbing from elpa
   :ensure nil
-  :mode ("\\.py\\'" . python-mode)
-  :interpreter ("python" . python-mode)
-  :hook (python-mode . (lambda () (add-hook 'before-save-hook 'eglot-format-buffer nil t))))
+  :mode ("\\.py\\'" . python-ts-mode)
+  :interpreter ("python" . python-ts-mode)
+  :hook (python-ts-mode . (lambda () (add-hook 'before-save-hook 'eglot-format-buffer nil t))))
 
 (use-package rust-mode :mode ("\\.rs'")
   :hook (rust-mode . (lambda () (add-hook 'before-save-hook 'eglot-format-buffer nil t))))
