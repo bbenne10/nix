@@ -13,33 +13,11 @@
                     :weight 'light)
 
 (defvar my/leader "<f13>")
-(defconst my/light-theme 'ef-light)
-(defconst my/dark-theme 'ef-dark)
-
-(defun set-theme-from-dbus (preference)
-  "Set the theme based on the dbus preference.
-If xdg-desktop-portal is installed, preference will be a string.
-Else it'll be an int."
-  (cond
-   ((stringp preference)
-    (cond
-      ((string-equal preference "default") (load-theme my/light-theme t))
-      ((string-equal preference "prefer-dark") (load-theme my/dark-theme t))
-      ((string-equal preference "prefer-light") (load-theme my/light-theme t))
-      (t (message "Don't know how to handle preference: %s" preference))))
-   ((integerp preference)
-    (cond
-     ((equal preference 0) (load-theme my/light-theme t))
-     ((equal preference 1) (load-theme my/dark-theme t))
-     ((equal preference 2) (load-theme my/light-theme t))
-     (t (message "Don't know how to handle preference: %s" preference))))
-   (t (message "Don't know how to handle preference with type %s" (type-of preference)))))
 
 (setq default-frame-alist
       '((menu-bar-lines . 0)
         (tool-bar-lines . 0) 
         (vertical-scroll-bars . nil)))
-
 
 ;; Note: These are provided via nix in here
 ;; Themes come from https://github.com/bbenne10/emacs_themes
@@ -52,9 +30,6 @@ Else it'll be an int."
 (use-package hydra)
 
 (use-package use-package-hydra)
-
-(use-package dbus
-  :ensure nil)
 
 (use-package emacs
   :ensure nil
@@ -95,41 +70,9 @@ Else it'll be an int."
 
     (when (eq window-system 'pgtk)
       (setq my/leader "<MenuKB>")
-      (if (string-equal "gnome" (getenv "DESKTOP_SESSION"))
-          (progn
-            (defun theme--handle-dbus-event (a setting values)
-              "Handler for color variety changes via DBus"
-              (when (string= setting "color-scheme")
-                (let ((scheme (car values)))
-                  (set-theme-from-dbus scheme))))
-
-            ;; Setup the handler above
-            (dbus-register-signal
-             :session
-             "org.freedesktop.portal"
-             "/org/freedesktop/portal/desktop"
-             "org.freedesktop.impl.portal.Settings"
-             "SettingChanged"
-             #'theme--handle-dbus-event))
-
+      (unless (string-equal "gnome" (getenv "DESKTOP_SESSION"))
         ;; CSD is the devil, but is necessary under gnome
         (add-to-list 'default-frame-alist '(undecorated . t))))
-
-    ;; If compiled with dbus, query for our preferred color variety
-    ;; and set theme based on that
-    (if (string-match "DBUS" system-configuration-features)
-      (let ((color-preference
-             (car (car (dbus-call-method
-                        :session
-                        "org.freedesktop.portal.Desktop"
-                        "/org/freedesktop/portal/desktop"
-                        "org.freedesktop.portal.Settings"
-                        "Read"
-                        "org.freedesktop.appearance"
-                        "color-scheme")))))
-        (set-theme-from-dbus color-preference))
-      ;; 1 is magic int for dark scheme - use it as fallback here
-      (set-theme-from-dbus 1))
 
     :general (
        :prefix my/leader
@@ -139,6 +82,12 @@ Else it'll be an int."
   :hook ((prog-mode . my/prog-mode-setup)
          (after-init . my/after-init-hook)
          (before-save . 'whitespace-cleanup)))
+
+(use-package auto-dark
+  :custom
+    (auto-dark-dark-theme 'ef-elea-dark)
+    (auto-dark-light-theme 'ef-elea-light)
+  :init (auto-dark-mode))
 
 (use-package textsize
   :custom (textsize-default-points (if (eq system-type 'darwin) 18 12))
