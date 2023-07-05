@@ -194,7 +194,7 @@ Else it'll be an int."
 
 (use-package evil-collection
     :after (evil)
-    :config (evil-collection-init '(magit magit-todos consult)))
+    :config (evil-collection-init '(consult magit magit-todos notmuch)))
 
 (use-package eldoc-box
   :hook (prog-mode . eldoc-box-hover-mode))
@@ -438,6 +438,14 @@ Else it'll be an int."
           (evil-insert-state))
 
   :hook (vterm-mode . my/vterm-mode-setup))
+
+(use-package notmuch
+  :custom
+    (notmuch-saved-searches
+     '((:name "Inbox" :query "tag:inbox" :key "i")
+       (:name "Unread" :query "tag:inbox and tag:unread" :key "u")
+       (:name "Archive" :query "tag:archive" :key "a")
+       (:name "Trash" :query "tag:deleted" :key "t"))))
 
 ;; languages
 (use-package markdown-mode
