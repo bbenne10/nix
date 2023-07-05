@@ -35,14 +35,15 @@ in
       colima
       docker
       pandoc
-      signal-desktop
     ];
 
     programs.emacs = {
       enable = true;
       package = pkgs.emacsWithPackagesFromUsePackage {
         config = ./../conf.d/emacs.el;
-        package = pkgs.emacsPgtk;
+        package = pkgs.emacs-pgtk.override {
+          withNS = (pkgs.stdenv.isDarwin);
+        };
         alwaysEnsure = true;
         override = epkgs: epkgs // {
           inherit bennett-themes;
