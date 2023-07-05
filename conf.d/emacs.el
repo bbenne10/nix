@@ -448,6 +448,14 @@ Else it'll be an int."
        (:name "Trash" :query "tag:deleted" :key "t"))))
 
 (use-package emms
+  :custom (emms-player-mpv-parameters
+           '("--quiet"
+             "--really-quiet"
+             "--no-audio-display"
+             "--no-video"
+             "--no-audio-display"
+             "--force-window=no"
+             "--vo=null"))
   :config
     (emms-standard)
     (emms-default-players))
