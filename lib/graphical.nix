@@ -62,7 +62,7 @@ in
 
     programs.firefox = {
       # TODO: nur for addons
-      enable = true;
+      enable = (pkgs.stdenv.isLinux);
     };
 
   };
