@@ -252,6 +252,10 @@ in
         # Accept autosuggestions with Ctrl + Spc
         bindkey "^ " autosuggest-accept
 
+        function set_title () {
+          echo -en "\033]1; $@ \007"
+        }
+
         # vterm emacs support
         function vterm_printf() {
           printf "\e]%s\e\\" "$1"
