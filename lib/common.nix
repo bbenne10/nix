@@ -43,6 +43,7 @@ in
       gnupg
       manix
       mpv
+      nix-tree
       nixUnstable
       nixfmt
       nix-tree
