@@ -1,7 +1,8 @@
+;; -*- lexical-binding: t -*-
+
 ;;; package --- Summary
 ;;; Commentary:
 ;;; Code:
-;; -*- lexical-binding: t -*-
 
 (eval-when-compile (require 'use-package))
 
