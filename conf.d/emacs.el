@@ -7,10 +7,10 @@
 (eval-when-compile (require 'use-package))
 
 (set-face-attribute 'default nil
-                    :family "Recursive Mono Linear Static"
+                    :family "Rec Mono Semicasual"
                     :weight 'light)
 (set-face-attribute 'line-number-current-line nil
-                    :family "Recursive Mono Linear Static"
+                    :family "Rec Mono Semicasual"
                     :weight 'light)
 
 (defvar my/leader "<f13>")
