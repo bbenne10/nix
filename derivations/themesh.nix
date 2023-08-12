@@ -1,12 +1,12 @@
-{stdenv, fetchFromGitHub, ...}: stdenv.mkDerivation {
+{ stdenv, fetchFromGitHub, ... }: stdenv.mkDerivation {
   name = "theme.sh";
-  version = "1.1.5";
+  version = "1.1.6";
   srcs = [
     (fetchFromGitHub {
       owner = "lemnos";
       repo = "theme.sh";
-      rev = "v1.1.5";
-      sha256="zDw8WGBzO4/HRCgN7yoUxT49ibTz+QkRa5WpBQbl1nI=";
+      rev = "326a43a215bd5d1e7e8a56939e48cc1a3acfe271";
+      sha256 = "lSJ2Gp/rdYbZRh9Ecn/cm26ual9SKXbN+UVIrjfCXNc=";
       name = "themesh";
     })
     (fetchFromGitHub {
