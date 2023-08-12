@@ -191,12 +191,7 @@
 
 (use-package eglot
   :custom (eglot-extend-to-xref t)
-  :config
-    (setcdr (assq 'java-mode eglot-server-programs) '("jdt-language-server"))
-    (add-to-list 'eglot-server-programs '(java-ts-mode . ("jdt-language-server")))
-    ;; TODO: use `eglot-alternatives` here to add new stuff when I need it?
-    (add-to-list 'eglot-server-programs '(js-ts-mode . ("flow" "lsp")))
-    :hydra (my/hydra-eglot (:exit t :foreign-keys warn :hint nil)
+  :hydra my/hydra-eglot (:exit t :foreign-keys warn :hint nil)
 			   "
 ┌──────────────────────┐┌───────────────┐┌─────────────┐┌───────────────────┐
 │ Find                 ││ Edit          ││ Format      ││ Manage            │
