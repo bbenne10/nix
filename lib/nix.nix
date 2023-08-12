@@ -1,4 +1,4 @@
-{ lib, nixpkgs, pkgs, userName, ...}: {
+{ lib, nixpkgs, pkgs, userName, system, ... }: {
   nix = {
     package = pkgs.nixUnstable;
     registry = {
@@ -24,6 +24,12 @@
       experimental-features = nix-command flakes
       keep-outputs = true
       keep-derivations = true
+    '';
+  };
+  system.activationScripts.diff = {
+    supportsDryActivation = true;
+    text = ''
+      ${pkgs.nvd}/bin/nvd --nix-bin-dir=${pkgs.nix}/bin diff /run/current-system "$systemConfig"
     '';
   };
 }
