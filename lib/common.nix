@@ -14,6 +14,7 @@
 }:
 let
   themesh = (pkgs.callPackage ../derivations/themesh.nix { });
+  darkmode = (pkgs.callPackage ../derivations/darkmode.nix { });
   deploy-rs-bin = deploy-rs.packages.${system}.deploy-rs;
 in
 {
@@ -37,6 +38,7 @@ in
     home.packages = with pkgs; [
       bitwarden-cli
       curl
+      darkmode
       dtach
       fd
       gawk
