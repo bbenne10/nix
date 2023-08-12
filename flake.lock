@@ -49,11 +49,11 @@
         "nixpkgs-stable": "nixpkgs-stable"
       },
       "locked": {
-        "lastModified": 1688552915,
-        "narHash": "sha256-eMG8RA9lO7YVWpZ2/+IPSnfyt9Zr03UVEc+l6gHz3WQ=",
+        "lastModified": 1691835323,
+        "narHash": "sha256-oQKQDzUWzLPQV62jXNSJ0jAHQBnTSyLetV5x/iIraaM=",
         "owner": "nix-community",
         "repo": "emacs-overlay",
-        "rev": "c084710df62bb9f681e52452a0cf518d1bfcedec",
+        "rev": "ff32272f326687e101ffb3e480cec43445eb5000",
         "type": "github"
       },
       "original": {
@@ -65,17 +65,14 @@
     "emacs_themes": {
       "flake": false,
       "locked": {
-        "lastModified": 1674740384,
-        "narHash": "sha256-bN1FbXsNorC0zmW6AAQEfdn94XsOf6rlKbeXPC24318=",
-        "owner": "bbenne10",
-        "repo": "emacs_themes",
-        "rev": "02221a63f0d8c28695b063ecc4c3244be72b2683",
-        "type": "github"
+        "lastModified": 1691590837,
+        "narHash": "sha256-XO6lP9HnjbblyqxTefzj8mmbbv9uUA1r/EU3wjOD+Z4=",
+        "path": "/users/bbennett37/code/personal/emacs_themes",
+        "type": "path"
       },
       "original": {
-        "owner": "bbenne10",
-        "repo": "emacs_themes",
-        "type": "github"
+        "path": "/users/bbennett37/code/personal/emacs_themes",
+        "type": "path"
       }
     },
     "flake-compat": {
@@ -99,11 +96,11 @@
         "systems": "systems"
       },
       "locked": {
-        "lastModified": 1687709756,
-        "narHash": "sha256-Y5wKlQSkgEK2weWdOu4J3riRd+kV/VCgHsqLNTTWQ/0=",
+        "lastModified": 1689068808,
+        "narHash": "sha256-6ixXo3wt24N/melDWjq70UuHQLxGV8jZvooRanIHXw0=",
         "owner": "numtide",
         "repo": "flake-utils",
-        "rev": "dbabf0ca0c0c4bce6ea5eaf65af5cb694d2082c7",
+        "rev": "919d646de7be200f3bf08cb76ae1f09402b6f9b4",
         "type": "github"
       },
       "original": {
@@ -169,6 +166,26 @@
         "type": "github"
       }
     },
+    "nix-index-database": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1691292840,
+        "narHash": "sha256-NA+o/NoOOQhzAQwB2JpeKoG+iYQ6yn/XXVxaGd5HSQI=",
+        "owner": "Mic92",
+        "repo": "nix-index-database",
+        "rev": "6c626d54d0414d34c771c0f6f9d771bc8aaaa3c4",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Mic92",
+        "repo": "nix-index-database",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1671417167,
@@ -187,11 +204,11 @@
     },
     "nixpkgs-stable": {
       "locked": {
-        "lastModified": 1688482527,
-        "narHash": "sha256-9zd0YC2gfsRvVJENZsVs1R5LBj5/t127JlCLggn/970=",
+        "lastModified": 1691693223,
+        "narHash": "sha256-9t8ZY1XNAsWqxAJmXgg+GXqF5chORMVnBT6PSHaRV3I=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "c7a18f89ef1dc423f57f3de9bd5d9355550a5d15",
+        "rev": "18784aac1013da9b442adf29b6c7c228518b5d3f",
         "type": "github"
       },
       "original": {
@@ -203,11 +220,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1688482527,
-        "narHash": "sha256-9zd0YC2gfsRvVJENZsVs1R5LBj5/t127JlCLggn/970=",
+        "lastModified": 1691693223,
+        "narHash": "sha256-9t8ZY1XNAsWqxAJmXgg+GXqF5chORMVnBT6PSHaRV3I=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "c7a18f89ef1dc423f57f3de9bd5d9355550a5d15",
+        "rev": "18784aac1013da9b442adf29b6c7c228518b5d3f",
         "type": "github"
       },
       "original": {
@@ -239,6 +256,7 @@
         "emacs": "emacs",
         "emacs_themes": "emacs_themes",
         "home-manager": "home-manager",
+        "nix-index-database": "nix-index-database",
         "nixpkgs": "nixpkgs_2",
         "website": "website",
         "zsh-fast_syntax_highlighting": "zsh-fast_syntax_highlighting",
@@ -350,11 +368,11 @@
     "zsh-fast_syntax_highlighting": {
       "flake": false,
       "locked": {
-        "lastModified": 1680505133,
-        "narHash": "sha256-AmsexwVombgVmRvl4O9Kd/WbnVJHPTXETxBv18PDHz4=",
+        "lastModified": 1688591419,
+        "narHash": "sha256-RVX9ZSzjBW3LpFs2W86lKI6vtcvDWP6EPxzeTcRZua4=",
         "owner": "zdharma-continuum",
         "repo": "fast-syntax-highlighting",
-        "rev": "13d7b4e63468307b6dcb2dadf6150818f242cbff",
+        "rev": "cf318e06a9b7c9f2219d78f41b46fa6e06011fd9",
         "type": "github"
       },
       "original": {
