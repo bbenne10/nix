@@ -17,6 +17,8 @@
   services.nix-daemon.enable = true;
   system.keyboard = {
     enableKeyMapping = true;
+    # Values are 0x700000000 or'd with value from "Keyboard/Keypad Page" here:
+    # https://www.usb.org/sites/default/files/hut1_4.pdf
     userKeyMapping = [
       {
         # Map F23 to F13
