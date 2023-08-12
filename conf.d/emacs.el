@@ -416,19 +416,23 @@
   :custom (markdown-command "pandoc")
   :mode (("\\.md'" . gfm-mode)))
 
+(defun my-before-save-format-buffer () (add-hook 'before-save-hook 'eglot-format-buffer nil t))
+
 (use-package nix-mode
-  :hook (nix-mode . (lambda () (add-hook 'before-save-hook 'eglot-format-buffer nil t))))
+  :hook (nix-mode . my-before-save-format-buffer))
 
 (use-package python
   ;; set ensure nil to use bundled version of python.el
   ;; rather than grabbing from elpa
   :ensure nil
-  :mode ("\\.py\\'" . python-ts-mode)
-  :interpreter ("python" . python-ts-mode)
-  :hook (python-ts-mode . (lambda () (add-hook 'before-save-hook 'eglot-format-buffer nil t))))
+  :mode ("\\.py\\'" . python-mode)
+  :interpreter ("python" . python-mode)
+  :hook ((python-mode . my-before-save-format-buffer)
+         (python-ts-mode . my-before-save-format-buffer)))
 
 (use-package rust-mode :mode ("\\.rs'")
-  :hook (rust-mode . (lambda () (add-hook 'before-save-hook 'eglot-format-buffer nil t))))
+  :hook ((rust-mode . my-before-save-format-buffer)
+         (rust-ts-mode . my-before-save-format-buffer)))
 
 (use-package yaml-mode :mode ("\\.yaml'" "\\.yml'"))
 ;;; emacs.el ends here
