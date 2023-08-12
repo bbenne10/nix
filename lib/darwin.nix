@@ -3,6 +3,16 @@
   users.users.${userName} = {
     home = "/Users/${userName}";
   };
+
+  home-manager.users.${userName} = {
+    home = {
+      packages = with pkgs; [
+        colima
+        iterm2
+      ];
+    };
+  };
+
   services.mopidy.mediakeys.enable = true;
   services.nix-daemon.enable = true;
   system.keyboard = {
@@ -34,9 +44,6 @@
       "com.apple.swipescrolldirection" = false; # disable "natural" scolling
       "com.apple.mouse.tapBehavior" = 1; # enable tap-to-click
     };
-  };
 
-  home-manager.users.${userName}.home.packages = with pkgs; [
-    colima
-  ];
+  };
 }
