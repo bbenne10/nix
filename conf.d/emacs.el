@@ -328,10 +328,6 @@
   :hook (after-init . tabspaces-mode)
   :custom (tabspaces-use-filtered-buffers-as-default t)
           (tab-bar-show nil)
-  :commands (tabspaces-create-workspace
-             tabspaces-create-new-project-and-workspace
-             tabspaces-open-existing-project-and-workspace
-             tabspaces-switch-workspace)
   :general (
     :prefix my/leader
     "p" #'tabspaces-open-or-create-project-and-workspace))
