@@ -204,8 +204,10 @@
 │ [_d_]: Declaration     ││ [_r_]: Rename   ││ [_=_]: Buffer ││ [_X_]: Shutdown     │
 │ [_i_]: Implementation  ││ [_a_]: Actions  ││ [_R_]: Region ││ [_C_]: Reconnect    │
 │ [_D_]: Type definition ││               ││             ││ [_E_]: Event Buffer │
+│ [_n_]: Next error      ││               ││             ││                   │
+│ [_p_]: Previous error  ││               ││             ││                   │
 └──────────────────────┘└───────────────┘└─────────────┘└───────────────────┘
-  [_X_]: Shutdown  [_C_]: Re-connect [_E_]: Display Events Buffer
+  [_X_]: Shutdown  [_C_]: Re-connect [_E_]: Display Events Buffer [_<escape>_]: Exit
 "
               ("d" eglot-find-declaration)
               ("i" eglot-find-implementation)
@@ -216,14 +218,17 @@
               ("R" eglot-format)
               ("X" eglot-shutdown)
               ("C" eglot-reconnect)
-              ("E" eglot-events-buffer))
-  :general (:prefix my/leader
-            "/" 'consult-ripgrep
-            "e" 'my/hydra-eglot/body)
+              ("E" eglot-events-buffer)
+              ("n" flymake-goto-next-error :color amaranth)
+              ("p" flymake-goto-prev-error :color amaranth)
+              ("<escape>" nil)
+  :general (:prefix my/leader "e" 'my/hydra-eglot/body)
            ("<M-RET>" #'eglot-code-actions)
   :hook ((python-ts-mode . eglot-ensure)
+         (python-mode . eglot-ensure)
          (java-mode . eglot-ensure)
          (rust-ts-mode . eglot-ensure)
+         (rust-mode . eglot-ensure)
          (nix-mode . eglot-ensure)))
 
 (use-package sideline
