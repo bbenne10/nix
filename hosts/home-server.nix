@@ -1,10 +1,9 @@
-{ pkgs, userName, ... }: {
+{ config, lib, pkgs, userName, ... }: {
   environment.systemPackages = with pkgs; [
     terminus_font
     neovim
   ];
   networking.hostName = "home-server";
-  networking.nameservers = [ "192.168.1.142" "1.1.1.1" ];
   networking.networkmanager.enable = true;
 
   users.users.${userName} = {
@@ -37,24 +36,35 @@
     earlySetup = true;
   };
 
-  home-manager.users.${userName} = {
-    services.syncthing = {
-      enable = true;
+  services.jellyfin.enable = true;
+  services.jellyfin.openFirewall = true;
+
+  services.syncthing = {
+    enable = true;
+    guiAddress = "0.0.0.0:8384";
+    dataDir = "/media";
+    configDir = "/media/.syncthing_config";
+    overrideDevices = true;
+    overrideFolders = true;
+    devices = {
+      "bryan-phone" = { id = "GH3EYR3-V72E72X-3VILKVK-S5SO4PA-LDJZWB7-W4CG7L7-3KYRRLK-FPMKDAE";};
+    };
+    folders = {
+      "Music" = {
+        path = "/media/Music";
+        devices = ["bryan-phone"];
+      };
     };
   };
 
-  services.xserver.enable = true;
-  services.xserver.displayManager.gdm.enable = true;
-  security.pam.services.gdm.enableGnomeKeyring = true;
-  services.xserver.desktopManager.gnome.enable = true;
+  services.minecraft-server = {
+    enable = true;
+    eula = true;
+    openFirewall = true;
+  };
+  networking.firewall.allowedTCPPorts = [ 8384 ];
+  networking.firewall.allowedUDPPorts = [ 22000 21027 ];
 
-  # TODO: Maybe later
-  # hardware.pulseaudio.enable = false;
-  # security.rtkit.enable = true;
-  # services.pipewire = {
-  #   enable = true;
-  #   pulse.enable = true;
-  # };
 
   # Stolen from hardware-configuration (autogen'd by nix installer)
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
@@ -65,8 +75,9 @@
   boot.loader.efi.canTouchEfiVariables = true;
   boot.initrd.availableKernelModules = [ "xhci_pci" "ehci_pci" "ahci" "usb_storage" "usbhid" "sd_mod" ];
   boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ "kvm-intel" ];
-  boot.extraModulePackages = [ ];
+  boot.kernelModules = [ "kvm-intel" "ntfs3" ];
+
+  users.groups.media.members = [ "bryan" "jelyfin" "syncthing" ];
 
   fileSystems."/" = {
     device = "/dev/disk/by-uuid/2f9674e3-bbb7-4bd9-bd42-ba2fd012ae2c";
@@ -76,6 +87,11 @@
   fileSystems."/boot" = {
     device = "/dev/disk/by-uuid/D355-ACB3";
     fsType = "vfat";
+  };
+
+  fileSystems."/media" = {
+    device = "/dev/sdb1";
+    fsType = "ntfs3";
   };
 
   swapDevices = [

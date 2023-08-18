@@ -4,7 +4,7 @@ let
   websitePkg = website.packages.${system}.website;
 in
 {
-  boot.cleanTmpDir = true;
+  boot.tmp.cleanOnBoot = true;
   zramSwap.enable = false;
   networking.hostName = "bennett-server";
   networking.domain = "";

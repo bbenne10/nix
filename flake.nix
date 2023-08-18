@@ -111,6 +111,7 @@
             ./lib/linux.nix
             ./hosts/home-server.nix
           ];
+          inherit specialArgs;
         };
       };
       darwinConfigurations = {
@@ -149,7 +150,10 @@
         };
         home-server = {
           hostname = "home-server";
-          user = "bryan";
+          user = "root";
+          sshUser = "bryan";
+          sshOpts = [ "-t" ];
+          magicRollback = false;
           profiles = {
             system = {
               path = deploy-rs.lib.x86_64-linux.activate.nixos
