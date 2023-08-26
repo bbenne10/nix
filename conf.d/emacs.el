@@ -13,18 +13,13 @@
                     :family "Rec Mono Semicasual"
                     :weight 'light)
 
-(defvar my/leader "<f13>")
-
-(setq default-frame-alist
-      '((menu-bar-lines . 0)
-        (tool-bar-lines . 0) 
-        (vertical-scroll-bars . nil)))
+(defconst my/leader (if (eq system-type 'darwin) "<f13>" "<MenuKB>"))
 
 ;; Note: These are provided via nix in here
 ;; Themes come from https://github.com/bbenne10/emacs_themes
 (use-package bennett-themes)
 
-(use-package ef-themes)
+(use-package everforest)
 
 (use-package general)
 
@@ -34,34 +29,37 @@
 
 (use-package emacs
   :ensure nil
-  :custom (custom-file null-device)
-          (initial-scratch-message "")
-          (inhibit-startup-message t)
-          (scroll-conservatively 101)
-          (scroll-margin 5)
-          (visible-bell t)
-          (ad-redefinition-action 'accept)
-          (vc-follow-symlinks t)
-          (select-enable-clipboard t)
-          (select-enable-primary t)
-          (mouse-drag-copy-region t)
-          (prettify-symbols-unprettify-at-point t)
-          (backup-directory-alist `((".*" . ,temporary-file-directory)))
-          (auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
-          (read-process-output-max (* 1024 1024))
-          (gc-cons-threshold 100000000)
+  :custom (default-frame-alist
+	   '((menu-bar-lines . 0)
+	     (tool-bar-lines . 0)
+	     (vertical-scroll-bars . nil)))
+             (initial-scratch-message "")
+             (inhibit-startup-message t)
+             (scroll-conservatively 101)
+             (scroll-margin 5)
+             (visible-bell t)
+             (ad-redefinition-action 'accept)
+             (vc-follow-symlinks t)
+             (select-enable-clipboard t)
+             (select-enable-primary t)
+             (mouse-drag-copy-region t)
+             (prettify-symbols-unprettify-at-point t)
+;;           (custom-file null-device)
+;;           (backup-directory-alist `((".*" . ,temporary-file-directory)))
+;;           (auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
 
   :init
     (defun my/prog-mode-setup ()
       (display-line-numbers-mode)
       (column-number-mode 1)
-      (prettify-symbols-mode 1)
+      ;; (prettify-symbols-mode 1)
       (hs-minor-mode))
 
     (defun my/after-init-hook ()
       (global-unset-key (kbd "C-x C-c"))
       (global-unset-key (kbd "C-h h"))
       (global-hl-line-mode 1)
+      (pixel-scroll-precision-mode 1)
       (show-paren-mode 1)
       (defalias 'yes-or-no-p 'y-or-n-p)
 
@@ -70,7 +68,6 @@
         indent-tabs-mode nil))
 
     (when (eq window-system 'pgtk)
-      (setq my/leader "<MenuKB>")
       (unless (string-equal "gnome" (getenv "DESKTOP_SESSION"))
         ;; CSD is the devil, but is necessary under gnome
         (add-to-list 'default-frame-alist '(undecorated . t))))
@@ -86,54 +83,75 @@
 
 (use-package auto-dark
   :custom
-    (auto-dark-dark-theme 'ef-elea-dark)
-    (auto-dark-light-theme 'ef-elea-light)
+    (auto-dark-dark-theme 'everforest-hard-dark)
+    (auto-dark-light-theme 'everforest-hard-light)
   :init (auto-dark-mode))
 
 (use-package textsize
-  :custom (textsize-default-points (if (eq system-type 'darwin) 18 12))
-  :config (textsize-mode)
-  :general (:prefix my/leader
-                    "t" 'my/hydra-textsize/body)
-           ("C-x t" nil)
-  :hydra (my/hydra-textsize (:exit nil :foreign-keys warn :hint nil)
-                         "
-┌───────────────┐
-│ Text Size     │
-│───────────────│
-│ [_+_]: Increase │
-│ [_-_]: Decrease │
-│ [_r_]: Reset    │
-│ [_x_]: Exit     │
-└───────────────┘
-"
-          ("+" textsize-increment )
-          ("-" textsize-decrement)
-          ("r" textsize-reset :color blue)
-          ("x" nil))
-  )
+   :custom (textsize-default-points (if (eq system-type 'darwin) 18 12))
+   :commands textsize-mode
+   :init (textsize-mode)
+   :general (:prefix my/leader "t" 'my/hydra-textsize/body)
+            ("C-x t" nil)
+   :hydra (my/hydra-textsize (:exit nil :foreign-keys warn )
+                          "
+ ┌───────────────┐
+ │ Text Size     │
+ │───────────────│
+ │ [_+_]: Increase │
+ │ [_-_]: Decrease │
+ │ [_r_]: Reset    │
+ └───────────────┘
+ "
+           ("+" textsize-increment )
+           ("-" textsize-decrement)
+           ("r" textsize-reset :color blue)
+           ("<escape>" nil)))
 
-(use-package exec-path-from-shell
-  :if (memq window-system '(mac ns))
-  :custom (exec-path-from-shell-check-startup-files nil)
-          ;; Launch a login shell; Nix is good at putting stuff in the right place
-          (exec-path-from-shell-arguments nil)
-          (exec-path-from-shell-variables '("PATH" "MANPATH" "SSL_CERT_FILE"))
-          ;; Use Nix path for locally managed zsh install so we get correct...everything
-          (exec-path-from-shell-shell-name (concat (getenv "HOME") "/.nix-profile/bin/zsh"))
-  :config (exec-path-from-shell-initialize))
+    ; (defun mood-line--checker-flymake-count-errors ()
+    ;   "Return alist with count of all current flymake diagnostic reports.
 
-(use-package doom-modeline
-  :after (evil)
-  :custom (doom-modeline-env-version nil)
-    (doom-modeline-modal-icon nil)
-    (evil-normal-state-tag (propertize "⬤" 'face '((:background 'doom-modeline-info))))
-    (evil-insert-state-tag (propertize "⬤" 'face '((:background 'doom-modeline-urgent))))
-    (evil-motion-state-tag (propertize "⬤" 'face '((:background 'doom-modeline-buffer-path))))
-    (evil-operator-state-tag (propertize "⬤" 'face '((:background 'doom-modeline-buffer-path))))
-    (evil-visual-state-tag (propertize "⬤" 'face '((:background 'doom-modeline-buffer-file))))
-    (evil-emacs-state-tag (propertize "⬤" 'face '((:background 'doom-modeline-warning))))
-  :config (doom-modeline-mode))
+    ;    Counts will be returned in an alist as the cdr of the following keys:
+    ;    `'note-count'    | All notes reported by checker
+    ;    `'error-count'   | All errors reported by checker
+    ;    `'warning-count' | All warnings reported by checkero
+    ;    `'issue-count'   | All errors and warnings reported by checker
+    ;    `'all-count'     | Everything reported by checker"
+    ;   (let ((error-count 0)
+    ;         (warning-count 0)
+    ;         (note-count 0))
+    ;     (progn
+    ;       (cl-loop
+    ;        with warning-level = (warning-numeric-level :warning)
+    ;        with note-level = (warning-numeric-level :debug)
+    ;        for state being the hash-values of flymake--state
+    ;        do (cl-loop
+    ;            with diags = (flymake--state-diags state)
+    ;            for diag in diags do
+    ;            (let ((severity (flymake--lookup-type-property (flymake--diag-type diag) 'severity
+    ;                                                           (warning-numeric-level :error))))
+    ;              (cond ((> severity warning-level) (cl-incf error-count))
+    ;                    ((> severity note-level)    (cl-incf warning-count))
+    ;                    (t                          (cl-incf note-count)))))))
+    ;     `((note-count . ,note-count)
+    ;       (error-count . ,error-count)
+    ;       (warning-count . ,warning-count)
+    ;       (issue-count . ,(+ warning-count
+    ;                          error-count))
+    ;       (all-count . ,(+ note-count
+    ;                        warning-count
+    ;                        error-count))))))
+
+(use-package mood-line
+  :config (mood-line-mode)
+  :custom
+  (mood-line-evil-state-alist . '((normal . ("⬤" . font-lock-variable-name-face))
+                                  (insert . ("⬤" . font-lock-string-face))
+                                  (visual . ("⬤" . font-lock-keyword-face))
+                                  (replace . ("⬤" . font-lock-type-face))
+                                  (motion . ("⬤" . font-lock-constant-face))
+                                  (operator . ("⬤" . font-lock-function-name-face))
+                                  (emacs . ("⨁" . font-lock-builtin-face)))))
 
 (use-package evil
     :custom (evil-undo-system 'undo-redo)
@@ -142,12 +160,15 @@
             (evil-want-integration t)
     :config (evil-mode 1))
 
+(use-package dirvish
+  :config (dirvish-override-dired-mode))
+
 (use-package evil-collection
     :after (evil)
-    :config (evil-collection-init '(consult magit magit-todos notmuch)))
+    :config (evil-collection-init '(consult dired magit magit-todos notmuch)))
 
 (use-package eldoc-box
-  :hook (prog-mode . eldoc-box-hover-mode))
+  :hook (prog-mode . eldoc-box-hover-at-point-mode))
 
 (use-package corfu
   :custom (corfu-auto t)
@@ -180,51 +201,8 @@
     :custom (fic-highlighted-words '("FIXME" "TODO" "BUG" "NOTE" "XXX"))
     :hook (prog-mode . fic-mode))
 
-(use-package rainbow-mode
-  :hook (prog-mode . rainbow-mode))
-
 (use-package which-key
   :config (which-key-mode 1))
-
-(use-package yasnippet
-  :hook (prog-mode . yas-minor-mode))
-
-(use-package eglot
-  :custom (eglot-extend-to-xref t)
-  :hydra my/hydra-eglot (:exit t :foreign-keys warn :hint nil)
-			   "
-┌──────────────────────┐┌───────────────┐┌─────────────┐┌───────────────────┐
-│ Find                 ││ Edit          ││ Format      ││ Manage            │
-│──────────────────────││───────────────││─────────────││───────────────────│
-│ [_d_]: Declaration     ││ [_r_]: Rename   ││ [_=_]: Buffer ││ [_X_]: Shutdown     │
-│ [_i_]: Implementation  ││ [_a_]: Actions  ││ [_R_]: Region ││ [_C_]: Reconnect    │
-│ [_D_]: Type definition ││               ││             ││ [_E_]: Event Buffer │
-│ [_n_]: Next error      ││               ││             ││                   │
-│ [_p_]: Previous error  ││               ││             ││                   │
-└──────────────────────┘└───────────────┘└─────────────┘└───────────────────┘
-  [_X_]: Shutdown  [_C_]: Re-connect [_E_]: Display Events Buffer [_<escape>_]: Exit
-"
-              ("d" eglot-find-declaration)
-              ("i" eglot-find-implementation)
-              ("D" eglot-find-typeDefinition)
-              ("r" eglot-rename)
-              ("a" eglot-code-actions)
-              ("=" eglot-format-buffer)
-              ("R" eglot-format)
-              ("X" eglot-shutdown)
-              ("C" eglot-reconnect)
-              ("E" eglot-events-buffer)
-              ("n" flymake-goto-next-error :color amaranth)
-              ("p" flymake-goto-prev-error :color amaranth)
-              ("<escape>" nil)
-  :general (:prefix my/leader "e" 'my/hydra-eglot/body)
-           ("<M-RET>" #'eglot-code-actions)
-  :hook ((python-ts-mode . eglot-ensure)
-         (python-mode . eglot-ensure)
-         (java-mode . eglot-ensure)
-         (rust-ts-mode . eglot-ensure)
-         (rust-mode . eglot-ensure)
-         (nix-mode . eglot-ensure)))
 
 (use-package sideline
   :hook (flymake-mode . sideline-mode))
@@ -252,6 +230,48 @@
      :preview-key "M-."))
 
 (use-package consult-project-extra)
+
+(use-package consult-dash
+  :config (consult-customize consult-dash :initial (thing-at-point 'symbol)))
+
+(use-package eglot
+  :custom (eglot-extend-to-xref t)
+  :hydra my/hydra-eglot (:exit t :foreign-keys warn :hint nil)
+			   "
+┌──────────────────────┐┌───────────────┐┌─────────────┐┌───────────────────┐
+│ Find                 ││ Edit          ││ Format      ││ Manage            │
+│──────────────────────││───────────────││─────────────││───────────────────│
+│ [_d_]: Declaration     ││ [_r_]: Rename   ││ [_=_]: Buffer ││ [_X_]: Shutdown     │
+│ [_i_]: Implementation  ││ [_a_]: Actions  ││ [_R_]: Region ││ [_C_]: Reconnect    │
+│ [_D_]: Type definition ││               ││             ││ [_E_]: Event Buffer │
+│ [_?_]: Dash docs       ││               ││             ││                   │
+│ [_n_]: Next error      ││               ││             ││                   │
+│ [_p_]: Previous error  ││               ││             ││                   │
+└──────────────────────┘└───────────────┘└─────────────┘└───────────────────┘
+  [_X_]: Shutdown  [_C_]: Re-connect [_E_]: Display Events Buffer [_<escape>_]: Exit
+"
+              ("d" eglot-find-declaration)
+              ("i" eglot-find-implementation)
+              ("D" eglot-find-typeDefinition)
+              ("r" eglot-rename)
+              ("a" eglot-code-actions)
+              ("=" eglot-format-buffer)
+              ("R" eglot-format)
+              ("X" eglot-shutdown)
+              ("C" eglot-reconnect)
+              ("E" eglot-events-buffer)
+              ("?" consult-dash)
+              ("n" flymake-goto-next-error :color amaranth)
+              ("p" flymake-goto-prev-error :color amaranth)
+              ("<escape>" nil)
+  :general (:prefix my/leader "e" 'my/hydra-eglot/body)
+           ("<M-RET>" #'eglot-code-actions)
+  :hook ((python-ts-mode . eglot-ensure)
+         (python-mode . eglot-ensure)
+         (java-mode . eglot-ensure)
+         (rust-ts-mode . eglot-ensure)
+         (rust-mode . eglot-ensure)
+         (nix-mode . eglot-ensure)))
 
 (use-package project
   :defer nil
@@ -315,7 +335,8 @@
        ("\/" project-find-regexp)
        ("A" project-or-external-find-regexp)
        ("s" project-multi-occur)
-       ("p" tabspaces-open-or-create-project-and-workspace))
+       ("p" tabspaces-open-or-create-project-and-workspace)
+       ("<escape>" nil))
   :config
      :general (:prefix my/leader "P" 'my/hydra-project/body))
 
