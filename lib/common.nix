@@ -1,6 +1,5 @@
 { config
 , deploy-rs
-, emacs_themes
 , lib
 , pkgs
 , home-manager

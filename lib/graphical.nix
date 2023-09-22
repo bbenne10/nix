@@ -2,11 +2,14 @@
 , pkgs
 , home-manager
 , userName
+, emacs_themes
 , ...
 }:
 let
-  bennett-themes = (pkgs.callPackage ../derivations/emacs_themes.nix { });
-  everforest = (pkgs.callPackage ../derivations/everforest-emacs.nix { });
+  bennett-themes =
+    (pkgs.callPackage ../derivations/emacs_themes.nix {
+      inherit emacs_themes;
+    });
 in
 {
   fonts = {
@@ -45,7 +48,10 @@ in
         package = pkgs.emacs29;
         alwaysEnsure = true;
         override = epkgs: epkgs // {
-          inherit bennett-themes everforest;
+          inherit bennett-themes;
+          mood-line = epkgs.mood-line.overrideAttrs (_: {
+            patches = [ ../conf.d/mood-line-eglot.patch ];
+          });
         };
         extraEmacsPackages = (epkgs: with epkgs; [
           treesit-grammars.with-all-grammars

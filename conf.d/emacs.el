@@ -108,51 +108,6 @@
            ("r" textsize-reset :color blue)
            ("<escape>" nil)))
 
-    ; (defun mood-line--checker-flymake-count-errors ()
-    ;   "Return alist with count of all current flymake diagnostic reports.
-
-    ;    Counts will be returned in an alist as the cdr of the following keys:
-    ;    `'note-count'    | All notes reported by checker
-    ;    `'error-count'   | All errors reported by checker
-    ;    `'warning-count' | All warnings reported by checkero
-    ;    `'issue-count'   | All errors and warnings reported by checker
-    ;    `'all-count'     | Everything reported by checker"
-    ;   (let ((error-count 0)
-    ;         (warning-count 0)
-    ;         (note-count 0))
-    ;     (progn
-    ;       (cl-loop
-    ;        with warning-level = (warning-numeric-level :warning)
-    ;        with note-level = (warning-numeric-level :debug)
-    ;        for state being the hash-values of flymake--state
-    ;        do (cl-loop
-    ;            with diags = (flymake--state-diags state)
-    ;            for diag in diags do
-    ;            (let ((severity (flymake--lookup-type-property (flymake--diag-type diag) 'severity
-    ;                                                           (warning-numeric-level :error))))
-    ;              (cond ((> severity warning-level) (cl-incf error-count))
-    ;                    ((> severity note-level)    (cl-incf warning-count))
-    ;                    (t                          (cl-incf note-count)))))))
-    ;     `((note-count . ,note-count)
-    ;       (error-count . ,error-count)
-    ;       (warning-count . ,warning-count)
-    ;       (issue-count . ,(+ warning-count
-    ;                          error-count))
-    ;       (all-count . ,(+ note-count
-    ;                        warning-count
-    ;                        error-count))))))
-
-(use-package mood-line
-  :config (mood-line-mode)
-  :custom
-  (mood-line-evil-state-alist . '((normal . ("⬤" . font-lock-variable-name-face))
-                                  (insert . ("⬤" . font-lock-string-face))
-                                  (visual . ("⬤" . font-lock-keyword-face))
-                                  (replace . ("⬤" . font-lock-type-face))
-                                  (motion . ("⬤" . font-lock-constant-face))
-                                  (operator . ("⬤" . font-lock-function-name-face))
-                                  (emacs . ("⨁" . font-lock-builtin-face)))))
-
 (use-package evil
     :custom (evil-undo-system 'undo-redo)
             (evil-want-keybinding nil)
@@ -169,6 +124,37 @@
 
 (use-package eldoc-box
   :hook (prog-mode . eldoc-box-hover-at-point-mode))
+(use-package mood-line
+  :custom
+  (mood-line-glyph-alist 
+   ;; This is the same as mood-line-fira-code, but
+   ;; 1) :custom seems to run before that variable is defined?
+   ;; 2) nix doesn't appreciate the ? syntax used in the main source file
+   '((:checker-info . 8627)
+     (:checker-issues . 8594)
+     (:checker-good . 10003)
+     (:checker-checking . 10227)
+     (:checker-errored . 120)
+     (:checker-interrupted . 61)
+     (:vc-added . 43)
+     (:vc-needs-merge . 10231)
+     (:vc-needs-update . 8595)
+     (:vc-conflict . 120)
+     (:vc-good . 10003)
+     (:buffer-narrowed . 9698)
+     (:buffer-modified . 9679)
+     (:buffer-read-only . 9632)
+     (:count-separator . 215)))
+    (mood-line-evil-state-alist 
+       '((normal . ("🅝" . font-lock-variable-name-face))
+         (insert . ("🅘" . font-lock-string-face))
+         (visual . ("🅥" . font-lock-keyword-face))
+         (replace . ("🅡" . font-lock-type-face))
+         (motion . ("🅜" . font-lock-constant-face))
+         (operator . ("🅞". font-lock-function-name-face))
+         (emacs . ("🅔" . font-lock-builtin-face))))
+  :config
+    (mood-line-mode))
 
 (use-package corfu
   :custom (corfu-auto t)
