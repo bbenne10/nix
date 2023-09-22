@@ -113,8 +113,8 @@
             (evil-want-integration t)
     :config (evil-mode 1))
 
-(use-package dirvish
-  :config (dirvish-override-dired-mode))
+(use-package evil-surround
+  :config (global-evil-surround-mode 1))
 
 (use-package evil-collection
     :after (evil)
