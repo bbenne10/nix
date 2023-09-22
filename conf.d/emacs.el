@@ -19,8 +19,6 @@
 ;; Themes come from https://github.com/bbenne10/emacs_themes
 (use-package bennett-themes)
 
-(use-package everforest)
-
 (use-package general)
 
 (use-package hydra)
@@ -83,8 +81,8 @@
 
 (use-package auto-dark
   :custom
-    (auto-dark-dark-theme 'everforest-hard-dark)
-    (auto-dark-light-theme 'everforest-hard-light)
+    (auto-dark-dark-theme 'bb-everforest-hard-dark)
+    (auto-dark-light-theme 'bb-everforest-hard-light)
   :init (auto-dark-mode))
 
 (use-package textsize
