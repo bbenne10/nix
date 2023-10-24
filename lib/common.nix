@@ -19,7 +19,7 @@ let
 in
 {
   environment.systemPackages = with pkgs; [
-    bash
+    bashInteractive
     cachix
     nixUnstable
     deploy-rs-bin
