@@ -412,6 +412,10 @@
     (emms-default-players))
 
 ;; languages
+(use-package dockerfile-mode)
+
+(use-package reason-mode)
+
 (use-package markdown-mode
   :custom (markdown-command "pandoc")
   :mode (("\\.md'" . gfm-mode)))
