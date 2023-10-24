@@ -238,7 +238,7 @@ in
       enableAutosuggestions = true;
       shellAliases = {
         rmr = "rm -r";
-        ls = "${pkgs.exa}/bin/exa";
+        ls = "${pkgs.eza}/bin/eza";
         cat = "${pkgs.bat}/bin/bat";
         gpgreset = "gpg-connect-agent killagent /bye; gpg-connect-agent updatestartuptty /bye; gpg-connect-agent /bye";
       };
