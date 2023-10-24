@@ -216,8 +216,6 @@ in
 
     programs.ssh = {
       enable = true;
-      controlMaster = "yes";
-      controlPersist = "10m";
       forwardAgent = true;
     };
 
