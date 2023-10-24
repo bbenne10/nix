@@ -41,6 +41,7 @@ in
       nix-index-database.packages.${pkgs.stdenv.system}.comma-with-db
       darkmode
       dtach
+      dvtm
       fd
       gawk
       gnupg
@@ -49,7 +50,6 @@ in
       nix-tree
       nixUnstable
       nixfmt
-      nix-tree
       openssh
       ripgrep
       rnix-lsp
