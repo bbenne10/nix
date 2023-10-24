@@ -3,6 +3,7 @@
 , lib
 , pkgs
 , home-manager
+, nix-index-database
 , system
 , userName
 , environment
@@ -37,6 +38,7 @@ in
     home.packages = with pkgs; [
       bitwarden-cli
       curl
+      nix-index-database.packages.${pkgs.stdenv.system}.comma-with-db
       darkmode
       dtach
       fd

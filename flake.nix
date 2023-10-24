@@ -14,6 +14,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nix-index-database = {
+      url = "github:Mic92/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -76,18 +78,21 @@
         system = "x86_64-linux";
         pkgs = linuxPkgs;
       };
+      baseLinuxModules = [
+        inputs.home-manager.nixosModules.home-manager
+        inputs.nix-index-database.nixosModules.nix-index
+        ./lib/nix.nix
+        ./lib/common.nix
+        ./lib/graphical.nix
+        ./lib/linux.nix
+      ];
     in
     {
       nixosConfigurations = {
         "bennett-laptop" = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
-          modules = [
-            inputs.home-manager.nixosModules.home-manager
+          modules = baseLinuxModules ++ [
             ./hardware/laptop.nix
-            ./lib/nix.nix
-            ./lib/common.nix
-            ./lib/graphical.nix
-            ./lib/linux.nix
             ./hosts/bennett-laptop.nix
           ];
           inherit specialArgs;
@@ -95,11 +100,7 @@
 
         "bennett-server" = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
-          modules = [
-            inputs.home-manager.nixosModules.home-manager
-            ./lib/nix.nix
-            ./lib/common.nix
-            ./lib/linux.nix
+          modules = baseLinuxModules ++ [
             ./hosts/bennett-server.nix
           ];
           inherit specialArgs;
@@ -107,11 +108,7 @@
 
         "home-server" = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
-          modules = [
-            inputs.home-manager.nixosModules.home-manager
-            ./lib/nix.nix
-            ./lib/common.nix
-            ./lib/linux.nix
+          modules = baseLinuxModules ++ [
             ./hosts/home-server.nix
           ];
           inherit specialArgs;
@@ -127,6 +124,7 @@
           };
           modules = [
             inputs.home-manager.darwinModules.home-manager
+            inputs.nix-index-database.darwinModules.nix-index
             ./lib/common.nix
             ./lib/nix.nix
             ./lib/graphical.nix
