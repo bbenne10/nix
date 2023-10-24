@@ -62,10 +62,16 @@ in
       enable = true;
     };
 
+    programs.btop = {
+      enable = true;
+    };
+
     programs.direnv = {
       enable = true;
       enableZshIntegration = true;
-      nix-direnv = { enable = true; };
+      nix-direnv = {
+        enable = true;
+      };
       stdlib = ''
         # Centralize direnv layouts in $HOME/.cache/direnv/layouts
         : ''${XDG_CACHE_HOME:=$HOME/.cache}
@@ -206,10 +212,6 @@ in
           trust = "ultimate";
         }
       ];
-    };
-
-    programs.htop = {
-      enable = true;
     };
 
     programs.ssh = {
