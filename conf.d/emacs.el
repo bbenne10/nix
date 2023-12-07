@@ -220,6 +220,13 @@
 
 (use-package eglot
   :custom (eglot-extend-to-xref t)
+  :config
+    ;; Change the Java server to jdt-language-server in $PATH, as that is provided by nix
+  (setf (alist-get '(java-mode java-ts-mode) eglot-server-programs nil nil 'equal)
+        (lambda (int)
+          (let ((cache (expand-file-name (md5 (project-root (project-current t)))
+                                         (locate-user-emacs-file "jdtls-cache"))))
+            `("jdt-language-server" "-data" ,cache))))
   :hydra my/hydra-eglot (:exit t :foreign-keys warn :hint nil)
 			   "
 ┌──────────────────────┐┌───────────────┐┌─────────────┐┌───────────────────┐
