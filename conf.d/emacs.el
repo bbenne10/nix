@@ -390,27 +390,6 @@
 
   :hook (vterm-mode . my/vterm-mode-setup))
 
-(use-package notmuch
-  :custom
-    (notmuch-saved-searches
-     '((:name "Inbox" :query "tag:inbox" :key "i")
-       (:name "Unread" :query "tag:inbox and tag:unread" :key "u")
-       (:name "Archive" :query "tag:archive" :key "a")
-       (:name "Trash" :query "tag:deleted" :key "t"))))
-
-(use-package emms
-  :custom (emms-player-mpv-parameters
-           '("--quiet"
-             "--really-quiet"
-             "--no-audio-display"
-             "--no-video"
-             "--no-audio-display"
-             "--force-window=no"
-             "--vo=null"))
-  :config
-    (emms-standard)
-    (emms-default-players))
-
 ;; languages
 (use-package dockerfile-mode)
 
