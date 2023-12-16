@@ -1,7 +1,7 @@
 {
   inputs = {
     nixpkgs = {
-      url = "github:nixos/nixpkgs/nixos-unstable";
+      url = "github:nixos/nixpkgs/nixos-23.11";
     };
 
     darwin = {
@@ -10,12 +10,7 @@
     };
 
     home-manager = {
-      url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    nix-index-database = {
-      url = "github:Mic92/nix-index-database";
+      url = "github:nix-community/home-manager/release-23.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -80,7 +75,6 @@
       };
       baseLinuxModules = [
         inputs.home-manager.nixosModules.home-manager
-        inputs.nix-index-database.nixosModules.nix-index
         ./lib/nix.nix
         ./lib/common.nix
         ./lib/graphical.nix
@@ -124,7 +118,6 @@
           };
           modules = [
             inputs.home-manager.darwinModules.home-manager
-            inputs.nix-index-database.darwinModules.nix-index
             ./lib/common.nix
             ./lib/nix.nix
             ./lib/graphical.nix
