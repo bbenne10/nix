@@ -49,13 +49,21 @@ in
         alwaysEnsure = true;
         override = epkgs: epkgs // {
           inherit bennett-themes;
-          mood-line = epkgs.mood-line.overrideAttrs (_: {
-            patches = [ ../conf.d/mood-line-eglot.patch ];
-          });
+          mood-line = epkgs.mood-line.overrideAttrs
+            (_: prev_attrs: {
+              src = pkgs.fetchFromGitLab
+                {
+                  owner = "jessieh";
+                  repo = "mood-line";
+                  rev = "a15d166249f04b047a6136856e5be109357762d3";
+                  hash = "sha256-Y9n0p3jO5Ol/uUigrRNfrfxD5aeeb98NjNSDtroRffc=";
+                };
+            });
         };
-        extraEmacsPackages = (epkgs: with epkgs; [
-          treesit-grammars.with-all-grammars
-        ]);
+        extraEmacsPackages = (epkgs: with epkgs;
+          [
+            treesit-grammars.with-all-grammars
+          ]);
       };
     };
 

@@ -50,7 +50,7 @@
     (defun my/prog-mode-setup ()
       (display-line-numbers-mode)
       (column-number-mode 1)
-      ;; (prettify-symbols-mode 1)
+      (prettify-symbols-mode 1)
       (hs-minor-mode))
 
     (defun my/after-init-hook ()
@@ -121,36 +121,37 @@
     :config (evil-collection-init '(consult dired magit magit-todos notmuch)))
 
 (use-package eldoc-box
-  :hook (prog-mode . eldoc-box-hover-at-point-mode))
+  :hook (prog-mode . eldoc-box-hover-mode))
+
 (use-package mood-line
   :custom
-  (mood-line-glyph-alist 
-   ;; This is the same as mood-line-fira-code, but
-   ;; 1) :custom seems to run before that variable is defined?
-   ;; 2) nix doesn't appreciate the ? syntax used in the main source file
-   '((:checker-info . 8627)
-     (:checker-issues . 8594)
-     (:checker-good . 10003)
-     (:checker-checking . 10227)
-     (:checker-errored . 120)
-     (:checker-interrupted . 61)
-     (:vc-added . 43)
-     (:vc-needs-merge . 10231)
-     (:vc-needs-update . 8595)
-     (:vc-conflict . 120)
-     (:vc-good . 10003)
-     (:buffer-narrowed . 9698)
-     (:buffer-modified . 9679)
-     (:buffer-read-only . 9632)
-     (:count-separator . 215)))
-    (mood-line-evil-state-alist 
-       '((normal . ("🅝" . font-lock-variable-name-face))
-         (insert . ("🅘" . font-lock-string-face))
-         (visual . ("🅥" . font-lock-keyword-face))
-         (replace . ("🅡" . font-lock-type-face))
-         (motion . ("🅜" . font-lock-constant-face))
-         (operator . ("🅞". font-lock-function-name-face))
-         (emacs . ("🅔" . font-lock-builtin-face))))
+    (mood-line-glyph-alist 
+     ;; This is the same as mood-line-fira-code, but
+     ;; 1) :custom seems to run before that variable is defined?
+     ;; 2) nix doesn't appreciate the ? syntax used in the main source file
+     '((:checker-info . 8627)
+       (:checker-issues . 8594)
+       (:checker-good . 10003)
+       (:checker-checking . 10227)
+       (:checker-errored . 120)
+       (:checker-interrupted . 61)
+       (:vc-added . 43)
+       (:vc-needs-merge . 10231)
+       (:vc-needs-update . 8595)
+       (:vc-conflict . 120)
+       (:vc-good . 10003)
+       (:buffer-narrowed . 9698)
+       (:buffer-modified . 9679)
+       (:buffer-read-only . 9632)
+       (:count-separator . 215)))
+      (mood-line-evil-state-alist 
+         '((normal . ("🅝" . font-lock-variable-name-face))
+           (insert . ("🅘" . font-lock-string-face))
+           (visual . ("🅥" . font-lock-keyword-face))
+           (replace . ("🅡" . font-lock-type-face))
+           (motion . ("🅜" . font-lock-constant-face))
+           (operator . ("🅞". font-lock-function-name-face))
+           (emacs . ("🅔" . font-lock-builtin-face))))
   :config
     (mood-line-mode))
 
