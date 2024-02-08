@@ -42,9 +42,6 @@
              (select-enable-primary t)
              (mouse-drag-copy-region t)
              (prettify-symbols-unprettify-at-point t)
-;;           (custom-file null-device)
-;;           (backup-directory-alist `((".*" . ,temporary-file-directory)))
-;;           (auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
 
   :init
     (defun my/prog-mode-setup ()
@@ -397,19 +394,6 @@
        (:name "Unread" :query "tag:inbox and tag:unread" :key "u")
        (:name "Archive" :query "tag:archive" :key "a")
        (:name "Trash" :query "tag:deleted" :key "t"))))
-
-(use-package emms
-  :custom (emms-player-mpv-parameters
-           '("--quiet"
-             "--really-quiet"
-             "--no-audio-display"
-             "--no-video"
-             "--no-audio-display"
-             "--force-window=no"
-             "--vo=null"))
-  :config
-    (emms-standard)
-    (emms-default-players))
 
 ;; languages
 (use-package dockerfile-mode)
