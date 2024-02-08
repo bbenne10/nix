@@ -14,7 +14,7 @@ in
 {
   fonts = {
     fontDir.enable = true;
-    fonts = with pkgs; [
+    packages = with pkgs; [
       (nerdfonts.override { fonts = [ "ShareTechMono" ]; })
       noto-fonts
       recursive
@@ -45,13 +45,10 @@ in
       enable = true;
       package = pkgs.emacsWithPackagesFromUsePackage {
         config = ./../conf.d/emacs.el;
-        package = pkgs.emacs29;
+        package = pkgs.emacs29-pgtk;
         alwaysEnsure = true;
         override = epkgs: epkgs // {
           inherit bennett-themes;
-          mood-line = epkgs.mood-line.overrideAttrs (_: {
-            patches = [ ../conf.d/mood-line-eglot.patch ];
-          });
         };
         extraEmacsPackages = (epkgs: with epkgs; [
           treesit-grammars.with-all-grammars
