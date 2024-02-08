@@ -1,7 +1,7 @@
 {
   inputs = {
     nixpkgs = {
-      url = "github:nixos/nixpkgs/nixos-unstable";
+      url = "github:nixos/nixpkgs/nixos-23.11";
     };
 
     darwin = {
@@ -10,12 +10,7 @@
     };
 
     home-manager = {
-      url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    nix-index-database = {
-      url = "github:Mic92/nix-index-database";
+      url = "github:nix-community/home-manager/release-23.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -53,6 +48,16 @@
       url = "github:urbainvaes/fzf-marks";
       flake = false;
     };
+
+    dwl-src = {
+      url = "github:bbenne10/dwl";
+      flake = false;
+    };
+
+    flake_env = {
+      url = "path:/home/bryan/code/flake_env";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -80,10 +85,8 @@
       };
       baseLinuxModules = [
         inputs.home-manager.nixosModules.home-manager
-        inputs.nix-index-database.nixosModules.nix-index
         ./lib/nix.nix
         ./lib/common.nix
-        ./lib/graphical.nix
         ./lib/linux.nix
       ];
     in
@@ -92,6 +95,7 @@
         "bennett-laptop" = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           modules = baseLinuxModules ++ [
+            ./lib/graphical.nix
             ./hardware/laptop.nix
             ./hosts/bennett-laptop.nix
           ];
