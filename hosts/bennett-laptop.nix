@@ -1,51 +1,24 @@
-{ pkgs, userName, ... }: {
+{ pkgs, userName, dwl-src, ... }:
+let dwl = (pkgs.callPackage ../derivations/dwl.nix { dwl-src = dwl-src; }); in
+{
   boot.kernelPackages = pkgs.linuxPackages_zen;
   hardware.system76.enableAll = true;
   environment.systemPackages = with pkgs; [
+    wlr-randr
     pmutils
     terminus_font
-    gnomeExtensions.pop-shell
-    gnomeExtensions.gsconnect
-    gnomeExtensions.caffeine
-    gnomeExtensions.media-controls
-    gnomeExtensions.workspace-indicator-2
-    gnomeExtensions.status-area-horizontal-spacing
-    gnome.gnome-tweaks
-    gthumb
   ];
-  environment.gnome.excludePackages = (with pkgs; [
-    gnome-photos
-    gnome-tour
-  ]) ++ (with pkgs.gnome; [
-    eog
-    epiphany
-    geary
-    gedit
-    gnome-characters
-    gnome-initial-setup
-    gnome-music
-    iagno
-    tali
-    yelp
-  ]);
-  programs.dconf.enable = true;
 
   networking.hostName = "bennett-laptop";
-  networking.nameservers = [ "192.168.1.142" "1.1.1.1" ];
   networking.networkmanager.enable = true;
 
-  hardware.pulseaudio.enable = false;
-
-  users.users.${userName} = {
-    isNormalUser = true;
-    extraGroups = [ "wheel" "docker" "vboxusers" "video" ];
-    hashedPassword = "$6$hc672tTQXjHQV$xOGejAjJAdP3VhKMAHCZ2J8G0mj2mjrYS7l4hkq6fVRlLygWplZeem4LX0MEdGGBsGaqClLUc6Z4fkRsfROYB/";
-    openssh.authorizedKeys.keys = [
-      "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDQtmdA5vhoNcN14PeFS80Y++BVPSBJKajg1hlqdr5dwhr+Ug6zvUHVpJy36FZvM6VL0t/cB4GwFpv9B+tHkECTfHQgQLvQ1pQIua5ByEf3hhc5owVWA3WOQa9E92F+PFR/AjNJHaQqSAZevYobxRT03r4fCkwaODXWuttz0314hV0HJMZPXZQxHrPEpBBmm7AcetWsu4zExCwwEODK1aT7WvDUp6CvIQaAqRSkfZQhirD//E7XgChTvVcVbjVV2E6akSOPr0cAZb08P6/XjXemddV3ohJtgzGVB8zixCf34Z53etD4j6MaVWjiRmv5J2Pffc7Kzwwdjs+LFkSr328L cardno:000606534762"
-    ];
-  };
+  programs.dconf.enable = true;
 
   users.groups.keyd = { };
+  services.tailscale = {
+    enable = true;
+    openFirewall = true;
+  };
   systemd.services.keyd = {
     description = "System-wide remapping daemon";
     requires = [ "local-fs.target" ];
@@ -56,6 +29,8 @@
       Type = "simple";
     };
   };
+
+  environment.etc."keyd/default.conf".source = ../conf.d/keyd_config;
 
   networking.firewall.allowedTCPPortRanges = [
     {
@@ -72,28 +47,18 @@
 
   time.timeZone = "America/New_York";
   i18n.defaultLocale = "en_US.UTF-8";
-  console = {
-    font = "${pkgs.terminus_font}/share/consolefonts/ter-u28n.psf.gz";
-    keyMap = "us";
-  };
   home-manager.users.${userName} = {
     home.packages = with pkgs; [
       firefox
       libnotify
-      spot
       xdg-utils
       xdg-desktop-portal
-      blackbox-terminal
-      tootle
-      fractal
+      dwl
+      pinentry-bemenu
     ];
 
     gtk = {
       enable = true;
-      theme = {
-        name = "Nordic-darker";
-        package = pkgs.nordic;
-      };
       cursorTheme = {
         name = "Vanilla-DMZ";
         package = pkgs.vanilla-dmz;
@@ -111,17 +76,189 @@
     services.syncthing = {
       enable = true;
     };
+
+    services.gpg-agent = {
+      enable = true;
+      enableZshIntegration = true;
+      enableScDaemon = true;
+      enableSshSupport = true;
+      pinentryFlavor = "qt";
+      # Disabled until  the following is fixed upstream
+      # (and maybe ba, depending on time-tablekported, depending on time-table?)
+      # https://github.com/nix-community/home-manager/issues/4804
+      # extraConfig = ''
+      #   pinentry-program ${pkgs.pinentry-bemenu}/bin/pinentry-bemenu
+      # '';
+    };
+
+    services.kanshi = {
+      enable = true;
+      profiles = {
+        default = {
+          outputs = [
+            {
+              criteria = "eDP-1";
+              status = "enable";
+            }
+          ];
+        };
+        docked = {
+          outputs = [
+            {
+              criteria = "eDP-1";
+              status = "disable";
+            }
+            {
+              criteria = "HDMI-A-2";
+              status = "enable";
+            }
+          ];
+        };
+      };
+    };
+
+    programs.waybar = {
+      enable = true;
+      settings = {
+        mainBar = {
+          spacing = 4;
+          margin = "10";
+          modules-left = [
+            "clock"
+            "dwl/tags"
+          ];
+          modules-center = [ ];
+          modules-right = [
+            "pulseaudio"
+            "network"
+            "cpu"
+            "memory"
+            "temperature"
+            "backlight"
+            "battery"
+          ];
+
+          keyboard-state = {
+            numlock = true;
+            capslock = true;
+            format = "{icon} {name}";
+            format-icons = {
+              locked = "";
+              unlocked = "";
+            };
+          };
+          "dwl/tags" = {
+            num-tags = 4;
+            tag-labels = [
+              ""
+              ""
+              ""
+              ""
+            ];
+          };
+          mpd = {
+            format = " {stateIcon} {consumeIcon}{randomIcon}{repeatIcon}{singleIcon}{artist} - {album} - {title} ({elapsedTime:%M:%S}/{totalTime:%M:%S}) ⸨{songPosition}|{queueLength}⸩ {volume}%";
+            format-disconnected = " Disconnected";
+            format-stopped = " {consumeIcon}{randomIcon}{repeatIcon}{singleIcon}Stopped";
+            unknown-tag = "N/A";
+            interval = 2;
+            consume-icons = {
+              on = " ";
+            };
+            random-icons = {
+              off = "<span color=\"#f53c3c\"></span> ";
+              on = " ";
+            };
+            repeat-icons = {
+              on = " ";
+            };
+            single-icons = {
+              on = "1 ";
+            };
+            state-icons = {
+              paused = "";
+              playing = "";
+            };
+            tooltip-format = "MPD (connected)";
+            tooltip-format-disconnected = "MPD (disconnected)";
+          };
+          clock = {
+            timezone = "America/New_York";
+            tooltip-format = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
+            format-alt = "{:%Y-%m-%d}";
+            format = "{:%a; %b %e @ %I:%M %p}";
+          };
+          cpu = {
+            format = " {usage}%";
+            tooltip = false;
+          };
+          memory = {
+            format = " {}%";
+          };
+          temperature = {
+            # thermal-zone = 2;
+            # hwmon-path = "/sys/class/hwmon/hwmon2/temp1_input";
+            # format-critical = "{temperatureC}°C {icon}";
+            critical-threshold = 80;
+            format = "{icon} {temperatureC}°C";
+            format-icons = [ "" "" "" ];
+          };
+          backlight = {
+            # device = "acpi_video1";
+            format = "{icon} {percent}%";
+            format-icons = [ "" "" "" "" "" "" "" "" "" ];
+          };
+          battery = {
+            states = {
+              # good = 95;
+              warning = 30;
+              critical = 15;
+            };
+            format = "{icon} {capacity}%";
+            format-charging = " {capacity}% ";
+            format-plugged = " {capacity}% ";
+            format-alt = "{icon} {icon}";
+            # format-good = ""; 
+            # format-full = "";
+            format-icons = [ "" "" "" "" "" ];
+          };
+          network = {
+            # interface = "wlp2*";
+            # (Optional) To force the use of this interface
+            format-wifi = "{essid} ({signalStrength}%) ";
+            format-ethernet = "{ipaddr}/{cidr} ";
+            tooltip-format = "{ifname} via {gwaddr} ";
+            format-linked = "{ifname} (No IP) ";
+            format-disconnected = "Disconnected ⚠";
+            format-alt = "{ifname}: {ipaddr}/{cidr}";
+          };
+          pulseaudio = {
+            # scroll-step = 1; # %, can be a float
+            format = "{icon} {volume}% {format_source}";
+            format-bluetooth = "{icon} {volume}% {format_source}";
+            format-bluetooth-muted = "{icon}  {format_source}";
+            format-muted = " {format_source}";
+            format-source = " {volume}% ";
+            format-source-muted = "";
+            format-icons = {
+              headphone = "";
+              hands-free = "";
+              headset = "";
+              phone = "";
+              portable = "";
+              car = "";
+              default = [ "" "" "" ];
+            };
+            on-click = "${pkgs.pavucontrol}";
+          };
+        };
+      };
+      style = ../conf.d/waybar_style.css;
+    };
+
   };
 
-  services.xserver.enable = true;
-  services.xserver.displayManager.gdm.enable = true;
-  security.pam.services.gdm.enableGnomeKeyring = true;
-  services.xserver.desktopManager.gnome.enable = true;
-
-  environment.etc."keyd/default.conf".source = ../conf.d/keyd_config;
-
   services.pcscd.enable = true;
-
   powerManagement = {
     enable = true;
     cpuFreqGovernor = "ondemand";
@@ -132,6 +269,8 @@
 
   hardware.bluetooth.enable = true;
   security.rtkit.enable = true;
+
+  hardware.pulseaudio.enable = false;
   services.pipewire = {
     enable = true;
     pulse.enable = true;
@@ -142,7 +281,5 @@
   };
 
   services.upower.enable = true;
-
-  console.earlySetup = true;
 }
 
