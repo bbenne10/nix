@@ -62,7 +62,7 @@ in
       enable = true;
     };
 
-    programs.btop = {
+    programs.htop = {
       enable = true;
     };
 
