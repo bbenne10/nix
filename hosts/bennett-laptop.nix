@@ -19,18 +19,21 @@ let dwl = (pkgs.callPackage ../derivations/dwl.nix { dwl-src = dwl-src; }); in
     enable = true;
     openFirewall = true;
   };
-  systemd.services.keyd = {
-    description = "System-wide remapping daemon";
-    requires = [ "local-fs.target" ];
-    after = [ "local-fs.target" ];
-    wantedBy = [ "sysinit.target" ];
-    serviceConfig = {
-      ExecStart = "${pkgs.keyd}/bin/keyd";
-      Type = "simple";
+
+  services.keyd = {
+    enable = true;
+    keyboards.default = {
+      ids = [ "*" ];
+      settings = {
+        main = {
+          insert = "S-insert";
+          capslock = "overload(control, menu)";
+        };
+      };
     };
   };
 
-  environment.etc."keyd/default.conf".source = ../conf.d/keyd_config;
+
 
   networking.firewall.allowedTCPPortRanges = [
     {
