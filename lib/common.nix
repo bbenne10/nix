@@ -46,7 +46,6 @@ in
       gawk
       gnupg
       manix
-      mpv
       nix-tree
       nixUnstable
       nixfmt
