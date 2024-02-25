@@ -7,6 +7,7 @@
 , kanshi
 , pamixer
 , swaybg
+, swaylock
 , waybar
 , writeShellScriptBin
 }:
@@ -23,6 +24,7 @@ dwl.overrideAttrs (oldAttrs: rec {
   postPatch = ''
     substituteInPlace \
       config.h \
+      --replace "swaylock" "${swaylock}/bin/swaylock" \
       --replace "bemenu-run" "${bemenu}/bin/bemenu-run" \
       --replace "foot" "${foot}/bin/foot" \
       --replace "pamixer" "${pamixer}/bin/pamixer" \
