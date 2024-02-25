@@ -25,6 +25,14 @@
       keep-outputs = true
       keep-derivations = true
     '';
+    optimise = {
+      automatic = true;
+    };
+    gc = {
+      automatic = true;
+      options = "--delete-older-than 30d";
+      persistent = true;
+    };
   };
   system.activationScripts.diff = {
     supportsDryActivation = true;
