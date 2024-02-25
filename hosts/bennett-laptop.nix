@@ -91,7 +91,7 @@ let dwl = (pkgs.callPackage ../derivations/dwl.nix { dwl-src = dwl-src; }); in
       enableSshSupport = true;
       pinentryFlavor = "qt";
       # Disabled until  the following is fixed upstream
-      # (and maybe ba, depending on time-tablekported, depending on time-table?)
+      # (and maybe backported, depending on time-table?)
       # https://github.com/nix-community/home-manager/issues/4804
       # extraConfig = ''
       #   pinentry-program ${pkgs.pinentry-bemenu}/bin/pinentry-bemenu
@@ -232,11 +232,11 @@ let dwl = (pkgs.callPackage ../derivations/dwl.nix { dwl-src = dwl-src; }); in
           network = {
             # interface = "wlp2*";
             # (Optional) To force the use of this interface
-            format-wifi = "{essid} ({signalStrength}%) ";
-            format-ethernet = "{ipaddr}/{cidr} ";
-            tooltip-format = "{ifname} via {gwaddr} ";
-            format-linked = "{ifname} (No IP) ";
-            format-disconnected = "Disconnected ⚠";
+            format-wifi = " {essid} ({signalStrength}%) ";
+            format-ethernet = "{ipaddr}/{cidr}";
+            tooltip-format = "{ifname} via {gwaddr}";
+            format-linked = "{ifname} (No IP)";
+            format-disconnected = "⚠ Disconnected";
             format-alt = "{ifname}: {ipaddr}/{cidr}";
           };
           pulseaudio = {
