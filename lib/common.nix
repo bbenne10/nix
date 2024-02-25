@@ -123,7 +123,7 @@ in
         ".direnv/"
         ".envrc"
       ];
-      userEmail = "Bryan.Bennett@protonmail.com";
+      userEmail = "Bryan.Bennett@proton.me";
       userName = "Bryan Bennett";
       extraConfig = {
         init = {
