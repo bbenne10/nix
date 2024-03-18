@@ -253,6 +253,7 @@
          (java-mode . eglot-ensure)
          (rust-ts-mode . eglot-ensure)
          (rust-mode . eglot-ensure)
+         (typescript-ts-mode . eglot-ensure)
          (nix-mode . eglot-ensure)))
 
 (use-package project
