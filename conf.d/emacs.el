@@ -247,6 +247,7 @@
               ("<escape>" nil)
   :general (:prefix my/leader "e" 'my/hydra-eglot/body)
            ("<M-RET>" #'eglot-code-actions)
+  :config (add-to-list 'eglot-server-programs '(nix-mode . ("nil")))
   :hook ((python-ts-mode . eglot-ensure)
          (python-mode . eglot-ensure)
          (java-mode . eglot-ensure)
