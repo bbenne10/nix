@@ -13,7 +13,7 @@
                     :family "Rec Mono Semicasual"
                     :weight 'light)
 
-(defconst my/leader (if (eq system-type 'darwin) "<f13>" "<MenuKB>"))
+(defconst my/leader (if (eq system-type 'darwin) "<f13>" "<Tools>"))
 
 ;; Note: These are provided via nix in here
 ;; Themes come from https://github.com/bbenne10/emacs_themes
