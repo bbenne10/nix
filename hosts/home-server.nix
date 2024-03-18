@@ -77,11 +77,7 @@
     openFirewall = true;
   };
   networking.firewall.allowedTCPPorts = [
-    1780 # snapserver
-    1704 # snapserver
-    1705 # snapserver
-    8384 # minecraft?
-    6600 # mopidy mpd
+    8384 # syncthing
     6680 # mopidy web
   ];
   networking.firewall.allowedUDPPorts = [ 22000 21027 ];
@@ -89,6 +85,7 @@
   services.snapserver = {
     enable = true;
     codec = "flac";
+    openFirewall = true;
     streams = {
       mopidy = {
         type = "pipe";
