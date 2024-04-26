@@ -21,17 +21,6 @@ in
     ];
   };
 
-  services.mopidy = {
-    enable = false;
-    extensionPackages = with pkgs; [
-      mopidy-ytmusic
-      mopidy-iris
-      mopidy-somafm
-      mopidy-bandcamp
-      mopidy-soundcloud
-    ];
-  };
-
   home-manager.users.${userName} = {
     home.enableNixpkgsReleaseCheck = true;
     home.stateVersion = "22.05";
