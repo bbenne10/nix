@@ -39,6 +39,7 @@ in
       gnupg
       manix
       nil
+      nix-output-monitor
       nix-tree
       nixfmt-classic
       openssh
