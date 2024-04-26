@@ -65,7 +65,7 @@
           mkPkgs = system:
             import nixpkgs {
               inherit system;
-              overlays = [ emacs.overlay ];
+              overlays = [ emacs.overlays.package emacs.overlays.emacs ];
               config = { allowUnfree = true; };
             };
         in

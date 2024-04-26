@@ -33,6 +33,7 @@ let
       osascript -e "display notification \"$numNew unread emails\" with title \"Notmuch\" sound name \"Submarine\""
     fi
   '';
+  acsaml = pkgs.callPackage ../derivations/acsaml.nix { };
 in
 {
   services.nix-daemon.enable = true;
@@ -41,8 +42,8 @@ in
     url = "https://mail.gtri.gatech.edu/EWS/Exchange.asmx";
   };
 
-
   home-manager.users.${userName} = {
+    home.packages = [ acsaml ];
     programs.mbsync.enable = true;
     programs.msmtp.enable = true;
     programs.notmuch = {
