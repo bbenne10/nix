@@ -123,7 +123,6 @@
           };
           modules = [
             inputs.home-manager.darwinModules.home-manager
-            inputs.nix-index-database.darwinModules.nix-index
             ./lib/common.nix
             ./lib/nix.nix
             ./lib/graphical.nix

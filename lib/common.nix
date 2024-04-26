@@ -1,8 +1,4 @@
-{ config
-, deploy-rs
-, environment
-, home-manager
-, lib
+{ deploy-rs
 , pkgs
 , system
 , userName
@@ -34,7 +30,6 @@ in
     home.enableNixpkgsReleaseCheck = true;
     home.stateVersion = "22.05";
     home.packages = with pkgs; [
-      bitwarden-cli
       curl
       darkmode
       dtach
