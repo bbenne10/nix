@@ -52,12 +52,15 @@ let dwl = (pkgs.callPackage ../derivations/dwl.nix { dwl-src = dwl-src; }); in
   i18n.defaultLocale = "en_US.UTF-8";
   home-manager.users.${userName} = {
     home.packages = with pkgs; [
+      bemenu
       firefox
       libnotify
       xdg-utils
       xdg-desktop-portal
       dwl
-      pinentry-bemenu
+      wlr-randr
+      wl-clipboard
+      wofi
     ];
     home.file.u2f_keys = {
       target = ".config/Yubico/u2f_keys";

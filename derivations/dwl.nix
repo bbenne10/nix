@@ -2,11 +2,11 @@
 , brightnessctl
 , dwl
 , dwl-src
+, emacs
 , firefox
 , foot
 , kanshi
 , pamixer
-, swaybg
 , swaylock
 , waybar
 , writeShellScriptBin
@@ -14,16 +14,16 @@
 let
   autostart = writeShellScriptBin "dwl_autostart.sh" ''
     ${kanshi}/bin/kanshi &
-    ${swaybg}/bin/swaybg -c "#495156" &
     ${waybar}/bin/waybar &
     ${firefox}/bin/firefox &
+    ${emacs}/bin/emacs &
   '';
 in
 dwl.overrideAttrs (oldAttrs: rec {
   src = dwl-src;
   postPatch = ''
     substituteInPlace \
-      config.h \
+      config.def.h \
       --replace "swaylock" "${swaylock}/bin/swaylock" \
       --replace "bemenu-run" "${bemenu}/bin/bemenu-run" \
       --replace "foot" "${foot}/bin/foot" \
