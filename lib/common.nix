@@ -1,15 +1,14 @@
 { config
 , deploy-rs
+, environment
+, home-manager
 , lib
 , pkgs
-, home-manager
-, nix-index-database
 , system
 , userName
-, environment
-, zsh-fzf_tab
 , zsh-fast_syntax_highlighting
 , zsh-fzf_marks
+, zsh-fzf_tab
 , ...
 }:
 let
@@ -21,7 +20,6 @@ in
   environment.systemPackages = with pkgs; [
     bashInteractive
     cachix
-    nixUnstable
     deploy-rs-bin
   ];
 
@@ -38,7 +36,6 @@ in
     home.packages = with pkgs; [
       bitwarden-cli
       curl
-      nix-index-database.packages.${pkgs.stdenv.system}.comma-with-db
       darkmode
       dtach
       dvtm
@@ -46,12 +43,11 @@ in
       gawk
       gnupg
       manix
+      nil
       nix-tree
-      nixUnstable
-      nixfmt
+      nixfmt-classic
       openssh
       ripgrep
-      rnix-lsp
       rsync
       themesh
       tree
@@ -200,7 +196,7 @@ in
       autocd = true;
       dotDir = ".config/zsh";
       enableCompletion = true;
-      enableAutosuggestions = true;
+      autosuggestion.enable = true;
       shellAliases = {
         rmr = "rm -r";
         ls = "${pkgs.eza}/bin/eza";

@@ -1,6 +1,6 @@
 { lib, nixpkgs, pkgs, userName, system, ... }: {
   nix = {
-    package = pkgs.nixUnstable;
+    package = pkgs.nixVersions.latest;
     registry = {
       nixpkgs = {
         flake = nixpkgs;
@@ -25,14 +25,6 @@
       keep-outputs = true
       keep-derivations = true
     '';
-    optimise = {
-      automatic = true;
-    };
-    gc = {
-      automatic = true;
-      options = "--delete-older-than 30d";
-      persistent = true;
-    };
   };
   system.activationScripts.diff = {
     supportsDryActivation = true;

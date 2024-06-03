@@ -7,7 +7,7 @@
         ;
     };
   networking.hostName = "home-server";
-  networking.networkmanager.enable = true;
+  networking.useNetworkd = true;
 
   time.timeZone = "America/New_York";
   i18n.defaultLocale = "en_US.UTF-8";
@@ -97,7 +97,6 @@
   services.mopidy = {
     enable = true;
     extensionPackages = [
-      pkgs.mopidy-mpd
       pkgs.mopidy-iris
       pkgs.mopidy-local
     ];

@@ -4,7 +4,6 @@ let dwl = (pkgs.callPackage ../derivations/dwl.nix { dwl-src = dwl-src; }); in
   boot.kernelPackages = pkgs.linuxPackages_zen;
   hardware.system76.enableAll = true;
   environment.systemPackages = with pkgs; [
-    wlr-randr
     pmutils
     terminus_font
   ];
@@ -92,39 +91,35 @@ let dwl = (pkgs.callPackage ../derivations/dwl.nix { dwl-src = dwl-src; }); in
       enableZshIntegration = true;
       enableScDaemon = true;
       enableSshSupport = true;
-      pinentryFlavor = "qt";
-      # Disabled until  the following is fixed upstream
-      # (and maybe backported, depending on time-table?)
-      # https://github.com/nix-community/home-manager/issues/4804
-      # extraConfig = ''
-      #   pinentry-program ${pkgs.pinentry-bemenu}/bin/pinentry-bemenu
-      # '';
+      pinentryPackage = pkgs.pinentry-bemenu;
     };
 
     services.kanshi = {
       enable = true;
-      profiles = {
-        default = {
-          outputs = [
+      settings = [
+        {
+          profile.name = "default";
+          profile.outputs = [
             {
               criteria = "eDP-1";
               status = "enable";
             }
           ];
-        };
-        docked = {
-          outputs = [
-            {
-              criteria = "eDP-1";
-              status = "disable";
-            }
-            {
-              criteria = "HDMI-A-2";
-              status = "enable";
-            }
-          ];
-        };
-      };
+        }
+        {
+          profile.name = "docked";
+          profile.outputs = [
+             {
+               criteria = "eDP-1";
+               status = "disable";
+             }
+             {
+               criteria = "HDMI-A-2";
+               status = "enable";
+             }
+           ];
+        }
+      ];
     };
 
     programs.waybar = {

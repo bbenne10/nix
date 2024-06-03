@@ -1,7 +1,7 @@
 {
   inputs = {
     nixpkgs = {
-      url = "github:nixos/nixpkgs/nixos-23.11";
+      url = "github:nixos/nixpkgs/nixos-24.05";
     };
 
     darwin = {
@@ -10,7 +10,7 @@
     };
 
     home-manager = {
-      url = "github:nix-community/home-manager/release-23.11";
+      url = "github:nix-community/home-manager/release-24.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -52,11 +52,6 @@
     dwl-src = {
       url = "github:bbenne10/dwl";
       flake = false;
-    };
-
-    flake_env = {
-      url = "path:/home/bryan/code/flake_env";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
@@ -142,9 +137,10 @@
           hostname = "bryan-bennett.com";
           user = "root";
           sshUser = "bryan";
-          magicRollback = false;
-          sshOpts = [ "-t" ];
+          interactiveSudo = true;
           profilesOrder = [ "system" ];
+          timeout = 600;
+          magicRollback=false;
 
           profiles = {
             system = {
@@ -157,7 +153,7 @@
           hostname = "home-server";
           user = "root";
           sshUser = "bryan";
-          sshOpts = [ "-t" ];
+          interactiveSudo = true;
           magicRollback = false;
           profiles = {
             system = {

@@ -6,6 +6,7 @@ in
 {
   boot.tmp.cleanOnBoot = true;
   zramSwap.enable = false;
+  networking.useNetworkd = true;
   networking.hostName = "bennett-server";
   networking.domain = "";
   services.openssh.enable = true;
