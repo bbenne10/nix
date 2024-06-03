@@ -4,13 +4,11 @@
 ;;; Commentary:
 ;;; Code:
 
-(eval-when-compile (require 'use-package))
-
 (set-face-attribute 'default nil
-                    :family "Rec Mono Semicasual"
-                    :weight 'light)
+                    :family "ShureTechMono Nerd Font"
+                    :weight 'regular)
 (set-face-attribute 'line-number-current-line nil
-                    :family "Rec Mono Semicasual"
+                    :family "ShureTechMono Nerd Font"
                     :weight 'light)
 
 (defconst my/leader (if (eq system-type 'darwin) "<f13>" "<Tools>"))
@@ -47,7 +45,7 @@
     (defun my/prog-mode-setup ()
       (display-line-numbers-mode)
       (column-number-mode 1)
-      ;; (prettify-symbols-mode 1)
+      (prettify-symbols-mode 1)
       (hs-minor-mode))
 
     (defun my/after-init-hook ()
@@ -63,18 +61,16 @@
         indent-tabs-mode nil))
 
     (when (eq window-system 'pgtk)
-      (unless (string-equal "gnome" (getenv "DESKTOP_SESSION"))
-        ;; CSD is the devil, but is necessary under gnome
-        (add-to-list 'default-frame-alist '(undecorated . t))))
+      (add-to-list 'default-frame-alist '(undecorated . t)))
 
     :general (
        :prefix my/leader
        "b" #'find-file
-       my/leader #'project-find-file)
+       my/leader #'consult-project-extra-find)
 
-  :hook ((prog-mode . my/prog-mode-setup)
-         (after-init . my/after-init-hook)
-         (before-save . 'whitespace-cleanup)))
+    :hook ((prog-mode . my/prog-mode-setup)
+           (after-init . my/after-init-hook)
+           (before-save . 'whitespace-cleanup)))
 
 (use-package auto-dark
   :custom
@@ -103,6 +99,9 @@
            ("r" textsize-reset :color blue)
            ("<escape>" nil)))
 
+(use-package which-key
+  :config (which-key-mode 1))
+
 (use-package evil
     :custom (evil-undo-system 'undo-redo)
             (evil-want-keybinding nil)
@@ -118,38 +117,50 @@
     :config (evil-collection-init '(consult dired magit magit-todos notmuch)))
 
 (use-package eldoc-box
-  :hook (prog-mode . eldoc-box-hover-at-point-mode))
-(use-package mood-line
-  :custom
-  (mood-line-glyph-alist 
-   ;; This is the same as mood-line-fira-code, but
-   ;; 1) :custom seems to run before that variable is defined?
-   ;; 2) nix doesn't appreciate the ? syntax used in the main source file
-   '((:checker-info . 8627)
-     (:checker-issues . 8594)
-     (:checker-good . 10003)
-     (:checker-checking . 10227)
-     (:checker-errored . 120)
-     (:checker-interrupted . 61)
-     (:vc-added . 43)
-     (:vc-needs-merge . 10231)
-     (:vc-needs-update . 8595)
-     (:vc-conflict . 120)
-     (:vc-good . 10003)
-     (:buffer-narrowed . 9698)
-     (:buffer-modified . 9679)
-     (:buffer-read-only . 9632)
-     (:count-separator . 215)))
-    (mood-line-evil-state-alist 
-       '((normal . ("🅝" . font-lock-variable-name-face))
-         (insert . ("🅘" . font-lock-string-face))
-         (visual . ("🅥" . font-lock-keyword-face))
-         (replace . ("🅡" . font-lock-type-face))
-         (motion . ("🅜" . font-lock-constant-face))
-         (operator . ("🅞". font-lock-function-name-face))
-         (emacs . ("🅔" . font-lock-builtin-face))))
+  :hook (prog-mode . eldoc-box-hover-mode))
+
+(use-package feline
   :config
-    (mood-line-mode))
+  (defun my-feline-evil nil
+    (when (boundp 'evil-state)
+      (let ((mode-cons (alist-get evil-state feline-evil-state-alist)))
+        (propertize (car mode-cons) 'face (cdr mode-cons)))))
+  (setq ;; not done in :custom because this is not defcustom'd in feline
+   feline-evil-state-alist
+   '((normal . ("󰰒" . font-lock-variable-name-face))
+     (insert . ("󰰃" . font-lock-string-face))
+     (visual . ("󰰪" . font-lock-keyword-face))
+     (replace . ("󰰞" . font-lock-type-face))
+     (motion . ("󰰏" . font-lock-constant-face))
+     (operator . ("󰰕". font-lock-function-name-face))
+     (emacs . ("" . font-lock-builtin-face))))
+
+  (setq-default
+   mode-line-format
+   '(""
+     (:eval (my-feline-evil))
+     "  "
+     (:eval (feline-major-mode))
+     " "
+     (:eval (feline-buffer-id (format-mode-line "%b")))
+     (:eval (propertize (if (buffer-modified-p) " ± " " ") 'face 'feline-buffer-id-face))
+     mode-line-format-right-align
+     (:eval (feline-project-name))
+     " "
+     (:eval (feline-positions))
+     " "
+     mode-line-misc-info))
+  :custom
+    (feline-line-prefix "↕")
+    (feline-column-prefix "↔ ")
+    (feline-mode-symbols
+     '(emacs-lisp-mode ""
+       python-mode ""
+       python-ts-mode ""
+       typescript-ts-mode "󰛦"
+       nix-mode "󱄅"
+       rust-mode ""
+       )))
 
 (use-package corfu
   :custom (corfu-auto t)
@@ -182,9 +193,7 @@
     :custom (fic-highlighted-words '("FIXME" "TODO" "BUG" "NOTE" "XXX"))
     :hook (prog-mode . fic-mode))
 
-(use-package which-key
-  :config (which-key-mode 1))
-
+;; Visual flymake integration
 (use-package sideline
   :hook (flymake-mode . sideline-mode))
 
@@ -192,29 +201,7 @@
   :custom (sideline-flymake-display-errors-whole-line 'line)
           (sideline-backends-right '((sideline-flymake . up))))
 
-(use-package consult
-  :general (:prefix my/leader
-            "/" 'consult-ripgrep)
-  :custom (register-preview-delay 0)
-          (register-preview-function #'consult-register-format)
-          (xref-show-xrefs-function #'consult-xref)
-          (xref-show-definitions-function #'consult-xref)
-  :init
-    (advice-add #'register-preview :override #'consult-register-preview)
-  :config
-    (consult-customize
-     consult-theme
-     :preview-key '(:debounce 0.2 any)
-     consult-ripgrep consult-git-grep consult-grep
-     consult-bookmark consult-recent-file consult-xref
-     consult--source-recent-file consult--source-project-recent-file consult--source-bookmark
-     :preview-key "M-."))
-
-(use-package consult-project-extra)
-
-(use-package consult-dash
-  :config (consult-customize consult-dash :initial (thing-at-point 'symbol)))
-
+;; Language Server Support / Treesitter
 (use-package eglot
   :custom (eglot-extend-to-xref t)
   :hydra my/hydra-eglot (:exit t :foreign-keys warn :hint nil)
@@ -225,7 +212,7 @@
 │ [_d_]: Declaration     ││ [_r_]: Rename   ││ [_=_]: Buffer ││ [_X_]: Shutdown     │
 │ [_i_]: Implementation  ││ [_a_]: Actions  ││ [_R_]: Region ││ [_C_]: Reconnect    │
 │ [_D_]: Type definition ││               ││             ││ [_E_]: Event Buffer │
-│ [_?_]: Dash docs       ││               ││             ││                   │
+│ [_u_]: Uses            ││               ││             ││                   │
 │ [_n_]: Next error      ││               ││             ││                   │
 │ [_p_]: Previous error  ││               ││             ││                   │
 └──────────────────────┘└───────────────┘└─────────────┘└───────────────────┘
@@ -234,6 +221,7 @@
               ("d" eglot-find-declaration)
               ("i" eglot-find-implementation)
               ("D" eglot-find-typeDefinition)
+              ("u" xref-find-references)
               ("r" eglot-rename)
               ("a" eglot-code-actions)
               ("=" eglot-format-buffer)
@@ -241,7 +229,6 @@
               ("X" eglot-shutdown)
               ("C" eglot-reconnect)
               ("E" eglot-events-buffer)
-              ("?" consult-dash)
               ("n" flymake-goto-next-error :color amaranth)
               ("p" flymake-goto-prev-error :color amaranth)
               ("<escape>" nil)
@@ -256,6 +243,12 @@
          (typescript-ts-mode . eglot-ensure)
          (nix-mode . eglot-ensure)))
 
+(use-package treesit-auto
+  :config
+    (treesit-auto-add-to-auto-mode-alist 'all)
+    (global-treesit-auto-mode))
+
+;; Project perspectives
 (use-package project
   :defer nil
   :custom (project-vc-extra-root-markers '(".project"))
@@ -331,6 +324,27 @@
     :prefix my/leader
     "p" #'tabspaces-open-or-create-project-and-workspace))
 
+;; completion / minibuffer
+(use-package consult
+  :general (:prefix my/leader
+            "/" 'consult-ripgrep)
+  :custom (register-preview-delay 0)
+          (register-preview-function #'consult-register-format)
+          (xref-show-xrefs-function #'consult-xref)
+          (xref-show-definitions-function #'consult-xref)
+  :init
+    (advice-add #'register-preview :override #'consult-register-preview)
+  :config
+    (consult-customize
+     consult-theme
+     :preview-key '(:debounce 0.2 any)
+     consult-ripgrep consult-git-grep consult-grep
+     consult-bookmark consult-recent-file consult-xref
+     consult--source-recent-file consult--source-project-recent-file consult--source-bookmark
+     :preview-key "M-."))
+
+(use-package consult-project-extra)
+
 (use-package vertico
    :init (vertico-mode))
 
@@ -343,6 +357,7 @@
   :general (:map minibuffer-local-map "M-A" 'marginalia-cycle)
   :init (marginalia-mode))
 
+;; terminal-in-emacs
 (use-package vterm
   :custom (vterm-shell (concat (getenv "HOME") "/.nix-profile/bin/zsh")))
 
@@ -389,34 +404,24 @@
 
   :hook (vterm-mode . my/vterm-mode-setup))
 
-(use-package notmuch
-  :custom
-    (notmuch-saved-searches
-     '((:name "Inbox" :query "tag:inbox" :key "i")
-       (:name "Unread" :query "tag:inbox and tag:unread" :key "u")
-       (:name "Archive" :query "tag:archive" :key "a")
-       (:name "Trash" :query "tag:deleted" :key "t"))))
-
 ;; languages
-(use-package dockerfile-mode)
-
 (use-package reason-mode)
 
 (use-package markdown-mode
   :custom (markdown-command "pandoc")
   :mode (("\\.md'" . gfm-mode)))
 
-(defun my-before-save-format-buffer () (add-hook 'before-save-hook 'eglot-format-buffer nil t))
+(defun my-before-save-format-buffer ()
+  "Call \"eglot-format-buffer\" before save."
+  (add-hook 'before-save-hook 'eglot-format-buffer nil t))
 
 (use-package nix-mode
   :hook (nix-mode . my-before-save-format-buffer))
 
 (use-package python
-  ;; set ensure nil to use bundled version of python.el
-  ;; rather than grabbing from elpa
   :ensure nil
-  :mode ("\\.py\\'" . python-mode)
-  :interpreter ("python" . python-mode)
+  :mode ("\\.py\\'" . python-ts-mode)
+  :interpreter ("python" . python-ts-mode)
   :hook ((python-mode . my-before-save-format-buffer)
          (python-ts-mode . my-before-save-format-buffer)))
 
