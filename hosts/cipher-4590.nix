@@ -37,10 +37,6 @@ let
 in
 {
   services.nix-daemon.enable = true;
-  services.davmail = {
-    enable = true;
-    url = "https://mail.gtri.gatech.edu/EWS/Exchange.asmx";
-  };
 
   home-manager.users.${userName} = {
     home.packages = [ acsaml ];
