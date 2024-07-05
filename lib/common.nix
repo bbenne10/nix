@@ -9,7 +9,6 @@
 }:
 let
   themesh = (pkgs.callPackage ../derivations/themesh.nix { });
-  darkmode = (pkgs.callPackage ../derivations/darkmode.nix { });
   deploy-rs-bin = deploy-rs.packages.${system}.deploy-rs;
 in
 {
@@ -31,7 +30,6 @@ in
     home.stateVersion = "22.05";
     home.packages = with pkgs; [
       curl
-      darkmode
       dtach
       dvtm
       fd
