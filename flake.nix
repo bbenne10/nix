@@ -5,7 +5,7 @@
     };
 
     darwin = {
-      url = "github:bbenne10/nix-darwin";
+      url = "github:LnL7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -49,6 +49,12 @@
       flake = false;
     };
 
+    # Darwin specific
+    mac-app-util = {
+      url = "github:hraban/mac-app-util";
+    };
+
+    # Linux specific
     dwl-src = {
       url = "github:bbenne10/dwl";
       flake = false;
@@ -123,6 +129,13 @@
           };
           modules = [
             inputs.home-manager.darwinModules.home-manager
+            inputs.mac-app-util.darwinModules.default
+            ({ pkgs, config, ... }: {
+              # Enable this for home-manager packages too
+              home-manager.sharedModules = [
+                inputs.mac-app-util.homeManagerModules.default
+              ];
+            })
             ./lib/common.nix
             ./lib/nix.nix
             ./lib/graphical.nix

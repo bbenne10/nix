@@ -73,6 +73,8 @@
            (after-init . my/after-init-hook)
            (before-save . 'whitespace-cleanup)))
 
+(use-package exec-path-from-shell
+  :config (exec-path-from-shell-initialize))
 
 (use-package textsize
    :custom (textsize-default-points (if (eq system-type 'darwin) 18 12))
@@ -274,6 +276,7 @@
               (lambda (f)
                 (string-prefix-p project-root (expand-file-name f)))
               recentf-list))))
+
     (defun project-multi-occur (&optional nlines)
       "Do a `multi-occur' in the project's buffers.
        With a prefix argument, show NLINES of context."
@@ -282,6 +285,7 @@
         (multi-occur (project--buffer-list pr)
                      (car (occur-read-primary-args))
                      nlines)))
+
   :hydra (my/hydra-project (:exit t :foreign-keys warn :hint nil)
                            "
 ┌────────────────────┐┌─────────────┐┌────────────────────┐┌──────────────────────┐┌────────────────────┐
