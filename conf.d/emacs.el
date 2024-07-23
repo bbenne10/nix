@@ -54,6 +54,7 @@
       (global-hl-line-mode 1)
       (pixel-scroll-precision-mode 1)
       (show-paren-mode 1)
+      (load-theme 'bb-everforest-hard-dark t)
       (defalias 'yes-or-no-p 'y-or-n-p)
 
       (setq-default
@@ -72,11 +73,6 @@
            (after-init . my/after-init-hook)
            (before-save . 'whitespace-cleanup)))
 
-(use-package auto-dark
-  :custom
-    (auto-dark-dark-theme 'bb-everforest-hard-dark)
-    (auto-dark-light-theme 'bb-everforest-hard-light)
-  :init (auto-dark-mode))
 
 (use-package textsize
    :custom (textsize-default-points (if (eq system-type 'darwin) 18 12))
