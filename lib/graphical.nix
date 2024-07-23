@@ -27,11 +27,12 @@ in
       pandoc
     ];
 
-    programs.emacs = {
+    programs.emacs = let package = if pkgs.stdenv.isDarwin then pkgs.emacs29 else pkgs.emacs29-pgtk; in {
       enable = true;
       package = pkgs.emacsWithPackagesFromUsePackage {
+        inherit package;
+
         config = ./../conf.d/emacs.el;
-        package = pkgs.emacs29-pgtk;
         alwaysEnsure = true;
         override = epkgs: epkgs // {
           inherit bennett-themes;
