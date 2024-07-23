@@ -6,7 +6,6 @@
     browser="$(command -v xdg-open || command -v open)"
     COOKIE=
 
-    # shellcheck disable=SC2046
     eval "$(
         openconnect \
             "$@" \
