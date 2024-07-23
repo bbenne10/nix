@@ -59,10 +59,14 @@
       url = "github:bbenne10/dwl";
       flake = false;
     };
+
+    nur = {
+      url = "github:nix-community/NUR";
+    };
   };
 
   outputs =
-    { self, nixpkgs, deploy-rs, emacs, darwin, ... }@inputs:
+    { self, nixpkgs, deploy-rs, emacs, darwin, nur, ... }@inputs:
     let
       genAttrs = list: f: nixpkgs.lib.genAttrs list f;
       systems = [ "x86_64-darwin" "x86_64-linux" ];
@@ -71,7 +75,11 @@
           mkPkgs = system:
             import nixpkgs {
               inherit system;
-              overlays = [ emacs.overlays.package emacs.overlays.emacs ];
+              overlays = [
+                emacs.overlays.package
+                emacs.overlays.emacs
+                nur.overlay
+              ];
               config = { allowUnfree = true; };
             };
         in

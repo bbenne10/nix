@@ -1,6 +1,4 @@
-{ config
-, pkgs
-, home-manager
+{ pkgs
 , userName
 , emacs_themes
 , ...
@@ -47,8 +45,30 @@ in
     home.file.".config/emacs/init.el".source = ./../conf.d/emacs.el;
 
     programs.firefox = {
-      # TODO: nur for addons
-      enable = (pkgs.stdenv.isLinux);
+      enable = true;
+      package = if pkgs.stdenv.isLinux then pkgs.librewolf else null;
+      profiles.default = {
+        name = "default";
+        isDefault = true;
+        extensions = builtins.attrValues {
+          inherit (pkgs.nur.repos.rycee.firefox-addons)
+            bitwarden
+            clearurls
+            consent-o-matic
+            df-youtube
+            facebook-container
+            localcdn
+            react-devtools
+            sponsorblock
+            tridactyl
+            ublock-origin
+            unpaywall
+          ;
+        };
+        settings = {
+          autoDisableScopes = 0;
+        };
+      };
     };
 
     programs.kitty = {
