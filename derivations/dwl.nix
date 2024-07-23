@@ -4,8 +4,8 @@
 , dwl-src
 , emacs
 , firefox
-, foot
 , kanshi
+, kitty
 , pamixer
 , swaylock
 , waybar
@@ -26,7 +26,7 @@ dwl.overrideAttrs (oldAttrs: rec {
       config.def.h \
       --replace "swaylock" "${swaylock}/bin/swaylock" \
       --replace "bemenu-run" "${bemenu}/bin/bemenu-run" \
-      --replace "foot" "${foot}/bin/foot" \
+      --replace "foot" "${kitty}/bin/kitty" \
       --replace "pamixer" "${pamixer}/bin/pamixer" \
       --replace "brightnessctl" "${brightnessctl}/bin/brightnessctl" \
       --replace "autostart.sh" "${autostart}/bin/dwl_autostart.sh";

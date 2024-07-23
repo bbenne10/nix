@@ -52,5 +52,18 @@ in
       enable = (pkgs.stdenv.isLinux);
     };
 
+    programs.kitty = {
+      enable = true;
+      theme = "Everforest Dark Hard";
+      font.name = "Rec Mono Semicasual";
+      shellIntegration.enableZshIntegration = true;
+      settings = {
+        scrollback_lines = 10000;
+        enable_audio_bell = "no";
+        window_padding_width = 12;
+        shell = "${pkgs.zsh}/bin/zsh";
+        font_size = 14;
+      };
+    };
   };
 }

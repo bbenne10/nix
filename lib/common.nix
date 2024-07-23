@@ -8,7 +8,6 @@
 , ...
 }:
 let
-  themesh = (pkgs.callPackage ../derivations/themesh.nix { });
   deploy-rs-bin = deploy-rs.packages.${system}.deploy-rs;
 in
 {
@@ -43,7 +42,6 @@ in
       openssh
       ripgrep
       rsync
-      themesh
       tree
     ];
 
@@ -189,7 +187,6 @@ in
       };
 
       initExtra = ''
-        theme.sh nord
         setopt noclobber
         setopt chasedots
         setopt no_histverify
