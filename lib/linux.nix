@@ -1,4 +1,4 @@
-{ pkgs, home-manager, userName, ... }: {
+{ userName, ... }: {
   system.stateVersion = "22.11";
 
   console.earlySetup = true;
@@ -14,4 +14,6 @@
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIN05GNTpS1NpA9W52N1tNKlS8yuRzRwTqwpL25CA7CCD cardno:23_229_660"
     ];
   };
+
+    fonts.fontDir.enable = true;
 }

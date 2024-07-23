@@ -13,7 +13,6 @@ let
 in
 {
   fonts = {
-    fontDir.enable = true;
     packages = with pkgs; [
       (nerdfonts.override { fonts = [ "ShareTechMono" ]; })
       noto-fonts
