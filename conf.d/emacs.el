@@ -431,5 +431,9 @@
   :hook ((rust-mode . my-before-save-format-buffer)
          (rust-ts-mode . my-before-save-format-buffer)))
 
+(use-package cargo-mode
+  :hook ((rust-mode . cargo-minor-mode) (rust-ts-mode . cargo-minor-mode))
+  :custom (compilation-scroll-output t))
+
 (use-package yaml-mode :mode ("\\.yaml'" "\\.yml'"))
 ;;; emacs.el ends here
