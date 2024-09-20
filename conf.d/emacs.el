@@ -229,7 +229,12 @@
               ("<escape>" nil)
   :general (:prefix my/leader "e" 'my/hydra-eglot/body)
            ("<M-RET>" #'eglot-code-actions)
-  :config (add-to-list 'eglot-server-programs '(nix-mode . ("nil")))
+  :config
+           (add-to-list 'eglot-server-programs '(nix-mode . ("nil")))
+           (add-to-list 'eglot-server-programs
+             '((rust-ts-mode rust-mode) .
+               ("rust-analyzer" :initializationOptions (:check (:command "clippy")))))
+
   :hook ((python-ts-mode . eglot-ensure)
          (python-mode . eglot-ensure)
          (java-mode . eglot-ensure)
