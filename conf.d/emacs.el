@@ -251,7 +251,7 @@
 ;; Project perspectives
 (use-package project
   :defer nil
-  :custom (project-vc-extra-root-markers '(".project"))
+  :custom (project-vc-extra-root-markers '(".projectel"))
           (project-vc-ignores '("node_modules"))
   :init
     ;; I stole the transient from https://github.com/jojojames/matcha/blob/master/matcha-project.el
