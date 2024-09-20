@@ -34,11 +34,12 @@ in
       fd
       gawk
       gnupg
-      manix
+      helix
+      jq
       nil
       nix-output-monitor
       nix-tree
-      nixfmt-classic
+      nixfmt-rfc-style
       openssh
       ripgrep
       rsync
