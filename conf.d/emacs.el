@@ -151,17 +151,22 @@
      (:eval (feline-positions))
      " "
      mode-line-misc-info))
+  :custom-face (feline-position-prefix-face ((t (:inherit font-lock-comment :slant normal))))
+               (mode-line-active ((t (:inherit mode-line-inactive :foreground "#d3c6aa" :overline "#A7C080"))))
+               (mode-line-inactive ((t (:inherit mode-line :overline nil))))
   :custom
-    (feline-line-prefix "↕")
-    (feline-column-prefix "↔ ")
+    (feline-line-prefix "⇅")
+    (feline-column-prefix ":")
     (feline-mode-symbols
-     '(emacs-lisp-mode ""
+     '(emacs-lisp-mode "λ"
+       lisp-interaction-mode "λ"
        python-mode ""
        python-ts-mode ""
        typescript-ts-mode "󰛦"
        nix-mode "󱄅"
        rust-mode ""
        )))
+
 
 (use-package corfu
   :custom (corfu-auto t)
