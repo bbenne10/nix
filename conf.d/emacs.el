@@ -74,6 +74,9 @@
            (before-save . 'whitespace-cleanup)))
 
 (use-package exec-path-from-shell
+  :custom (exec-path-from-shell-variables '("PATH" "SSH_AUTH_SOCK"))
+          (exec-path-from-shell-shell-name "zsh")
+          (exec-path-from-shell-arguments nil)
   :config (exec-path-from-shell-initialize))
 
 (use-package textsize
@@ -172,17 +175,6 @@
             (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1)
             (git-commit-fill-column 72)
             (git-commit-summary-max-length 50))
-
-(use-package git-gutter
-  :hook (prog-mode . git-gutter-mode)
-  :custom (git-gutter:update-interval 0.02))
-
-(use-package git-gutter-fringe
-  :config
-  ;; https://ianyepan.github.io/posts/emacs-git-gutter/
-    (define-fringe-bitmap 'git-gutter-fr:added [224] nil nil '(center repeated))
-    (define-fringe-bitmap 'git-gutter-fr:modified [224] nil nil '(center repeated))
-    (define-fringe-bitmap 'git-gutter-fr:deleted [128 192 224 240] nil nil 'bottom))
 
 (use-package direnv
   :config (direnv-mode))
