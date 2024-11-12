@@ -250,6 +250,10 @@
     (treesit-auto-add-to-auto-mode-alist 'all)
     (global-treesit-auto-mode))
 
+(use-package treesit-fold
+  :config (global-treesit-fold-indicators-mode)
+  :custom-face (treesit-fold-replacement-face ((t (:inherit font-lock-comment :slant normal)))))
+
 ;; Project perspectives
 (use-package project
   :defer nil
