@@ -128,12 +128,12 @@
         (propertize (car mode-cons) 'face (cdr mode-cons)))))
   (setq ;; not done in :custom because this is not defcustom'd in feline
    feline-evil-state-alist
-   '((normal . ("󰰒" . font-lock-variable-name-face))
-     (insert . ("󰰃" . font-lock-string-face))
-     (visual . ("󰰪" . font-lock-keyword-face))
-     (replace . ("󰰞" . font-lock-type-face))
-     (motion . ("󰰏" . font-lock-constant-face))
-     (operator . ("󰰕". font-lock-function-name-face))
+   '((normal . ("Ⓝ" . font-lock-variable-name-face))
+     (insert . ("Ⓘ" . font-lock-string-face))
+     (visual . ("Ⓥ" . font-lock-keyword-face))
+     (replace . ("Ⓡ" . font-lock-type-face))
+     (motion . ("Ⓜ" . font-lock-constant-face))
+     (operator . ("Ⓞ". font-lock-function-name-face))
      (emacs . ("" . font-lock-builtin-face))))
 
   (setq-default
