@@ -88,7 +88,7 @@ in
       lfs = { enable = true; };
       delta = { enable = true; };
       signing = {
-        key = "EE149E4215408DE9";
+        key = "5DDFE2C35409EFE83F70C32788393D9EC269636D";
         signByDefault = true;
       };
       ignores = [
@@ -137,21 +137,22 @@ in
           text = ''
             -----BEGIN PGP PUBLIC KEY BLOCK-----
 
-            mDMEZVy2/RYJKwYBBAHaRw8BAQdAFneOh6/zyVrvAJAocXI2caoUi96dQhm2e/NK
-            MnKpe7a0LUJyeWFuIEJlbm5ldHQgKFlLNSkgPEJyeWFuLkJlbm5ldHRAcHJvdG9u
-            Lm1lPoiOBBMWCgA2FiEETqGbx3D6YpkNmJpi7hSeQhVAjekFAmVctv0CGwMECwkI
-            BwQVCgkIBRYCAwEAAh4FAheAAAoJEO4UnkIVQI3piX0A/2/qlK+AXNwlFYP6dJER
-            JXNLyCYM6bGG9vBFlI/srht+AQCREA3BzmMfmetfqizOclTVoW2Po5p6PKaUILdV
-            R2h7Crg4BGVctv0SCisGAQQBl1UBBQEBB0Aun+ARMYJOzUh7thx5gc8RxqItZXn0
-            RqlHHsB9qUQ0dQMBCAeIeAQYFgoAIBYhBE6hm8dw+mKZDZiaYu4UnkIVQI3pBQJl
-            XLb9AhsMAAoJEO4UnkIVQI3pi5IBALDDr9GkrWS7nDoro3O7eG+JqGWVINm7ta8I
-            TdC0HjipAQDLEN2ufgeS/1Fdr1PYDPw/mP0ouxF+w4/OsE4L1xbDC7gzBGVctz8W
-            CSsGAQQB2kcPAQEHQN05GNTpS1NpA9W52N1tNKlS8yuRzRwTqwpL25CA7CCDiHgE
-            GBYKACAWIQROoZvHcPpimQ2YmmLuFJ5CFUCN6QUCZVy3PwIbIAAKCRDuFJ5CFUCN
-            6UCRAQDGMbm1CtlobTFJ69Qf0a1nQ1GqwU9tYSn6snXycE8SkgEAvtOAFD6g2RuZ
-            FPMNQmarY2X4fi6eDPdAjzZAhT69uwU=
-            =Yp2h
+            mDMEZyjlExYJKwYBBAHaRw8BAQdAmqK3U2qsdh/4cuIa2PfhAUapZCK0bvFzPLdL
+            rzq0fHa0J0JyeWFuIEJlbm5ldHQgPEJyeWFuLkJlbm5ldHRAcHJvdG9uLm1lPoiZ
+            BBMWCgBBFiEEXd/iw1QJ7+g/cMMniDk9nsJpY20FAmco5RMCGwMFCQWjmoAFCwkI
+            BwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQiDk9nsJpY20/5QD/YUQZczM2EUC7
+            Fte+SoLzSdGOM+4ketM/FiRfT5gz5zQBAJvYyzf/RjFe+2VdQ7tnQySKUo/A5Lfc
+            b74vVxZSRVUCuDgEZyjlExIKKwYBBAGXVQEFAQEHQE3AcQyGlQXu8/3S3APmYJFE
+            wddgGzznFhqlY2MxdyBwAwEIB4h+BBgWCgAmFiEEXd/iw1QJ7+g/cMMniDk9nsJp
+            Y20FAmco5RMCGwwFCQWjmoAACgkQiDk9nsJpY23rUAEA0oUs19rCu6vnUjG6TVQq
+            lG0iYfRu/bG63gOXl2pJrU0A/ip8NsgQ6szv7rtT04ZGhPTex0aWSTybQ3uHT8mC
+            TWQIuDMEZyjlMxYJKwYBBAHaRw8BAQdAWNGLzVg3MLQhTht6UVfZBeagANQIyhwj
+            9IT+SI3imy2IfgQYFgoAJhYhBF3f4sNUCe/oP3DDJ4g5PZ7CaWNtBQJnKOUzAhsg
+            BQkFo5qAAAoJEIg5PZ7CaWNtxG4BAP1oKfO8eCE1GaaSD7g90Hw9AgDb8c1+RdXS
+            6VxP2mpZAQCr153Ei5QdNnb/kYV+vAIV/sX2J6NOfEONZi0dT997Aw==
+            =aMQ3
             -----END PGP PUBLIC KEY BLOCK-----
+
           '';
           trust = "ultimate";
         }
