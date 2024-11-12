@@ -230,6 +230,7 @@
   :general (:prefix my/leader "e" 'my/hydra-eglot/body)
            ("<M-RET>" #'eglot-code-actions)
   :config
+           (add-to-list 'eglot-server-programs '(flow-js2-mode . ("flow" "lsp")))
            (add-to-list 'eglot-server-programs '(nix-mode . ("nil")))
            (add-to-list 'eglot-server-programs
              '((rust-ts-mode rust-mode) .
@@ -240,6 +241,7 @@
          (java-mode . eglot-ensure)
          (rust-ts-mode . eglot-ensure)
          (rust-mode . eglot-ensure)
+         (js-mode . eglot-ensure)
          (typescript-ts-mode . eglot-ensure)
          (nix-mode . eglot-ensure)))
 
@@ -419,6 +421,15 @@
 
 (use-package nix-mode
   :hook (nix-mode . my-before-save-format-buffer))
+
+(use-package js2-mode
+  :mode (("\\.js[x]'" . js2-mode)))
+
+(use-package flow-js2-mode
+  :custom (js2-strict-missing-semi-warning nil)
+          (js2-mode-show-parse-errors nil)
+          (js2-mode-show-strict-warnings nil)
+  :mode (("\\.js[x]'" . flow-js2-mode)))
 
 (use-package python
   :ensure nil
