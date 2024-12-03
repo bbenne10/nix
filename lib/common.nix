@@ -34,7 +34,6 @@ in
       fd
       gawk
       gnupg
-      helix
       jq
       nil
       nix-output-monitor
@@ -48,6 +47,23 @@ in
 
     programs.bat = {
       enable = true;
+    };
+
+    programs.helix = {
+      enable = true;
+      settings = {
+        theme = "everforest_dark";
+        editor = {
+          statusline = {
+            mode = {
+              normal = "N";
+              insert = "I";
+              select = "S";
+            };
+          };
+          auto-pairs = false;
+        };
+      };
     };
 
     programs.htop = {
