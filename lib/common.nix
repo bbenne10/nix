@@ -126,6 +126,7 @@ in
       userEmail = "Bryan.Bennett@proton.me";
       userName = "Bryan Bennett";
       extraConfig = {
+        core.fsmonitor = true;
         init = {
           defaultBranch = "main";
         };
