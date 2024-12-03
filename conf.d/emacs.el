@@ -426,6 +426,8 @@
 (use-package nix-mode
   :hook (nix-mode . my-before-save-format-buffer))
 
+(use-package nix-ts-mode :mode "\\.nix\\'")
+
 (use-package js2-mode
   :mode (("\\.js[x]'" . js2-mode)))
 
