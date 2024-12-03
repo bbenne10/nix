@@ -8,11 +8,21 @@
     home = {
       packages = with pkgs; [
         colima
+        docker
       ];
+
+      file = {
+        ".gnupg/gpg-agent.conf" = {
+          enable = true;
+          text = ''
+            pinentry-program ${pkgs.lib.getExe pkgs.pinentry_mac}
+          '';
+        };
+      };
     };
   };
 
-  services.mopidy.mediakeys.enable = true;
+
   services.nix-daemon.enable = true;
   system.keyboard = {
     enableKeyMapping = true;
