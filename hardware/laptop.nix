@@ -42,7 +42,7 @@
   ];
 
   powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
-  hardware.opengl.enable = true;
+  hardware.graphics.enable = true;
 
   networking.interfaces.enp58s0f1.useDHCP = true;
   networking.interfaces.wlp59s0.useDHCP = true;

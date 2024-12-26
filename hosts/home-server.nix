@@ -25,9 +25,6 @@
 
   services.openssh.enable = true;
 
-  # Terrapin attack mitigation
-  services.openssh.settings.Ciphers = [ "aes256-gcm@openssh.com" ];
-
   console = {
     font = "${pkgs.terminus_font}/share/consolefonts/ter-u28n.psf.gz";
     keyMap = "us";
@@ -35,7 +32,11 @@
   };
 
   users.groups.media = {
-    members = [ "bryan" "syncthing" "mopidy" ];
+    members = [
+      # "syncthing"
+      "bryan"
+      "mopidy"
+    ];
   };
 
   users.users.media = {
@@ -46,7 +47,7 @@
   };
 
   services.syncthing = {
-    enable = true;
+    enable = false;
     user = "media";
     group = "media";
     guiAddress = "0.0.0.0:8384";
@@ -77,7 +78,9 @@
     openFirewall = true;
   };
   networking.firewall.allowedTCPPorts = [
-    8384 # syncthing
+    # 8384 # syncthing
+    80 # nginx name-based routing
+    5030 # slskd
     6680 # mopidy web
   ];
   networking.firewall.allowedUDPPorts = [ 22000 21027 ];
@@ -94,33 +97,41 @@
     };
   };
 
-  services.mopidy = {
+  services.nginx = {
     enable = true;
-    extensionPackages = [
-      pkgs.mopidy-iris
-      pkgs.mopidy-local
-    ];
-    configuration = ''
-      [core]
-      restore_state = true
+    virtualHosts = {
+      "music.*" = {
+        locations."/" = {
+          proxyPass = "http://127.0.0.1:4533/";
+          proxyWebsockets = true;
+        };
+      };
+    };
+  };
 
-      [file]
-      media_dirs = |
-       /media/Music|Music
+  services.slskd = {
+    enable = true;
+    group = "media";
+    user = "media";
+    openFirewall = true;
+    domain = "slskd.*";
+    environmentFile = "/etc/slskdEnv";
+    settings.shares.directories = [ "/media/Music" ];
+  };
 
-      [http]
-      hostname = ::
+  services.navidrome = {
+    enable = true;
+    user = "media";
+    group = "media";
+    settings.MusicFolder = "/media/Music";
+  };
 
-      [mpd]
-      hostname = ::
-
-      [audio]
-      output = audioresample ! audioconvert ! audio/x-raw,rate=48000,channels=2,format=S16LE ! wavenc ! filesink location=/run/snapserver/mopidy
-
-      [local]
-      media_dir = /media/Music
-      included_file_extensions = .flac,.mp3,.m4a,.ogg
-    '';
+  services.dashy = {
+    enable = true;
+    virtualHost = {
+      enableNginx = true;
+      domain = "/";
+    };
   };
 
   services.tailscale.enable = true;

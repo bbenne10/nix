@@ -1,7 +1,7 @@
 {
   inputs = {
     nixpkgs = {
-      url = "github:nixos/nixpkgs/nixos-24.05";
+      url = "github:nixos/nixpkgs/nixos-24.11";
     };
 
     darwin = {
@@ -10,7 +10,7 @@
     };
 
     home-manager = {
-      url = "github:nix-community/home-manager/release-24.05";
+      url = "github:nix-community/home-manager/release-24.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -55,9 +55,8 @@
     };
 
     # Linux specific
-    dwl-src = {
+    dwl-custom = {
       url = "github:bbenne10/dwl";
-      flake = false;
     };
 
     nur = {
@@ -66,7 +65,7 @@
   };
 
   outputs =
-    { self, nixpkgs, deploy-rs, emacs, darwin, nur, ... }@inputs:
+    { self, nixpkgs, deploy-rs, dwl-custom, emacs, darwin, nur, ... }@inputs:
     let
       genAttrs = list: f: nixpkgs.lib.genAttrs list f;
       systems = [ "x86_64-darwin" "x86_64-linux" ];
@@ -78,7 +77,7 @@
               overlays = [
                 emacs.overlays.package
                 emacs.overlays.emacs
-                nur.overlay
+                nur.overlays.default
               ];
               config = { allowUnfree = true; };
             };

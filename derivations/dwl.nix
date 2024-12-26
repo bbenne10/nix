@@ -1,35 +1,35 @@
 { bemenu
 , brightnessctl
 , dwl
-, dwl-src
 , emacs
 , firefox
 , kanshi
 , kitty
 , pamixer
 , swaylock
-, waybar
 , writeShellScriptBin
+, wlroots_0_18
 }:
 let
   autostart = writeShellScriptBin "dwl_autostart.sh" ''
     ${kanshi}/bin/kanshi &
-    ${waybar}/bin/waybar &
     ${firefox}/bin/firefox &
     ${emacs}/bin/emacs &
   '';
 in
-dwl.overrideAttrs (oldAttrs: rec {
-  src = dwl-src;
+dwl.overrideAttrs (oldAttrs: {
+  buildInputs = oldAttrs.buildInputs ++ [
+    wlroots_0_18
+  ];
   postPatch = ''
     substituteInPlace \
       config.def.h \
-      --replace "swaylock" "${swaylock}/bin/swaylock" \
-      --replace "bemenu-run" "${bemenu}/bin/bemenu-run" \
-      --replace "foot" "${kitty}/bin/kitty" \
-      --replace "pamixer" "${pamixer}/bin/pamixer" \
-      --replace "brightnessctl" "${brightnessctl}/bin/brightnessctl" \
-      --replace "autostart.sh" "${autostart}/bin/dwl_autostart.sh";
+      --replace-warn "swaylock" "${swaylock}/bin/swaylock" \
+      --replace-warn "bemenu-run" "${bemenu}/bin/bemenu-run" \
+      --replace-warn "foot" "${kitty}/bin/kitty" \
+      --replace-warn "pamixer" "${pamixer}/bin/pamixer" \
+      --replace-warn "brightnessctl" "${brightnessctl}/bin/brightnessctl" \
+      --replace-warn "autostart.sh" "${autostart}/bin/dwl_autostart.sh";
   '';
 })
 

@@ -12,7 +12,6 @@ in
 {
   fonts = {
     packages = with pkgs; [
-      (nerdfonts.override { fonts = [ "ShareTechMono" ]; })
       noto-fonts
       recursive
     ];
@@ -74,7 +73,7 @@ in
 
     programs.kitty = {
       enable = true;
-      theme = "Everforest Dark Hard";
+      themeFile = "everforest_dark_hard";
       font.name = "Rec Mono Semicasual";
       shellIntegration.enableZshIntegration = true;
       keybindings = {
@@ -89,12 +88,12 @@ in
         "f13>K" = "prev_tab";
       };
       settings = {
-        scrollback_lines = 10000;
         enable_audio_bell = "no";
-        window_padding_width = 12;
-        shell = "${pkgs.zsh}/bin/zsh";
-        font_size = 14;
         enabled_layouts = "tall:bias=50;full_size=1;mirrored=false";
+        font_size = if pkgs.stdenv.isDarwin then 14 else 10;
+        scrollback_lines = 10000;
+        shell = "${pkgs.zsh}/bin/zsh";
+        window_padding_width = 12;
       };
     };
   };

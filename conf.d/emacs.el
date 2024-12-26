@@ -5,10 +5,10 @@
 ;;; Code:
 
 (set-face-attribute 'default nil
-                    :family "ShureTechMono Nerd Font"
+                    :family "Rec Mono Semicasual"
                     :weight 'regular)
 (set-face-attribute 'line-number-current-line nil
-                    :family "ShureTechMono Nerd Font"
+                    :family "Rec Mono Semicasual"
                     :weight 'light)
 
 (defconst my/leader (if (eq system-type 'darwin) "<f13>" "<Tools>"))
@@ -230,20 +230,15 @@
   :general (:prefix my/leader "e" 'my/hydra-eglot/body)
            ("<M-RET>" #'eglot-code-actions)
   :config
-           (add-to-list 'eglot-server-programs '(flow-js2-mode . ("flow" "lsp")))
-           (add-to-list 'eglot-server-programs '(nix-mode . ("nil")))
-           (add-to-list 'eglot-server-programs
-             '((rust-ts-mode rust-mode) .
-               ("rust-analyzer" :initializationOptions (:check (:command "clippy")))))
-
-  :hook ((python-ts-mode . eglot-ensure)
-         (python-mode . eglot-ensure)
-         (java-mode . eglot-ensure)
-         (rust-ts-mode . eglot-ensure)
-         (rust-mode . eglot-ensure)
-         (js-mode . eglot-ensure)
-         (typescript-ts-mode . eglot-ensure)
-         (nix-mode . eglot-ensure)))
+    (add-to-list 'eglot-server-programs '(flow-js2-mode . ("flow" "lsp")))
+    (add-to-list
+     'eglot-server-programs
+     '((nix-mode nix-ts-mode) . ("nil" :initializationOptions (:formatting (:command [ "nixpkgs-fmt" ])))))
+    (add-to-list
+     'eglot-server-programs
+     '((rust-ts-mode rust-mode) .
+       ("rust-analyzer" :initializationOptions (:check (:command "clippy")))))
+  :hook ((prog-mode . eglot-ensure) ))
 
 (use-package treesit-auto
   :config

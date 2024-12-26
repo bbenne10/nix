@@ -1,9 +1,7 @@
-{ userName, ... }: {
+{ userName, pkgs, ... }: {
   system.stateVersion = "22.11";
 
   console.earlySetup = true;
-
-  networking.nameservers = [ "192.168.1.142" "1.1.1.1" ];
 
   users.users.${userName} = {
     home = "/home/${userName}";

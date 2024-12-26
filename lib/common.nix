@@ -1,6 +1,6 @@
-{ deploy-rs
-, pkgs
-, system
+{ lib
+, config
+, sysPkgs
 , userName
 , zsh-fast_syntax_highlighting
 , zsh-fzf_marks
@@ -8,45 +8,48 @@
 , ...
 }:
 let
-  deploy-rs-bin = deploy-rs.packages.${system}.deploy-rs;
+  cfg = config.personal;
 in
 {
-  environment.systemPackages = with pkgs; [
-    bashInteractive
-    cachix
-    deploy-rs-bin
-  ];
-
-  programs.gnupg.agent = {
-    enable = true;
-    enableSSHSupport = true;
+  options = {
+    personal.enableGnupg = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+    };
   };
 
-  programs.zsh.enable = true;
+  config = {
+    programs.zsh.enable = true;
+    home-manager.backupFileExtension = "bk";
 
-  home-manager.users.${userName} = {
-    home.enableNixpkgsReleaseCheck = true;
-    home.stateVersion = "22.05";
-    home.packages = with pkgs; [
-      curl
-      dtach
-      dvtm
-      fd
-      gawk
-      gnupg
-      jq
-      nil
-      nix-output-monitor
-      nix-tree
-      nixfmt-rfc-style
-      openssh
-      ripgrep
-      rsync
-      tree
+    environment.systemPackages = [
+      sysPkgs.deploy-rs
     ];
 
-    programs.bat = {
+    home-manager.users.${userName} = {
+    home.enableNixpkgsReleaseCheck = true;
+    home.stateVersion = "22.05";
+    home.packages = builtins.attrValues {
+      inherit (sysPkgs)
+        curl
+        fd
+        gawk
+        helix
+        jq
+        nil
+        nix-output-monitor
+        nix-tree
+        nixfmt-rfc-style
+        openssh
+        rsync
+        tree
+        tmux
+      ;
+    };
+
+    programs.gnupg.agent = lib.mkIf cfg.enableGnupg {
       enable = true;
+      enableSSHSupport = true;
     };
 
     programs.helix = {
@@ -70,10 +73,14 @@ in
       enable = true;
     };
 
-    programs.direnv = {
-      enable = true;
-      enableZshIntegration = true;
-      stdlib = ''
+      programs.bat = {
+        enable = true;
+      };
+
+      programs.direnv = {
+        enable = true;
+        enableZshIntegration = true;
+        stdlib = ''
         # Centralize direnv layouts in $HOME/.cache/direnv/layouts
         : ''${XDG_CACHE_HOME:=$HOME/.cache}
         declare -A direnv_layout_dirs
@@ -81,76 +88,77 @@ in
           echo "''${direnv_layout_dirs[$PWD]:=$(
             echo -n "$XDG_CACHE_HOME"/direnv/layouts/
             echo -n "$PWD" | shasum | cut -d ' ' -f 1
-          )}"
+                                             )}"
         }
       '';
-    };
+      };
 
-    programs.fzf = {
-      enable = true;
-      defaultCommand = "fd --type file --follow";
-      defaultOptions = [ "--height 40%" "--reverse" ];
-      enableZshIntegration = true;
-    };
+      programs.fzf = {
+        enable = true;
+        defaultCommand = "fd --type file --follow";
+        defaultOptions = [ "--height 40%" "--reverse" ];
+        enableZshIntegration = true;
+      };
 
-    programs.git = {
-      enable = true;
-      aliases = {
-        graph = "log --graph --oneline --decorate";
-        up = "!git pull --ff-only && git submodule update --init --recursive";
-        wip = "commit --no-sign -am WIP --no-verify";
-        unwip = "!git log --pretty=%B -1 | grep -iq wip && git reset HEAD~";
-      };
-      lfs = { enable = true; };
-      delta = { enable = true; };
-      signing = {
-        key = "5DDFE2C35409EFE83F70C32788393D9EC269636D";
-        signByDefault = true;
-      };
-      ignores = [
-        "*.pyc"
-        ".python-version"
-        ".ropeproject"
-        "auto-save-list"
-        "custom.el"
-        "url/"
-        "*~"
-        ".\#*"
-        "\#*\#"
-        "*.log"
-        ".DS_Store"
-        "**/*.elc"
-        ".direnv/"
-        ".envrc"
-      ];
-      userEmail = "Bryan.Bennett@proton.me";
-      userName = "Bryan Bennett";
-      extraConfig = {
-        core.fsmonitor = true;
-        init = {
-          defaultBranch = "main";
+      programs.git = {
+        enable = true;
+        aliases = {
+          graph = "log --graph --oneline --decorate";
+          up = "!git pull --ff-only && git submodule update --init --recursive";
+          wip = "commit --no-sign -am WIP --no-verify";
+          unwip = "!git log --pretty=%B -1 | grep -iq wip && git reset HEAD~";
         };
-        pull = {
-          rebase = true;
+        lfs = { enable = true; };
+        delta = { enable = true; };
+        signing = {
+          key = "5DDFE2C35409EFE83F70C32788393D9EC269636D";
+          signByDefault = true;
         };
-        push = {
-          default = "current";
-          autoSetupRemote = "true";
+        ignores = [
+          "*.pyc"
+          ".python-version"
+          ".ropeproject"
+          "auto-save-list"
+          "custom.el"
+          "url/"
+          "#*"
+          "*~"
+          ".#*"
+          "#*#"
+          "*.log"
+          ".DS_Store"
+          "**/*.elc"
+          ".direnv/"
+          ".envrc"
+        ];
+        userEmail = "Bryan.Bennett@proton.me";
+        userName = "Bryan Bennett";
+        extraConfig = {
+          core.fsmonitor = true;
+          init = {
+            defaultBranch = "main";
+          };
+          pull = {
+            rebase = true;
+          };
+          push = {
+            default = "current";
+            autoSetupRemote = "true";
+          };
         };
       };
-    };
 
-    programs.gpg = {
-      enable = true;
-      mutableKeys = false;
-      mutableTrust = false;
-      scdaemonSettings = {
-        disable-ccid = true;
-      };
-      publicKeys = [
-        {
-          # yubikey 5
-          text = ''
+      programs.gpg = lib.mkIf cfg.enableGnupg {
+        enable = true;
+        mutableKeys = false;
+        mutableTrust = false;
+        scdaemonSettings = {
+          disable-ccid = true;
+        };
+        publicKeys = [
+          {
+            # yubikey 5
+            text = ''
             -----BEGIN PGP PUBLIC KEY BLOCK-----
 
             mDMEZyjlExYJKwYBBAHaRw8BAQdAmqK3U2qsdh/4cuIa2PfhAUapZCK0bvFzPLdL
@@ -170,41 +178,48 @@ in
             -----END PGP PUBLIC KEY BLOCK-----
 
           '';
-          trust = "ultimate";
-        }
-      ];
-    };
-
-    programs.ssh = {
-      enable = true;
-      forwardAgent = true;
-    };
-
-    programs.starship = {
-      enable = true;
-      enableZshIntegration = true;
-      settings = {
-        add_newline = false;
-        scan_timeout = 10;
-        character.success_symbol = "[➜](bold green)";
-        character.error_symbol = "[➜](bold red)";
-      };
-    };
-
-    programs.zsh = {
-      enable = true;
-      autocd = true;
-      dotDir = ".config/zsh";
-      enableCompletion = true;
-      autosuggestion.enable = true;
-      shellAliases = {
-        rmr = "rm -r";
-        ls = "${pkgs.eza}/bin/eza";
-        cat = "${pkgs.bat}/bin/bat";
-        gpgreset = "gpg-connect-agent killagent /bye; gpg-connect-agent updatestartuptty /bye; gpg-connect-agent /bye";
+            trust = "ultimate";
+          }
+        ];
       };
 
-      initExtra = ''
+      programs.htop = {
+        enable = true;
+      };
+
+      programs.ssh = {
+        enable = true;
+        forwardAgent = true;
+      };
+
+      programs.ripgrep = {
+        enable = true;
+      };
+
+      programs.starship = {
+        enable = true;
+        enableZshIntegration = true;
+        settings = {
+          add_newline = false;
+          scan_timeout = 10;
+          character.success_symbol = "[➜](bold green)";
+          character.error_symbol = "[➜](bold red)";
+        };
+      };
+
+      programs.zsh = {
+        enable = true;
+        autocd = true;
+        enableCompletion = true;
+        autosuggestion.enable = true;
+        shellAliases = {
+          rmr = "rm -r";
+          ls = lib.getExe pkgs.eza;
+          cat = lib.getExe pkgs.bat;
+          gpgreset = lib.mkIf cfg.enableGnupg "gpg-connect-agent killagent /bye; gpg-connect-agent updatestartuptty /bye; gpg-connect-agent /bye";
+        };
+
+        initExtra = ''
         setopt noclobber
         setopt chasedots
         setopt no_histverify
@@ -217,12 +232,12 @@ in
 
         function set_title () {
           echo -en "\033]1; $@ \007"
-        }
+                   }
 
         # vterm emacs support
         function vterm_printf() {
           printf "\e]%s\e\\" "$1"
-        }
+                  }
 
         # I have no idea where this is coming from
         # But I don't need it for now
@@ -234,26 +249,50 @@ in
         bindkey -M emacs '^z' foreground-current-job
 
         gpg-connect-agent /bye
+        if [[ "$(tty)" = "/dev/tty/0" ]]; then
+          exec dwls
+        fi
       '';
 
-      envExtra = ''
-        export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
-      '';
+        sessionVariables = {
+          BEMENU_OPTS = ''
+          -c \
+          -W0.5 \
+          -l10 \
+          --nb "#1E2326" \
+          --ab "#1E2326" \
+          --sb "#1E3236" \
+          --tb "#1E2326" \
+          --fb "#1E2326" \
+          --tf "#D3C6AA" \
+          --fn \"Rec Mono Semicasual 10\"
+          --fixed-height \
+          -B10 \
+          --bdr "#1E2326" \
+          --hf "#E69875" \
+          --hb "#1E2326"
+        '';
+        };
 
-      plugins = [
-        {
-          name = "fzf-tab";
-          src = zsh-fzf_tab;
-        }
-        {
-          name = "fast-syntax-highlighting";
-          src = zsh-fast_syntax_highlighting;
-        }
-        {
-          name = "fzf-marks";
-          src = zsh-fzf_marks;
-        }
-      ];
+        envExtra = ''
+          export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
+        '';
+
+        plugins = [
+          {
+            name = "fzf-tab";
+            src = zsh-fzf_tab;
+          }
+          {
+            name = "fast-syntax-highlighting";
+            src = zsh-fast_syntax_highlighting;
+          }
+          {
+            name = "fzf-marks";
+            src = zsh-fzf_marks;
+          }
+        ];
+      };
     };
   };
 }
