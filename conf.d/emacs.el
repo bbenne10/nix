@@ -233,7 +233,7 @@
     (add-to-list 'eglot-server-programs '(flow-js2-mode . ("flow" "lsp")))
     (add-to-list
      'eglot-server-programs
-     '((nix-mode nix-ts-mode) . ("nil" :initializationOptions (:formatting (:command [ "nixpkgs-fmt" ])))))
+     '((nix-mode nix-ts-mode) . ("nil" :initializationOptions (:formatting (:command [ "nixfmt" ])))))
     (add-to-list
      'eglot-server-programs
      '((rust-ts-mode rust-mode) .
