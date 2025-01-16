@@ -265,7 +265,7 @@
 
 (use-package treesit-fold
   :config (global-treesit-fold-indicators-mode)
-  :custom-face (treesit-fold-replacement-face ((t (:inherit font-lock-comment :slant normal)))))
+  :custom-face (treesit-fold-replacement-face ((t (:inherit font-lock-comment :slant normal :box nil)))))
 
 ;; Project perspectives
 (use-package project
