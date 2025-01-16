@@ -1,34 +1,38 @@
-{ pkgs
+{ sysPkgs
 , userName
 , emacs_themes
 , ...
 }:
 let
   bennett-themes =
-    (pkgs.callPackage ../derivations/emacs_themes.nix {
+    (sysPkgs.callPackage ../derivations/emacs_themes.nix {
       inherit emacs_themes;
     });
 in
 {
   fonts = {
-    packages = with pkgs; [
+    packages = builtins.attrValues {
+      inherit (sysPkgs)
       noto-fonts
       recursive
-    ];
+    ;
+    };
   };
 
   home-manager.users.${userName} = {
     home.enableNixpkgsReleaseCheck = true;
     home.stateVersion = "22.05";
-    home.packages = with pkgs; [
+    home.packages = builtins.attrValues {
+      inherit (sysPkgs)
       colima
       docker
       pandoc
-    ];
+      ;
+    };
 
-    programs.emacs = let package = if pkgs.stdenv.isDarwin then pkgs.emacs29 else pkgs.emacs29-pgtk; in {
+    programs.emacs = let package = if sysPkgs.stdenv.isDarwin then sysPkgs.emacs30 else sysPkgs.emacs30-pgtk; in {
       enable = true;
-      package = pkgs.emacsWithPackagesFromUsePackage {
+      package = sysPkgs.emacsWithPackagesFromUsePackage {
         inherit package;
 
         config = ./../conf.d/emacs.el;
@@ -46,12 +50,12 @@ in
 
     programs.firefox = {
       enable = true;
-      package = if pkgs.stdenv.isLinux then pkgs.librewolf else null;
+      package = if sysPkgs.stdenv.isLinux then sysPkgs.librewolf else null;
       profiles.default = {
         name = "default";
         isDefault = true;
         extensions = builtins.attrValues {
-          inherit (pkgs.nur.repos.rycee.firefox-addons)
+          inherit (sysPkgs.nur.repos.rycee.firefox-addons)
             bitwarden
             clearurls
             consent-o-matic
@@ -90,10 +94,11 @@ in
       settings = {
         enable_audio_bell = "no";
         enabled_layouts = "tall:bias=50;full_size=1;mirrored=false";
-        font_size = if pkgs.stdenv.isDarwin then 14 else 10;
+        font_size = if sysPkgs.stdenv.isDarwin then 14 else 10;
         scrollback_lines = 10000;
-        shell = "${pkgs.zsh}/bin/zsh";
+        shell = "${sysPkgs.zsh}/bin/zsh";
         window_padding_width = 12;
+        background_opacity = 0.8;
       };
     };
   };

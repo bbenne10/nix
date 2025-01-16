@@ -2,7 +2,6 @@
 let
   dwl_status=dwl-custom.packages.x86_64-linux.dwls;
 in {
-  boot.kernelPackages = pkgs.linuxPackages_zen;
   hardware.system76.enableAll = true;
   environment.systemPackages = with pkgs; [
     pmutils

@@ -22,9 +22,26 @@ in
     programs.zsh.enable = true;
     home-manager.backupFileExtension = "bk";
 
-    environment.systemPackages = [
-      sysPkgs.deploy-rs
-    ];
+    environment = {
+      systemPackages = [
+        sysPkgs.deploy-rs
+      ];
+      sessionVariables = {
+        XDG_DESKTOP_DIR="$HOME";
+        XDG_DOCUMENTS_DIR="$HOME/documents";
+        XDG_DOWNLOAD_DIR="$HOME/downloads";
+        XDG_MUSIC_DIR="$HOME/music";
+        XDG_PICTURES_DIR="$HOME/pictures";
+        XDG_PUBLICSHARE_DIR="$HOME/public";
+        XDG_TEMPLATES_DIR="$HOME/templates";
+        XDG_VIDEOS_DIR="$HOME/videos";
+      };
+    };
+    programs.gnupg.agent = lib.mkIf cfg.enableGnupg {
+      enable = true;
+      enableSSHSupport = true;
+    };
+
 
     home-manager.users.${userName} = {
     home.enableNixpkgsReleaseCheck = true;
@@ -47,11 +64,6 @@ in
       ;
     };
 
-    programs.gnupg.agent = lib.mkIf cfg.enableGnupg {
-      enable = true;
-      enableSSHSupport = true;
-    };
-
     programs.helix = {
       enable = true;
       settings = {
@@ -67,10 +79,6 @@ in
           auto-pairs = false;
         };
       };
-    };
-
-    programs.htop = {
-      enable = true;
     };
 
       programs.bat = {
@@ -214,8 +222,8 @@ in
         autosuggestion.enable = true;
         shellAliases = {
           rmr = "rm -r";
-          ls = lib.getExe pkgs.eza;
-          cat = lib.getExe pkgs.bat;
+          ls = lib.getExe sysPkgs.eza;
+          cat = lib.getExe sysPkgs.bat;
           gpgreset = lib.mkIf cfg.enableGnupg "gpg-connect-agent killagent /bye; gpg-connect-agent updatestartuptty /bye; gpg-connect-agent /bye";
         };
 

@@ -1,50 +1,89 @@
-{ config, lib, pkgs, ... }:
+{ pkgs, ... }: {
 
-{
-  imports =
-    [
-      # <nixpkgs/nixos/modules/installer/scan/not-detected.nix>
-    ];
-
-  boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usb_storage" "sd_mod" "rtsx_pci_sdmmc" ];
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  hardware.cpu.intel.updateMicrocode = true;
   hardware.enableRedistributableFirmware = true;
-  users.defaultUserShell = pkgs.zsh;
-  boot.kernelParams = [
-    # Does not work to fix flicker
-    # "i915.enable_fbc=0"
-    # "intel_idle.max_cstate=4"
-    "i915.enable_psr=0"
+  hardware.graphics.enable = true;
+  hardware.system76.enableAll = true;
 
+  environment.systemPackages = [
+    # for lanzaboote
+    pkgs.sbctl
   ];
-  boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ "kvm-intel" "i915" ];
-  boot.extraModulePackages = [ ];
 
-  fileSystems."/" =
-    { device = "/dev/nvme0n1p2";
+  users.defaultUserShell = pkgs.zsh;
+
+  boot = {
+    initrd = {
+      availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usb_storage" "sd_mod" "rtsx_pci_sdmmc" ];
+      kernelModules = [ ];
+      luks = {
+        devices = {
+         root = {
+            # device = "/dev/disk/by-label/NixOS";
+            device = "/dev/disk/by-uuid/2ffb7979-b188-48a7-9570-4d42ed89a0c7";
+          };
+          home = {
+            # device = "/dev/disk/by-label/NixOS-Home";
+            device = "/dev/disk/by-uuid/9e74fd32-2779-4282-81bd-28f6745bbdf3";
+          };
+        };
+        };
+      };
+    kernelModules = [ "kvm-intel" "i915" ];
+    # use 6.11 until system76 modules work on 6.12
+    kernelPackages = pkgs.linuxKernel.packages.linux_6_11;
+    loader = {
+      # lanzaboote replaces systemd-boot
+      systemd-boot.enable = false;
+      efi.canTouchEfiVariables = true;
+    };
+
+    lanzaboote = {
+      enable = true;
+      pkiBundle = "/etc/secureboot";
+    };
+
+  };
+
+  fileSystems = {
+    "/" = {
+      label = "NixOS";
+      fsType = "btrfs";
+      options = ["subvol=@"];
+    };
+
+    "/nix" = {
+      label = "NixOS";
+      fsType = "btrfs";
+      options = ["subvol=@nix"];
+    };
+
+    "/etc/nixos" = {
+      label = "NixOS";
+      fsType = "btrfs";
+      options = ["subvol=@nix-config"];
+    };
+
+    "/var/log" = {
+      label = "NixOS";
+      fsType = "btrfs";
+      options = ["subvol=@log"];
+    };
+
+    "/home" = {
+      label = "NixOS-Home";
       fsType = "btrfs";
     };
+    
+  };
 
-  fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/AF7F-1C95";
-      fsType = "vfat";
-    };
-
-  fileSystems."/home" =
-    { device = "/dev/disk/by-uuid/d6bc2fc8-e9bf-4d63-a0cc-18d9f30b715b";
-      fsType = "ext4";
-    };
-
-  swapDevices = [
-    { device = "/dev/nvme0n1p1"; }
-  ];
-
-  powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
-  hardware.graphics.enable = true;
-
-  networking.interfaces.enp58s0f1.useDHCP = true;
-  networking.interfaces.wlp59s0.useDHCP = true;
+  networking.interfaces = {
+    en58s0f1 = {
+      useDHCP = true;
+    }; 
+    wlp59s0 = {
+      useDHCP = true;
+    }; 
+  };
 
 }

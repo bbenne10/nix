@@ -14,6 +14,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    lanzaboote = {
+      url = "github:nix-community/lanzaboote/v0.4.1";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Server specific
     deploy-rs.url = "github:serokell/deploy-rs";
 
@@ -65,13 +70,27 @@
   };
 
   outputs =
-    { self, nixpkgs, deploy-rs, dwl-custom, emacs, darwin, nur, ... }@inputs:
+    {
+      self,
+      nixpkgs,
+      deploy-rs,
+      dwl-custom,
+      emacs,
+      darwin,
+      lanzaboote,
+      nur,
+      ...
+    }@inputs:
     let
       genAttrs = list: f: nixpkgs.lib.genAttrs list f;
-      systems = [ "x86_64-darwin" "x86_64-linux" ];
+      systems = [
+        "x86_64-darwin"
+        "x86_64-linux"
+      ];
       pkgsBySystem = (
         let
-          mkPkgs = system:
+          mkPkgs =
+            system:
             import nixpkgs {
               inherit system;
               overlays = [
@@ -79,7 +98,9 @@
                 emacs.overlays.emacs
                 nur.overlays.default
               ];
-              config = { allowUnfree = true; };
+              config = {
+                allowUnfree = true;
+              };
             };
         in
         genAttrs systems mkPkgs
@@ -89,7 +110,7 @@
       specialArgs = inputs // {
         userName = "bryan";
         system = "x86_64-linux";
-        pkgs = linuxPkgs;
+        sysPkgs = linuxPkgs;
       };
       baseLinuxModules = [
         inputs.home-manager.nixosModules.home-manager
@@ -103,6 +124,7 @@
         "bennett-laptop" = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           modules = baseLinuxModules ++ [
+            lanzaboote.nixosModules.lanzaboote
             ./lib/graphical.nix
             ./hardware/laptop.nix
             ./hosts/bennett-laptop.nix
@@ -130,19 +152,22 @@
         "cipher-4590" = darwin.lib.darwinSystem {
           system = "x86_64-darwin";
           specialArgs = specialArgs // {
-            pkgs = darwinPkgs;
+            sysPkgs = darwinPkgs;
             userName = "bbennett37";
             system = "x86_64-darwin";
           };
           modules = [
             inputs.home-manager.darwinModules.home-manager
             inputs.mac-app-util.darwinModules.default
-            ({ pkgs, config, ... }: {
-              # Enable this for home-manager packages too
-              home-manager.sharedModules = [
-                inputs.mac-app-util.homeManagerModules.default
-              ];
-            })
+            (
+              { pkgs, config, ... }:
+              {
+                # Enable this for home-manager packages too
+                home-manager.sharedModules = [
+                  inputs.mac-app-util.homeManagerModules.default
+                ];
+              }
+            )
             ./lib/common.nix
             ./lib/nix.nix
             ./lib/graphical.nix
@@ -159,12 +184,11 @@
           interactiveSudo = true;
           profilesOrder = [ "system" ];
           timeout = 600;
-          magicRollback=false;
+          magicRollback = false;
 
           profiles = {
             system = {
-              path = deploy-rs.lib.x86_64-linux.activate.nixos
-                self.nixosConfigurations.bennett-server;
+              path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.bennett-server;
             };
           };
         };
@@ -176,8 +200,7 @@
           magicRollback = false;
           profiles = {
             system = {
-              path = deploy-rs.lib.x86_64-linux.activate.nixos
-                self.nixosConfigurations.home-server;
+              path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.home-server;
             };
           };
         };
