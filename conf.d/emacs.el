@@ -145,9 +145,9 @@
      " "
      (:eval (feline-buffer-id (format-mode-line "%b")))
      (:eval (propertize (if (buffer-modified-p) " ± " " ") 'face 'feline-buffer-id-face))
-     mode-line-format-right-align
+     (:eval (mode-line-format-right-align))
      (:eval (feline-project-name))
-     " "
+     "  "
      (:eval (feline-positions))
      " "
      mode-line-misc-info))
