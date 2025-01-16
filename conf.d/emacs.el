@@ -246,15 +246,17 @@
   :general (:prefix my/leader "e" 'my/hydra-eglot/body)
            ("<M-RET>" #'eglot-code-actions)
   :config
-    (add-to-list 'eglot-server-programs '(flow-js2-mode . ("flow" "lsp")))
-    (add-to-list
-     'eglot-server-programs
-     '((nix-mode nix-ts-mode) . ("nil" :initializationOptions (:formatting (:command [ "nixfmt" ])))))
-    (add-to-list
-     'eglot-server-programs
-     '((rust-ts-mode rust-mode) .
-       ("rust-analyzer" :initializationOptions (:check (:command "clippy")))))
+           (add-to-list 'eglot-server-programs '(flow-js2-mode . ("flow" "lsp")))
+           (add-to-list 'eglot-server-programs '(nix-mode . ("nil")))
+           (add-to-list 'eglot-server-programs '(nix-ts-mode . ("nil")))
+           (add-to-list 'eglot-server-programs
+             '((rust-ts-mode rust-mode) .
+               ("rust-analyzer" :initializationOptions (:check (:command "clippy")))))
   :hook ((prog-mode . eglot-ensure) ))
+
+(use-package eglot-java
+  :after (eglot))
+>>>>>>> 0ed4706 (Emacs: Add nix-ts and java-ts to eglot modes)
 
 (use-package treesit-auto
   :config
