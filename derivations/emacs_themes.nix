@@ -1,7 +1,7 @@
-{ emacsPackages, lib, fetchFromGitHub, emacs_themes }: emacsPackages.trivialBuild {
+{ emacsPackages, lib, fetchFromGitHub, emacs_themes_src }: emacsPackages.trivialBuild {
   pname = "bennett-themes";
   version = "1.0";
-  src = emacs_themes;
+  src = emacs_themes_src;
   postBuild = ''
     emacs -L . --batch -f batch-byte-compile themes/*.el
   '';

@@ -1,7 +1,6 @@
-{ pkgs, userName, dwl-custom, ... }:
-let
-  dwl_status=dwl-custom.packages.x86_64-linux.dwls;
-in {
+{ pkgs, userName, ... }:
+{
+  boot.kernelPackages = pkgs.linuxPackages_zen;
   hardware.system76.enableAll = true;
   environment.systemPackages = with pkgs; [
     pmutils
@@ -32,8 +31,6 @@ in {
     };
   };
 
-
-
   networking.firewall.allowedTCPPortRanges = [
     {
       from = 1714;
@@ -49,81 +46,6 @@ in {
 
   time.timeZone = "America/New_York";
   i18n.defaultLocale = "en_US.UTF-8";
-  home-manager.users.${userName} = {
-    home.packages = (builtins.attrValues {
-      inherit dwl_status;
-      inherit (pkgs)
-        bemenu
-        libnotify
-        xdg-utils
-        xdg-desktop-portal
-        wlr-randr
-        wl-clipboard
-      ;
-    });
-    home.file.u2f_keys = {
-      target = ".config/Yubico/u2f_keys";
-      text = "bryan:6wdZOqyH9e2yqQZxcIoWoh2Ns+asTlhxBnzwGJvLP4c6MkCdM6jht2hQ8hwVWaxcv/1W43g0Ct1kJOVZKXruyg==,pvVwE1EtFLyuofbyWwX93grSfhDZa1JWPmkPybtfovzEFoqUCIPoeH0oJx+subMVLutVokwtKP6DgJP8PTce2w==,es256,+presence";
-    };
-
-    gtk = {
-      enable = true;
-      cursorTheme = {
-        name = "Vanilla-DMZ";
-        package = pkgs.vanilla-dmz;
-      };
-      font = {
-        name = "Recursive Sans Linear Static";
-        size = 10;
-      };
-      iconTheme = {
-        name = "Zafiro-icons-Dark";
-        package = pkgs.zafiro-icons;
-      };
-    };
-
-    services.syncthing = {
-      enable = true;
-    };
-
-    services.gpg-agent = {
-      enable = true;
-      enableZshIntegration = true;
-      enableScDaemon = true;
-      enableSshSupport = true;
-      pinentryPackage = pkgs.pinentry-bemenu;
-    };
-
-    services.kanshi = {
-      enable = true;
-      settings = [
-        {
-          profile.name = "default";
-          profile.outputs = [
-            {
-              criteria = "eDP-1";
-              status = "enable";
-            }
-          ];
-        }
-        {
-          profile.name = "docked";
-          profile.outputs = [
-             {
-               criteria = "eDP-1";
-               status = "disable";
-             }
-             {
-               criteria = "HDMI-A-2";
-               status = "enable";
-             }
-           ];
-        }
-      ];
-    };
-    };
-
-
   services.pcscd.enable = true;
   powerManagement = {
     enable = true;

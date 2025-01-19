@@ -5,10 +5,10 @@
 ;;; Code:
 
 (set-face-attribute 'default nil
-                    :family "Rec Mono Semicasual"
+                    :family "RecMonoSmCasual Nerd Font"
                     :weight 'regular)
 (set-face-attribute 'line-number-current-line nil
-                    :family "Rec Mono Semicasual"
+                    :family "RecMonoSmCasual Nerd Font"
                     :weight 'light)
 
 (defconst my/leader (if (eq system-type 'darwin) "<f13>" "<Tools>"))
@@ -122,10 +122,6 @@
 
 (use-package feline
   :config
-  (defun my-feline-evil nil
-    (when (boundp 'evil-state)
-      (let ((mode-cons (alist-get evil-state feline-evil-state-alist)))
-        (propertize (car mode-cons) 'face (cdr mode-cons)))))
   (setq ;; not done in :custom because this is not defcustom'd in feline
    feline-evil-state-alist
    '((normal . ("Ⓝ" . font-lock-variable-name-face))
@@ -136,6 +132,11 @@
      (operator . ("Ⓞ". font-lock-function-name-face))
      (emacs . ("" . font-lock-builtin-face))))
 
+  (defun my-feline-evil nil
+    (when (boundp 'evil-state)
+      (let ((mode-cons (alist-get evil-state feline-evil-state-alist)))
+        (propertize (car mode-cons) 'face (cdr mode-cons)))))
+
   (setq-default
    mode-line-format
    '(""
@@ -145,11 +146,12 @@
      " "
      (:eval (feline-buffer-id (format-mode-line "%b")))
      (:eval (propertize (if (buffer-modified-p) " ± " " ") 'face 'feline-buffer-id-face))
-     (:eval (mode-line-format-right-align))
-     (:eval (feline-project-name))
-     "  "
+
+     mode-line-format-right-align
+
      (:eval (feline-positions))
      " "
+     (:eval (feline-project-name))
      mode-line-misc-info))
   :custom-face (feline-position-prefix-face ((t (:inherit font-lock-comment :slant normal))))
                (mode-line-active ((t (:inherit mode-line-inactive :foreground "#d3c6aa" :overline "#A7C080"))))
@@ -162,8 +164,8 @@
        lisp-interaction-mode "λ"
        python-mode ""
        python-ts-mode ""
-       typescript-ts-mode "󰛦"
-       nix-mode "󱄅"
+       typescript-ts-mode ""
+       nix-mode ""
        rust-mode ""
        )))
 
@@ -182,10 +184,6 @@
       "S-TAB" 'corfu-previous
       [backtab] 'corfu-previous)
 
-  :init (global-corfu-mode))
-
-(use-package corfu
-  :custom (corfu-auto t)
   :init (global-corfu-mode))
 
 (use-package magit
@@ -256,7 +254,6 @@
 
 (use-package eglot-java
   :after (eglot))
->>>>>>> 0ed4706 (Emacs: Add nix-ts and java-ts to eglot modes)
 
 (use-package treesit-auto
   :config

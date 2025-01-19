@@ -7,7 +7,6 @@
   home-manager.users.${userName} = {
     home = {
       packages = with pkgs; [
-        colima
         docker
       ];
 
@@ -22,6 +21,23 @@
     };
   };
 
+  launchd.agents."colima.default" = {
+    command = "${pkgs.colima}/bin/colima start -c 4 -m 12 -d 100 --foreground";
+    serviceConfig = {
+      Label = "com.colima.default";
+      RunAtLoad = true;
+      KeepAlive = true;
+
+      # not sure where to put these paths and not reference a hard-coded `$HOME`; `/var/log`?
+      StandardOutPath = "/Users/${userName}/.colima/default/daemon/launchd.stdout.log";
+      StandardErrorPath = "/Users/${userName}/.colima/default/daemon/launchd.stderr.log";
+
+      # not using launchd.agents.<name>.path because colima needs the system ones as well
+      EnvironmentVariables = {
+        PATH = "${pkgs.colima}/bin:${pkgs.docker}/bin:/usr/bin:/bin:/usr/sbin:/sbin";
+      };
+    };
+  };
 
   services.nix-daemon.enable = true;
   system.keyboard = {

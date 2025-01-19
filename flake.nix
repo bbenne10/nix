@@ -4,6 +4,11 @@
       url = "github:nixos/nixpkgs/nixos-24.11";
     };
 
+    lix = {
+      url = "https://git.lix.systems/lix-project/nixos-module/archive/2.91.1-2.tar.gz";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     darwin = {
       url = "github:LnL7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -16,6 +21,11 @@
 
     lanzaboote = {
       url = "github:nix-community/lanzaboote/v0.4.1";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    nixgl = {
+      url = "github:guibou/nixGL";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -33,7 +43,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    emacs_themes = {
+    emacs_themes_src = {
       url = "github:bbenne10/emacs_themes";
       flake = false;
     };
@@ -60,8 +70,9 @@
     };
 
     # Linux specific
-    dwl-custom = {
+    dwl = {
       url = "github:bbenne10/dwl";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     nur = {
@@ -73,50 +84,34 @@
     {
       self,
       nixpkgs,
-      deploy-rs,
-      dwl-custom,
-      emacs,
       darwin,
+      deploy-rs,
+      emacs,
+      home-manager,
       lanzaboote,
       nur,
       ...
     }@inputs:
     let
-      genAttrs = list: f: nixpkgs.lib.genAttrs list f;
-      systems = [
-        "x86_64-darwin"
-        "x86_64-linux"
-      ];
-      pkgsBySystem = (
-        let
-          mkPkgs =
-            system:
-            import nixpkgs {
-              inherit system;
-              overlays = [
-                emacs.overlays.package
-                emacs.overlays.emacs
-                nur.overlays.default
-              ];
-              config = {
-                allowUnfree = true;
-              };
-            };
-        in
-        genAttrs systems mkPkgs
-      );
-      darwinPkgs = pkgsBySystem.x86_64-darwin;
-      linuxPkgs = pkgsBySystem.x86_64-linux;
       specialArgs = inputs // {
         userName = "bryan";
-        system = "x86_64-linux";
-        sysPkgs = linuxPkgs;
       };
       baseLinuxModules = [
-        inputs.home-manager.nixosModules.home-manager
+        home-manager.nixosModules.home-manager
+        inputs.lix.nixosModules.default
+
         ./lib/nix.nix
         ./lib/common.nix
+        ./lib/home/common.nix
         ./lib/linux.nix
+        {
+          home.username = "bryan";
+          home-manager.users.bryan.imports = [
+            ./lib/home/graphical.nix
+            ./lib/home/common.nix
+            ./lib/home/linux.nix
+          ];
+        }
       ];
     in
     {
@@ -126,8 +121,10 @@
           modules = baseLinuxModules ++ [
             lanzaboote.nixosModules.lanzaboote
             ./lib/graphical.nix
+            ./lib/home/graphical.nix
             ./hardware/laptop.nix
             ./hosts/bennett-laptop.nix
+            # TODO: test this on nixos with HM modules
           ];
           inherit specialArgs;
         };
@@ -149,12 +146,10 @@
         };
       };
       darwinConfigurations = {
-        "cipher-4590" = darwin.lib.darwinSystem {
-          system = "x86_64-darwin";
+        "cipher-12058" = darwin.lib.darwinSystem {
+          system = "aarch64-darwin";
           specialArgs = specialArgs // {
-            sysPkgs = darwinPkgs;
             userName = "bbennett37";
-            system = "x86_64-darwin";
           };
           modules = [
             inputs.home-manager.darwinModules.home-manager
@@ -173,6 +168,39 @@
             ./lib/graphical.nix
             ./lib/darwin.nix
             ./hosts/cipher-4590.nix
+            {
+
+              home.username = "bbennett37";
+              home-manager.users.bbennett37 = {
+                userName = "bbennett37";
+                imports = [
+                  ./lib/home/graphical.nix
+                  ./lib/home/common.nix
+                ];
+              };
+            }
+          ];
+        };
+      };
+      homeConfigurations = {
+        "cipher-12053" = home-manager.lib.homeManagerConfiguration {
+          pkgs = import nixpkgs {
+            system = "x86_64-linux";
+            overlays = [
+              nur.overlays.default
+              emacs.overlays.default
+            ];
+          };
+          extraSpecialArgs = inputs;
+          modules = [
+            ./lib/home/common.nix
+            ./lib/home/graphical.nix
+            ./lib/home/linux.nix
+            ./lib/home/alien_linux.nix
+            {
+              home.username = "bbennett37";
+              home.homeDirectory = "/home/bbennett37";
+            }
           ];
         };
       };

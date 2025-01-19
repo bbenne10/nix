@@ -1,21 +1,21 @@
-{ lib
-, config
-, sysPkgs
+{ deploy-rs
+, pkgs
 , userName
 , zsh-fast_syntax_highlighting
 , zsh-fzf_marks
 , zsh-fzf_tab
 , ...
-}:
-let
-  cfg = config.personal;
-in
-{
-  options = {
-    personal.enableGnupg = lib.mkOption {
-      type = lib.types.bool;
-      default = true;
-    };
+}: {
+  environment.systemPackages = builtins.attrValues {
+    inherit (pkgs) 
+      bashInteractive
+      deploy-rs
+    ;
+  };
+
+  programs.gnupg.agent = {
+    enable = true;
+    enableSSHSupport = true;
   };
 
   config = {
@@ -24,7 +24,7 @@ in
 
     environment = {
       systemPackages = [
-        sysPkgs.deploy-rs
+        pkgs.deploy-rs
       ];
       sessionVariables = {
         XDG_DESKTOP_DIR="$HOME";
@@ -37,17 +37,16 @@ in
         XDG_VIDEOS_DIR="$HOME/videos";
       };
     };
-    programs.gnupg.agent = lib.mkIf cfg.enableGnupg {
+    programs.gnupg.agent = {
       enable = true;
       enableSSHSupport = true;
     };
-
 
     home-manager.users.${userName} = {
     home.enableNixpkgsReleaseCheck = true;
     home.stateVersion = "22.05";
     home.packages = builtins.attrValues {
-      inherit (sysPkgs)
+      inherit (pkgs)
         curl
         fd
         gawk
@@ -156,7 +155,7 @@ in
         };
       };
 
-      programs.gpg = lib.mkIf cfg.enableGnupg {
+      programs.gpg = {
         enable = true;
         mutableKeys = false;
         mutableTrust = false;
@@ -222,9 +221,9 @@ in
         autosuggestion.enable = true;
         shellAliases = {
           rmr = "rm -r";
-          ls = lib.getExe sysPkgs.eza;
-          cat = lib.getExe sysPkgs.bat;
-          gpgreset = lib.mkIf cfg.enableGnupg "gpg-connect-agent killagent /bye; gpg-connect-agent updatestartuptty /bye; gpg-connect-agent /bye";
+          ls = pkgs.lib.getExe pkgs.eza;
+          cat = pkgs.lib.getExe pkgs.bat;
+          gpgreset = "gpg-connect-agent killagent /bye; gpg-connect-agent updatestartuptty /bye; gpg-connect-agent /bye";
         };
 
         initExtra = ''

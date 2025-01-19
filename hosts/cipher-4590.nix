@@ -1,11 +1,7 @@
 { userName, pkgs, ... }:
-let
-  acsaml = pkgs.callPackage ../derivations/acsaml.nix { };
-in
 {
   services.nix-daemon.enable = true;
-
-  home-manager.users.${userName} = {
-    home.packages = [ acsaml ];
+  home-manager.users.${userName}.home.packages = builtins.attrValues {
+    inherit (pkgs.jetbrains) idea-community-bin;
   };
 }

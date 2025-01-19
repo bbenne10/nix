@@ -21,6 +21,7 @@
     sudo openconnect \
          --servercert "$FINGERPRINT" \
          "$CONNECT_URL" \
+         --useragent "AnyConnect Linux_64" \
          --cookie-on-stdin \
          ''${RESOLVE:+--resolve "$RESOLVE"} <<< "$COOKIE"
   '';
