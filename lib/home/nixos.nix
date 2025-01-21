@@ -1,7 +1,7 @@
-{pkgs, dwl}: {
-  home.packages = {
-    dwls = dwl.packages.${pkgs.system}.dwls;
-  };
+{pkgs, dwl, ...}: {
+  home.packages = [
+    dwl.packages.${pkgs.system}.dwls
+  ];
 
   services.gpg-agent = {
     enable = true;

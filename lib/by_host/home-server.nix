@@ -1,11 +1,9 @@
 { config, lib, pkgs, userName, ... }: {
-  environment.systemPackages = builtins.attrValues
-    {
-      inherit (pkgs)
-        terminus_font
-        neovim
-        ;
-    };
+  environment.systemPackages = [
+    pkgs.terminus_font
+    pkgs.neovim
+  ];
+
   networking.hostName = "home-server";
   networking.useNetworkd = true;
 
@@ -33,9 +31,7 @@
 
   users.groups.media = {
     members = [
-      # "syncthing"
       "bryan"
-      "mopidy"
     ];
   };
 
@@ -43,33 +39,6 @@
     isSystemUser = true;
     description = "cross-service media user";
     group = "media";
-    extraGroups = [ "mopidy" ];
-  };
-
-  services.syncthing = {
-    enable = false;
-    user = "media";
-    group = "media";
-    guiAddress = "0.0.0.0:8384";
-    dataDir = "/media";
-    configDir = "/media/.syncthing_config";
-    overrideDevices = true;
-    overrideFolders = true;
-    settings = {
-      devices = {
-        "bryan-phone" = { id = "GH3EYR3-V72E72X-3VILKVK-S5SO4PA-LDJZWB7-W4CG7L7-3KYRRLK-FPMKDAE"; };
-      };
-      folders = {
-        "Music" = {
-          path = "/media/Music";
-          devices = [ "bryan-phone" ];
-        };
-        "Camera" = {
-          path = "/media/Camera";
-          devices = [ "bryan-phone" ];
-        };
-      };
-    };
   };
 
   services.minecraft-server = {
@@ -77,25 +46,26 @@
     eula = true;
     openFirewall = true;
   };
+
   networking.firewall.allowedTCPPorts = [
-    # 8384 # syncthing
     80 # nginx name-based routing
     5030 # slskd
     6680 # mopidy web
   ];
+
   networking.firewall.allowedUDPPorts = [ 22000 21027 ];
 
-  services.snapserver = {
-    enable = true;
-    codec = "flac";
-    openFirewall = true;
-    streams = {
-      mopidy = {
-        type = "pipe";
-        location = "/run/snapserver/mopidy";
-      };
-    };
-  };
+  # services.snapserver = {
+  #   enable = true;
+  #   codec = "flac";
+  #   openFirewall = true;
+  #   streams = {
+  #     # mopidy = {
+  #     #   type = "pipe";
+  #     #   location = "/run/snapserver/mopidy";
+  #     # };
+  #   };
+  # };
 
   services.nginx = {
     enable = true;
@@ -117,6 +87,10 @@
     domain = "slskd.*";
     environmentFile = "/etc/slskdEnv";
     settings.shares.directories = [ "/media/Music" ];
+    settings.directories = {
+      downloads = /media/slskd/downloads;
+      incomplete = /media/slskd/incomplete;
+    };
   };
 
   services.navidrome = {
@@ -137,8 +111,8 @@
   services.tailscale.enable = true;
 
   # Stolen from hardware-configuration (autogen'd by nix installer)
-  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-  hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+  nixpkgs.hostPlatform = "x86_64-linux";
+  hardware.cpu.intel.updateMicrocode = true;
 
   boot.kernelPackages = pkgs.linuxPackages_zen;
   boot.loader.systemd-boot.enable = true;

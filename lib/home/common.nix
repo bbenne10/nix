@@ -1,13 +1,13 @@
-{ deploy-rs
-, pkgs
-, zsh-fast_syntax_highlighting
-, zsh-fzf_marks
-, zsh-fzf_tab
-, ...
-}: {
+{
+  pkgs,
+  specialArgs,
+  ...
+}:
+{
   home.stateVersion = "22.05";
-  home.enableNixpkgsReleaseCheck = true;
-  programs.home-manager.enable = true;
+
+  home.username = "bryan";
+
   home.packages = builtins.attrValues {
     inherit (pkgs)
       curl
@@ -25,32 +25,14 @@
       ripgrep
       rsync
       tree
-    ;
+      ;
   };
 
   programs.bat = {
     enable = true;
-  };
-
-  programs.helix = {
-   enable = true;
-    settings = {
-      theme = "everforest_dark";
-      editor = {
-        statusline = {
-          mode = {
-            normal = "N";
-            insert = "I";
-            select = "S";
-          };
-        };
-        auto-pairs = false;
-      };
+    config = {
+      theme = "ansi";
     };
-  };
-
-  programs.htop = {
-    enable = true;
   };
 
   programs.direnv = {
@@ -72,7 +54,10 @@
   programs.fzf = {
     enable = true;
     defaultCommand = "fd --type file --follow";
-    defaultOptions = [ "--height 40%" "--reverse" ];
+    defaultOptions = [
+      "--height 40%"
+      "--reverse"
+    ];
     enableZshIntegration = true;
   };
 
@@ -84,8 +69,12 @@
       wip = "commit --no-sign -am WIP --no-verify";
       unwip = "!git log --pretty=%B -1 | grep -iq wip && git reset HEAD~";
     };
-    lfs = { enable = true; };
-    delta = { enable = true; };
+    lfs = {
+      enable = true;
+    };
+    delta = {
+      enable = true;
+    };
     # signing = {
     #   key = "5DDFE2C35409EFE83F70C32788393D9EC269636D";
     #   signByDefault = true;
@@ -139,6 +128,29 @@
     #   }
     # ];
   };
+
+  programs.helix = {
+    enable = true;
+    settings = {
+      theme = "everforest_dark";
+      editor = {
+        statusline = {
+          mode = {
+            normal = "N";
+            insert = "I";
+            select = "S";
+          };
+        };
+        auto-pairs = false;
+      };
+    };
+  };
+
+  programs.htop = {
+    enable = true;
+  };
+
+  programs.home-manager.enable = true;
 
   programs.ssh = {
     enable = true;
@@ -209,15 +221,15 @@
     plugins = [
       {
         name = "fzf-tab";
-        src = zsh-fzf_tab;
+        src = specialArgs.zsh-fzf_tab;
       }
       {
         name = "fast-syntax-highlighting";
-        src = zsh-fast_syntax_highlighting;
+        src = specialArgs.zsh-fast_syntax_highlighting;
       }
       {
         name = "fzf-marks";
-        src = zsh-fzf_marks;
+        src = specialArgs.zsh-fzf_marks;
       }
     ];
   };

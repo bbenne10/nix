@@ -1,4 +1,8 @@
-{ lib, nixpkgs, pkgs, userName, system, ... }: {
+{ lib, nixpkgs, pkgs, userName, system, emacs, nur, ... }: {
+  nixpkgs.overlays = [
+    nur.overlays.default
+    emacs.overlays.default
+  ];
   nix = {
     channel.enable = false;
     registry = {

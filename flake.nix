@@ -5,7 +5,7 @@
     };
 
     lix = {
-      url = "https://git.lix.systems/lix-project/nixos-module/archive/2.91.1-2.tar.gz";
+      url = "https://git.lix.systems/lix-project/nixos-module/archive/2.92.0.tar.gz";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -86,32 +86,26 @@
       nixpkgs,
       darwin,
       deploy-rs,
-      emacs,
       home-manager,
       lanzaboote,
-      nur,
       ...
     }@inputs:
     let
       specialArgs = inputs // {
         userName = "bryan";
       };
+      baseLinuxHMModules = [
+        ./lib/home/common.nix
+        ./lib/home/graphical.nix
+        ./lib/home/linux.nix
+      ];
       baseLinuxModules = [
         home-manager.nixosModules.home-manager
         inputs.lix.nixosModules.default
 
         ./lib/nix.nix
         ./lib/common.nix
-        ./lib/home/common.nix
         ./lib/linux.nix
-        {
-          home.username = "bryan";
-          home-manager.users.bryan.imports = [
-            ./lib/home/graphical.nix
-            ./lib/home/common.nix
-            ./lib/home/linux.nix
-          ];
-        }
       ];
     in
     {
@@ -121,10 +115,19 @@
           modules = baseLinuxModules ++ [
             lanzaboote.nixosModules.lanzaboote
             ./lib/graphical.nix
-            ./lib/home/graphical.nix
-            ./hardware/laptop.nix
-            ./hosts/bennett-laptop.nix
-            # TODO: test this on nixos with HM modules
+            ./lib/by_host/bennett-laptop.nix
+            (
+              { home-manager, ... }:
+              {
+                home-manager.extraSpecialArgs = inputs;
+                home-manager.useGlobalPkgs = true;
+                home-manager.useUserPackages = true;
+                home-manager.users.bryan.imports = baseLinuxHMModules ++ [
+                  ./lib/home/nixos.nix
+                  ./lib/home/by_host/bennett-laptop.nix
+                ];
+              }
+            )
           ];
           inherit specialArgs;
         };
@@ -132,7 +135,7 @@
         "bennett-server" = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           modules = baseLinuxModules ++ [
-            ./hosts/bennett-server.nix
+            ./lib/by_host/bennett-server.nix
           ];
           inherit specialArgs;
         };
@@ -140,7 +143,7 @@
         "home-server" = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           modules = baseLinuxModules ++ [
-            ./hosts/home-server.nix
+            ./lib/by_host/home-server.nix
           ];
           inherit specialArgs;
         };
@@ -167,15 +170,18 @@
             ./lib/nix.nix
             ./lib/graphical.nix
             ./lib/darwin.nix
-            ./hosts/cipher-4590.nix
+            ./lib/by_host/cipher-12058.nix
             {
-
               home.username = "bbennett37";
+              home-manager.extraSpecialArgs = inputs;
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
               home-manager.users.bbennett37 = {
                 userName = "bbennett37";
                 imports = [
                   ./lib/home/graphical.nix
                   ./lib/home/common.nix
+                  ./lib/home/work.nix
                 ];
               };
             }
@@ -187,16 +193,14 @@
           pkgs = import nixpkgs {
             system = "x86_64-linux";
             overlays = [
-              nur.overlays.default
-              emacs.overlays.default
+              inputs.nur.overlays.default
+              inputs.emacs.overlays.default
             ];
           };
           extraSpecialArgs = inputs;
-          modules = [
-            ./lib/home/common.nix
-            ./lib/home/graphical.nix
-            ./lib/home/linux.nix
+          modules = baseLinuxHMModules ++ [
             ./lib/home/alien_linux.nix
+            ./lib/home/work.nix
             {
               home.username = "bbennett37";
               home.homeDirectory = "/home/bbennett37";
@@ -204,6 +208,7 @@
           ];
         };
       };
+
       deploy.nodes = {
         server = {
           hostname = "bryan-bennett.com";
@@ -233,6 +238,7 @@
           };
         };
       };
+
       checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
     };
 }

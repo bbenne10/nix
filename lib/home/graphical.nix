@@ -9,7 +9,6 @@
 in
 {
   home.packages = [
-    pkgs.colima
     pkgs.docker
     pkgs.pandoc
     (pkgs.nerdfonts.override { fonts = ["Recursive" "Noto"]; })
@@ -17,10 +16,10 @@ in
 
   fonts.fontconfig.enable = true;
 
-  programs.emacs = let package = if pkgs.stdenv.isDarwin then pkgs.emacs30 else pkgs.emacs30-pgtk; in {
+  programs.emacs = {
     enable = true;
     package = pkgs.emacsWithPackagesFromUsePackage {
-      inherit package;
+      package = pkgs.emacs30-pgtk;
 
       config = ./../../conf.d/emacs.el;
       defaultInitFile = true;
