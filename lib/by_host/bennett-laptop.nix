@@ -158,17 +158,6 @@
       label = "NixOS-Home";
       fsType = "btrfs";
     };
-    
   };
-
-  networking.interfaces = {
-    en58s0f1 = {
-      useDHCP = true;
-    }; 
-    wlp59s0 = {
-      useDHCP = true;
-    }; 
-  };
-
 }
 
