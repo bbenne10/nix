@@ -86,7 +86,7 @@
     openFirewall = true;
     domain = "slskd.*";
     environmentFile = "/etc/slskdEnv";
-    settings.shares.directories = [ "/media/Music" ];
+    settings.shares.directories = [ "/media/music" ];
     settings.directories = {
       downloads = /media/slskd/downloads;
       incomplete = /media/slskd/incomplete;
@@ -97,14 +97,22 @@
     enable = true;
     user = "media";
     group = "media";
-    settings.MusicFolder = "/media/Music";
+    settings.MusicFolder = "/media/music";
   };
 
-  services.dashy = {
+  services.fetchpod = {
     enable = true;
-    virtualHost = {
-      enableNginx = true;
-      domain = "/";
+    settings = {
+      update_interval_secs = 3600;
+      download_dir = "/media/podcasts";
+      initial_episode_download_count = 3;
+      feeds = [
+        "https://feeds.megaphone.fm/midst" # Midst
+        "https://feeds.megaphone.fm/GLSS4504081211" # Reslayer's Take
+        "https://feeds.libsyn.com/487862/rss" # Breaker Whiskey
+        "https://anchor.fm/s/a0cdc6ac/podcast/rss" # The Liminal Lands
+        "https://feeds.megaphone.fm/culpable" # Culpable
+      ];
     };
   };
 

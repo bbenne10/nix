@@ -9,11 +9,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    darwin = {
-      url = "github:LnL7/nix-darwin";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     home-manager = {
       url = "github:nix-community/home-manager/release-24.11";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -31,6 +26,11 @@
 
     # Server specific
     deploy-rs.url = "github:serokell/deploy-rs";
+    fetchpod = {
+      # url = "sourcehut:~bryan_bennett/fetchpod";
+      url = "path:/home/bryan/code/fetchpod";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     website = {
       url = "github:bbenne10/website";
@@ -65,6 +65,11 @@
     };
 
     # Darwin specific
+    darwin = {
+      url = "github:LnL7/nix-darwin";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     mac-app-util = {
       url = "github:hraban/mac-app-util";
     };
@@ -143,6 +148,7 @@
         "home-server" = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           modules = baseLinuxModules ++ [
+            inputs.fetchpod.nixosModules.default
             ./lib/by_host/home-server.nix
           ];
           inherit specialArgs;
@@ -225,6 +231,7 @@
             };
           };
         };
+
         home-server = {
           hostname = "home-server";
           user = "root";
