@@ -1,4 +1,8 @@
 { config, lib, pkgs, userName, ... }: {
+  nixpkgs.config.allowUnfreePredicate = pkg: (
+    builtins.elem (lib.getName pkg) [
+    "minecraft-server"
+  ]);
   environment.systemPackages = [
     pkgs.terminus_font
     pkgs.neovim
