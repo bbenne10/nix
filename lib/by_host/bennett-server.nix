@@ -1,7 +1,7 @@
-{ config, lib, pkgs, userName, modulesPath, website, system, ... }:
+{ config, lib, pkgs, website, ... }:
 let
   hostName = "bryan-bennett.com";
-  websitePkg = website.packages.${system}.website;
+  websitePkg = website.packages.${pkgs.system}.website;
 in
 {
   boot.tmp.cleanOnBoot = true;
