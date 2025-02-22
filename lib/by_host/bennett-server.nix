@@ -15,18 +15,7 @@ in
   fileSystems."/" = { device = "/dev/vda3"; fsType = "ext4"; };
   swapDevices = [{ device = "/dev/vda2"; }];
 
-
   services.fail2ban.enable = true;
-
-  # TODO: set up auth before reenabling
-  services.radicale = {
-    enable = false;
-    settings = {
-      server = {
-        hosts = [ " 0.0.0.0:5232" "[::]:5232" ];
-      };
-    };
-  };
 
   services.nginx = {
     enable = true;
@@ -38,6 +27,14 @@ in
         root = "${websitePkg}";
         enableACME = true;
         forceSSL = true;
+        locations = {
+          "/robots.txt" = {
+            extraConfig = ''
+              rewrite ^/(.*) $1;
+              return 200 "User-agent: *\nDisallow: /";
+            '';
+          };
+        };
       };
 
       "pass.${hostName}" = {
@@ -47,19 +44,14 @@ in
           "/" = {
             proxyPass = "http://localhost:8000/";
           };
-        };
-      };
-
-      "files.${hostName}" = {
-        forceSSL = true;
-        enableACME = true;
-        locations = {
-          "/" = {
-            proxyPass = "http://localhost:8384/";
+          "/robots.txt" = {
+            extraConfig = ''
+              rewrite ^/(.*) $1;
+              return 200 "User-agent: *\nDisallow: /";
+            '';
           };
         };
       };
-
     };
   };
 
@@ -69,27 +61,10 @@ in
     DOMAIN = "https:////pass.${hostName}";
   };
 
-  services.syncthing = {
-    enable = true;
-    user = "${userName}";
-    dataDir = "/home/${userName}/sync";
-    configDir = "/home/${userName}/sync/.config/syncthing";
-    # Allow access from remote hosts (via proxypass)
-    guiAddress = "0.0.0.0:8384";
-  };
-
   networking.firewall.allowedTCPPorts = [
     # nginx
     80
     443
-    # syncthing
-    22000
-  ];
-
-  networking.firewall.allowedUDPPorts = [
-    # syncthing
-    22000
-    21027
   ];
 
   security.acme = {
