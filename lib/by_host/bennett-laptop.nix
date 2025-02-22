@@ -11,11 +11,11 @@
   # use 6.11 until system76 modules work on 6.12
   boot.kernelPackages = pkgs.linuxKernel.packages.linux_6_11;
   hardware.system76.enableAll = true;
-  environment.systemPackages = with pkgs; [
-    pmutils
-    terminus_font
+  environment.systemPackages = [ 
+    pkgs.pmutils
+    pkgs.terminus_font
     # for lanzaboote
-    sbctl
+    pkgs.sbctl
   ];
 
   networking.hostName = "bennett-laptop";
