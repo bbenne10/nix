@@ -6,8 +6,6 @@
 {
   home.stateVersion = "22.05";
 
-  home.username = "bryan";
-
   home.packages = builtins.attrValues {
     inherit (pkgs)
       curl

@@ -1,9 +1,4 @@
-{ deploy-rs
-  , pkgs
-  , userName
-  , zsh-fast_syntax_highlighting
-  , zsh-fzf_marks
-  , zsh-fzf_tab
+{pkgs
   , ...
 }: {
   config = {
