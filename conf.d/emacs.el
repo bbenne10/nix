@@ -245,11 +245,12 @@
            ("<M-RET>" #'eglot-code-actions)
   :config
            (add-to-list 'eglot-server-programs '(flow-js2-mode . ("flow" "lsp")))
-           (add-to-list 'eglot-server-programs '(nix-mode . ("nil")))
-           (add-to-list 'eglot-server-programs '(nix-ts-mode . ("nil")))
            (add-to-list 'eglot-server-programs
              '((rust-ts-mode rust-mode) .
                ("rust-analyzer" :initializationOptions (:check (:command "clippy")))))
+           (add-to-list 'eglot-server-programs
+             '((nix-ts-mode nix-mode) .
+               ("nil" :initializationOptions (:formatting (:command ["nixfmt"])))))
   :hook ((prog-mode . eglot-ensure) ))
 
 (use-package eglot-java
@@ -436,7 +437,8 @@
 (use-package nix-mode
   :hook (nix-mode . my-before-save-format-buffer))
 
-(use-package nix-ts-mode :mode "\\.nix\\'")
+(use-package nix-ts-mode :mode "\\.nix\\'"
+  :hook (nix-ts-mode . my-before-save-format-buffer))
 
 (use-package js2-mode
   :mode (("\\.js[x]'" . js2-mode)))
