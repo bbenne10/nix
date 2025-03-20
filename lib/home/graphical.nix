@@ -33,12 +33,144 @@ in
     };
   };
 
-  programs.firefox = {
+  programs.librewolf = {
     enable = true;
-    package = if pkgs.stdenv.isLinux then pkgs.firefox else null;
+    # librewolf (and firefox generally) is marked broken on macos
+    # this still gets the addons and config installed there though
+    package = if pkgs.stdenv.isLinux then pkgs.librewolf else null;
     profiles.default = {
       name = "default";
       isDefault = true;
+      search = {
+        default = "DuckDuckGo";
+        engines = {
+          Google.metadata.hidden = true;
+          Bing.metadata.hidden = true;
+          DuckDuckGo = {
+            urls = [
+              {
+                template = "https://duckduckgo.com";
+                params = [
+                  {
+                    name = "q";
+                    value = "{searchTerms}";
+                  }
+                ];
+              }
+            ];
+            definedAliases = [ ];
+          };
+          "std - Rust" = {
+            urls = [
+              {
+                template = "https://std.rs/{searchTerms}";
+                params = [];
+              }
+            ];
+            definedAliases = [ "!rust" ];
+          };
+          "Docs.rs" = {
+            urls = [
+              {
+                template = "https://docs.rs/releases/search";
+                params = [
+                  {
+                    name = "query";
+                    value = "{searchTerms}";
+                  }
+                ];
+              }
+            ];
+            definedAliases = [ "!rdoc" ];
+          };
+          "Lib.rs" = {
+            urls = [
+              {
+                template = "https://lib.rs/search";
+                params = [
+                  {
+                    name = "q";
+                    value = "{searchTerms}";
+                  }
+                ];
+              }
+            ];
+            definedAliases = [ "!crates" ];
+          };
+          "NixOS Packages" = {
+            urls = [
+              {
+                template = "https://search.nixos.org/packages";
+                params = [
+                  {
+                    name = "query";
+                    value = "{searchTerms}";
+                  }
+                  {
+                    name = "channel";
+                    value = "unstable";
+                  }
+                  {
+                    name = "type";
+                    value = "packages";
+                  }
+                ];
+              }
+            ];
+            definedAliases = [ "!np" ];
+          };
+          "NixOS Options" = {
+            urls = [
+              {
+                template = "https://search.nixos.org/options";
+                params = [
+                  {
+                    name = "query";
+                    value = "{searchTerms}";
+                  }
+                  {
+                    name = "channel";
+                    value = "unstable";
+                  }
+                  {
+                    name = "type";
+                    value = "packages";
+                  }
+                ];
+              }
+            ];
+            definedAliases = [ "!no" ];
+          };
+          "Noogle.dev" = {
+            urls = [
+              {
+                template = "https://noogle.dev/q";
+                params = [
+                  {
+                    name = "term";
+                    value = "{searchTerms}";
+                  }
+                ];
+              }
+            ];
+            definedAliases = ["!ng" "!noogle" ];
+          };
+          "Home Manager Options" = {
+            urls = [
+              {
+                template = "https://home-manager-options.extranix.com";
+                params = [
+                  {
+                    name = "query";
+                    value = "{searchTerms}";
+                  }
+                ];
+              }
+            ];
+            definedAliases = [ "!hm" ];
+          };
+        };
+      };
       extensions = builtins.attrValues {
         inherit (pkgs.nur.repos.rycee.firefox-addons)
           bitwarden
