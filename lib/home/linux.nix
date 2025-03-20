@@ -12,6 +12,40 @@
     ;
   };
 
+  services.fnott = {
+    enable = true;
+    settings = {
+      "main" = {
+        border-size = 3;
+        summary-font = "RecMonoSmCasual Nerd Font:size=10";
+        title-font = "RecMonoSmCasual Nerd Font:size=10";
+        body-font = "RecMonoSmCasual Nerd Font:size=10";
+        max-timeout = 20;
+        default-timeout = 5;
+        idle-timeout = 20;
+
+        progress-bar-height = 20;
+
+        progress-bar-color = "D3C6AAFF";
+        body-color = "D3C6AAFF";
+        summary-color = "D3C6AAFF";
+        title-color = "D3C6AAFF";
+      };
+
+      critical = {
+        background = "4C3743FF";
+      };
+
+      normal = {
+        background = "493B40FF";
+      };
+
+      low = {
+        background = "45443CFF";
+      };
+    };
+  };
+
   services.kanshi = {
     enable = true;
     settings = [
