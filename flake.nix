@@ -27,8 +27,7 @@
     # Server specific
     deploy-rs.url = "github:serokell/deploy-rs";
     fetchpod = {
-      # url = "sourcehut:~bryan_bennett/fetchpod";
-      url = "path:/home/bryan/code/fetchpod";
+      url = "sourcehut:~bryan_bennett/fetchpod";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
