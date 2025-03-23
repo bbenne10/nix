@@ -176,10 +176,10 @@ in
           bitwarden
           clearurls
           consent-o-matic
-          df-youtube
           facebook-container
           localcdn
           react-devtools
+          remove-youtube-s-suggestions
           sponsorblock
           tridactyl
           ublock-origin
