@@ -101,6 +101,7 @@
            ("<escape>" nil)))
 
 (use-package which-key
+  :ensure nil
   :config (which-key-mode 1))
 
 (use-package evil
