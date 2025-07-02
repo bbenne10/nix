@@ -155,7 +155,15 @@
   programs.ssh = {
     enable = true;
     forwardAgent = true;
-    matchBlocks."*.malnet".proxyJump = "malnet-jump.apiary.gtri.gatech.edu:222";
+    matchBlocks = {
+      "*.malnet" = {
+        proxyJump = "malnet-jump.apiary.gtri.gatech.edu:222";
+      };
+      "ciph-*.malnet" = {
+        user = "admin";
+        identityFile = [ "~/.ssh/id_apiary_admin" ];
+      };
+    };
   };
 
   programs.starship = {
@@ -182,7 +190,7 @@
       gpgreset = "gpg-connect-agent killagent /bye; gpg-connect-agent updatestartuptty /bye; gpg-connect-agent /bye";
     };
 
-    initExtra = ''
+    initContent = ''
       setopt noclobber
       setopt chasedots
       setopt no_histverify

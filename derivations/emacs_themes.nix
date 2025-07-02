@@ -1,4 +1,5 @@
-{ emacsPackages, lib, fetchFromGitHub, emacs_themes_src }: emacsPackages.trivialBuild {
+{ emacsPackages, emacs_themes_src }:
+emacsPackages.trivialBuild {
   pname = "bennett-themes";
   version = "1.0";
   src = emacs_themes_src;

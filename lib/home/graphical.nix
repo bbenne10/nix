@@ -1,11 +1,12 @@
-{ pkgs
-, emacs_themes_src
-, ...
-}: let
-  bennett-themes =
-    (pkgs.callPackage ./../../derivations/emacs_themes.nix {
+{
+  pkgs,
+  emacs_themes_src,
+  ...
+}:
+let
+  bennett-themes = (
+    pkgs.callPackage ./../../derivations/emacs_themes.nix {
       inherit emacs_themes_src;
-    });
     }
   );
   modern-tab-bar = (pkgs.callPackage ./../../derivations/emacs_modern_tab_bar.nix { });
@@ -14,7 +15,8 @@ in
   home.packages = [
     pkgs.docker
     pkgs.pandoc
-    (pkgs.nerdfonts.override { fonts = ["Recursive" "Noto"]; })
+    pkgs.nerd-fonts.recursive-mono # needed for fontconfig below
+    pkgs.noto-fonts # needed for fontconfig
   ];
 
   fonts.fontconfig.enable = true;
@@ -27,15 +29,13 @@ in
       config = ./../../conf.d/emacs.el;
       defaultInitFile = true;
       alwaysEnsure = true;
-      extraEmacsPackages = (epkgs: [
-        epkgs.treesit-grammars.with-all-grammars
-      ]);
       override =
         epkgs:
         epkgs
         // {
           inherit bennett-themes modern-tab-bar;
         };
+      extraEmacsPackages = epkgs: [ epkgs.treesit-grammars.with-all-grammars ];
     };
   };
 
@@ -48,11 +48,11 @@ in
       name = "default";
       isDefault = true;
       search = {
-        default = "DuckDuckGo";
+        default = "ddg";
         engines = {
-          Google.metadata.hidden = true;
-          Bing.metadata.hidden = true;
-          DuckDuckGo = {
+          google.metadata.hidden = true;
+          bing.metadata.hidden = true;
+          ddg = {
             urls = [
               {
                 template = "https://duckduckgo.com";
@@ -70,7 +70,7 @@ in
             urls = [
               {
                 template = "https://std.rs/{searchTerms}";
-                params = [];
+                params = [ ];
               }
             ];
             definedAliases = [ "!rust" ];
@@ -159,7 +159,10 @@ in
                 ];
               }
             ];
-            definedAliases = ["!ng" "!noogle" ];
+            definedAliases = [
+              "!ng"
+              "!noogle"
+            ];
           };
           "Home Manager Options" = {
             urls = [
@@ -177,20 +180,22 @@ in
           };
         };
       };
-      extensions = builtins.attrValues {
+      extensions.packages = builtins.attrValues {
         inherit (pkgs.nur.repos.rycee.firefox-addons)
           bitwarden
           clearurls
           consent-o-matic
           facebook-container
+          foxyproxy-standard
           localcdn
+          onepassword-password-manager
           react-devtools
           remove-youtube-s-suggestions
           sponsorblock
           tridactyl
           ublock-origin
           unpaywall
-        ;
+          ;
       };
       settings = {
         autoDisableScopes = 0;
