@@ -339,7 +339,6 @@
 (use-package tabspaces
   :hook (after-init . tabspaces-mode)
   :custom (tabspaces-use-filtered-buffers-as-default t)
-          (tab-bar-show nil)
   :general (
     :prefix my/leader
     "p" #'tabspaces-open-or-create-project-and-workspace))
