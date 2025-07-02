@@ -6,6 +6,9 @@
     (pkgs.callPackage ./../../derivations/emacs_themes.nix {
       inherit emacs_themes_src;
     });
+    }
+  );
+  modern-tab-bar = (pkgs.callPackage ./../../derivations/emacs_modern_tab_bar.nix { });
 in
 {
   home.packages = [
@@ -24,12 +27,15 @@ in
       config = ./../../conf.d/emacs.el;
       defaultInitFile = true;
       alwaysEnsure = true;
-      override = epkgs: epkgs // {
-        inherit bennett-themes;
-      };
       extraEmacsPackages = (epkgs: [
         epkgs.treesit-grammars.with-all-grammars
       ]);
+      override =
+        epkgs:
+        epkgs
+        // {
+          inherit bennett-themes modern-tab-bar;
+        };
     };
   };
 

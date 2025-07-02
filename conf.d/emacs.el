@@ -465,7 +465,6 @@
   :custom (compilation-scroll-output t))
 
 (use-package yaml-mode :mode ("\\.yaml'" "\\.yml'"))
-;;; emacs.el ends here
 (use-package web-mode
   :mode ("\\.j2\\'" . web-mode)
   :custom (web-mode-engines-alist '(("django" . "\\.j2\\'")))
@@ -473,3 +472,11 @@
           (web-mode-css-indent-offset 2)
           (web-mode-code-indent-offset 2))
 
+(use-package modern-tab-bar
+  :custom
+    (tab-bar-show t)
+    (tab-bar-new-button nil)
+  :config
+    (modern-tab-bar-mode 1))
+
+;;; emacs.el ends
