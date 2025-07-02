@@ -198,8 +198,36 @@ in
     };
   };
 
-  programs.kitty = {
+  programs.alacritty = {
     enable = true;
+    theme = "everforest_dark";
+    settings = {
+      window = {
+        decorations = "None";
+        padding = {
+          x = 12;
+          y = 12;
+        };
+        opacity = 0.8;
+        blur = true;
+      };
+      scrolling = {
+        history = 10000;
+      };
+      font = {
+        normal = {
+          family = "RecMonoSmCasual Nerd Font";
+        };
+        size = 12;
+      };
+      terminal = {
+        shell = "${pkgs.zsh}/bin/zsh";
+      };
+    };
+  };
+
+  programs.kitty = {
+    enable = false;
     themeFile = "everforest_dark_hard";
     font.name = "RecMonoSmCasual Nerd Font";
     font.size = 12;
