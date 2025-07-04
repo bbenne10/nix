@@ -75,7 +75,7 @@
 
     # Linux specific
     dwl = {
-      url = "github:bbenne10/dwl";
+      url = "https://codeberg.org/bryan_bennett/dwl/archive/main.tar.gz";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

@@ -98,17 +98,15 @@
         ]
       },
       "locked": {
-        "lastModified": 1737294211,
-        "narHash": "sha256-CgwhwLqPk9d1Qxg2nMx1tKrfXwlDIeHtfZCcvEOnigc=",
-        "owner": "bbenne10",
-        "repo": "dwl",
-        "rev": "1c1668f2ee31d8328205b1131b0a4534d4d1f2b1",
-        "type": "github"
+        "lastModified": 1751635530,
+        "narHash": "sha256-gX0Os0N2Gm6p+7LyXNju0DKj8lhtXdqFiYPJ/zdBBVs=",
+        "rev": "38a7ee593c092e9869be5b9458281c83dcb92c59",
+        "type": "tarball",
+        "url": "https://codeberg.org/api/v1/repos/bryan_bennett/dwl/archive/38a7ee593c092e9869be5b9458281c83dcb92c59.tar.gz"
       },
       "original": {
-        "owner": "bbenne10",
-        "repo": "dwl",
-        "type": "github"
+        "type": "tarball",
+        "url": "https://codeberg.org/bryan_bennett/dwl/archive/main.tar.gz"
       }
     },
     "emacs": {
