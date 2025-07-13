@@ -7,9 +7,7 @@
   systemd.services.NetworkManager-wait-online.enable = false;
   systemd.network.wait-online.enable = false;
 
-  # boot.kernelPackages = pkgs.linuxPackages_zen;
-  # use 6.11 until system76 modules work on 6.12
-  boot.kernelPackages = pkgs.linuxKernel.packages.linux_6_11;
+  boot.kernelPackages = pkgs.linuxPackages_zen;
   hardware.system76.enableAll = true;
   environment.systemPackages = [ 
     pkgs.pmutils
