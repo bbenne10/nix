@@ -13,7 +13,7 @@
       dvtm
       fd
       gawk
-      gnupg
+      gh
       jq
       nil
       nix-output-monitor
