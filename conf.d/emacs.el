@@ -271,6 +271,7 @@
   :defer nil
   :custom (project-vc-extra-root-markers '(".projectel"))
           (project-vc-ignores '("node_modules"))
+          (project-switch-commands 'project-find-flake-with-fallback)
   :init
     ;; I stole the transient from https://github.com/jojojames/matcha/blob/master/matcha-project.el
     ;; And then made it a hydra
@@ -287,6 +288,7 @@
                 (user-error "You didn't specify the file")
               (find-file file)))
         (message "recentf is not enabled")))
+
     (defun project-recentf-files ()
       "Return a list of recently visited files in a project."
       (and (boundp 'recentf-list)
@@ -339,9 +341,17 @@
 (use-package tabspaces
   :hook (after-init . tabspaces-mode)
   :custom (tabspaces-use-filtered-buffers-as-default t)
+          (tabspaces-project-switch-commands 'project-find-flake-with-fallback)
   :general (
     :prefix my/leader
-    "p" #'tabspaces-open-or-create-project-and-workspace))
+            "p" #'tabspaces-open-or-create-project-and-workspace)
+  :init 
+    (defun project-find-flake-with-fallback ()
+      (interactive)
+      (let* ((project-flake-path (concat (project-root (project-current t)) "flake.nix")))
+        (if (file-exists-p project-flake-path)
+            (find-file project-flake-path)
+          (project-find-file)))))
 
 ;; completion / minibuffer
 (use-package consult
