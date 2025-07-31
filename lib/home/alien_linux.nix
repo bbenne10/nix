@@ -8,7 +8,7 @@ in {
   nixGL.packages = {
     inherit nixGLIntel;
   };
-  programs.kitty.package = nixglwrap pkgs.kitty;
+  programs.alacritty.package = nixglwrap pkgs.alacritty;
   home.packages = [
     (pkgs.writeScriptBin "dwls" ''
         ${getExe slstatus} -s | ${nixglwrap dwl.packages.${pkgs.system}.dwl}/bin/dwl
