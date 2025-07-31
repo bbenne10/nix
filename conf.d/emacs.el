@@ -203,14 +203,6 @@
     :custom (fic-highlighted-words '("FIXME" "TODO" "BUG" "NOTE" "XXX"))
     :hook (prog-mode . fic-mode))
 
-;; Visual flymake integration
-(use-package sideline
-  :hook (flymake-mode . sideline-mode))
-
-(use-package sideline-flymake
-  :custom (sideline-flymake-display-errors-whole-line 'line)
-          (sideline-backends-right '((sideline-flymake . up))))
-
 ;; Language Server Support / Treesitter
 (use-package eglot
   :custom (eglot-extend-to-xref t)
