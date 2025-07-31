@@ -1,16 +1,30 @@
-{ writeShellApplication, openconnect, fetchFromGitLab, libnotify }:
+{
+  writeShellApplication,
+  openconnect,
+  fetchFromGitLab,
+  libnotify,
+}:
 
-let updated_openconnect = openconnect.overrideAttrs {
-  version = "9.12+";
-  src = fetchFromGitLab {
-    owner = "openconnect";
-    repo  = "openconnect";
-    rev = "f17fe20d337b400b476a73326de642a9f63b59c8"; # head 1/21/25
-    hash = "sha256-OBEojqOf7cmGtDa9ToPaJUHrmBhq19/CyZ5agbP7WUw=";
-  };
-}; in writeShellApplication {
+let
+  updated_openconnect = openconnect.overrideAttrs (old: {
+    version = "9.12+";
+    patches = (old.patches or [ ]) ++ [
+      ./openconnect_browser_ipv4.patch
+    ];
+    src = fetchFromGitLab {
+      owner = "openconnect";
+      repo = "openconnect";
+      rev = "589560612d41001d5cdc0585c921a4f4d42249b4"; # head 7/30/25
+      hash = "sha256-6aq4DorOVshMOmH8zvBFvfrHVWqgNI56+BX/9IJlEaA=";
+    };
+  });
+in
+writeShellApplication {
   name = "vpn_up";
-  runtimeInputs = [ updated_openconnect libnotify];
+  runtimeInputs = [
+    updated_openconnect
+    libnotify
+  ];
   text = ''
     set -x
     # This script integrates with a system-wide installation

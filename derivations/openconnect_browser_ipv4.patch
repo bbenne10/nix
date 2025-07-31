@@ -1,0 +1,37 @@
+diff --git a/hpke.c b/hpke.c
+index 551ae4c6..557683c9 100644
+--- a/hpke.c
++++ b/hpke.c
+@@ -111,17 +111,17 @@ static int spawn_browser(struct openconnect_info *vpninfo)
+ int handle_external_browser(struct openconnect_info *vpninfo)
+ {
+ 	int ret = 0;
+-	struct sockaddr_in6 sin6 = { };
+-	sin6.sin6_family = AF_INET6;
+-	sin6.sin6_port = htons(29786);
+-	sin6.sin6_addr = in6addr_loopback;
++	struct sockaddr_in sin = { };
++	sin.sin_family = AF_INET;
++	sin.sin_port = htons(29786);
++	sin.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+ 
+ 	int listen_fd;
+ #ifdef SOCK_CLOEXEC
+-	listen_fd = socket(AF_INET6, SOCK_STREAM | SOCK_CLOEXEC, IPPROTO_TCP);
++	listen_fd = socket(AF_INET, SOCK_STREAM | SOCK_CLOEXEC, IPPROTO_TCP);
+ 	if (listen_fd < 0)
+ #endif
+-	listen_fd = socket(AF_INET6, SOCK_STREAM, IPPROTO_TCP);
++	listen_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+ 	if (listen_fd < 0) {
+ 		char *errstr;
+ 	sockerr:
+@@ -145,7 +145,7 @@ int handle_external_browser(struct openconnect_info *vpninfo)
+ 	int optval = 1;
+ 	(void)setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, (void *)&optval, sizeof(optval));
+ 
+-	if (bind(listen_fd, (void *)&sin6, sizeof(sin6)) < 0)
++	if (bind(listen_fd, (void *)&sin, sizeof(sin)) < 0)
+ 		goto sockerr;
+ 
+ 	if (listen(listen_fd, 1))
