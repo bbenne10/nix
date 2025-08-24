@@ -45,8 +45,7 @@
     (defun my/prog-mode-setup ()
       (display-line-numbers-mode)
       (column-number-mode 1)
-      (prettify-symbols-mode 1)
-      (hs-minor-mode))
+      (prettify-symbols-mode 1))
 
     (defun my/after-init-hook ()
       (global-unset-key (kbd "C-x C-c"))
