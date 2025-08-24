@@ -26,10 +26,6 @@
 
     # Server specific
     deploy-rs.url = "github:serokell/deploy-rs";
-    fetchpod = {
-      url = "sourcehut:~bryan_bennett/fetchpod";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
 
     website = {
       url = "github:bbenne10/website";
@@ -136,7 +132,6 @@
         "home-server" = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           modules = baseLinuxModules ++ [
-            inputs.fetchpod.nixosModules.default
             ./lib/by_host/home-server.nix
           ];
           inherit specialArgs;

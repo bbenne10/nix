@@ -1,14 +1,23 @@
-{ config, lib, pkgs, userName, ... }: {
-  nixpkgs.config.allowUnfreePredicate = pkg: (
-    builtins.elem (lib.getName pkg) [
-    "minecraft-server"
-  ]);
+{
+  lib,
+  pkgs,
+  ...
+}:
+let
+  airsonicRefix = pkgs.callPackage ../../derivations/airsonic-refix { };
+in
+{
+  nixpkgs.config.allowUnfreePredicate =
+    pkg:
+    (builtins.elem (lib.getName pkg) [
+      "minecraft-server"
+    ]);
   environment.systemPackages = [
     pkgs.terminus_font
     pkgs.neovim
   ];
 
-  networking.hostName = "home-server";
+  networking.hostName = "home";
   networking.useNetworkd = true;
 
   time.timeZone = "America/New_York";
@@ -52,75 +61,72 @@
   };
 
   networking.firewall.allowedTCPPorts = [
-    80 # nginx name-based routing
-    5030 # slskd
-    6680 # mopidy web
+    80
   ];
 
-  networking.firewall.allowedUDPPorts = [ 22000 21027 ];
-
-  # services.snapserver = {
-  #   enable = true;
-  #   codec = "flac";
-  #   openFirewall = true;
-  #   streams = {
-  #     # mopidy = {
-  #     #   type = "pipe";
-  #     #   location = "/run/snapserver/mopidy";
-  #     # };
-  #   };
-  # };
+  networking.firewall.allowedUDPPorts = [
+    22000
+    21027
+  ];
 
   services.nginx = {
     enable = true;
     virtualHosts = {
-      "music.*" = {
+      "gonic.*" = {
         locations."/" = {
-          proxyPass = "http://127.0.0.1:4533/";
+          proxyPass = "http://127.0.0.1:4747/";
           proxyWebsockets = true;
         };
+      };
+      "prowlarr.*" = {
+        locations."/" = {
+          proxyPass = "http://127.0.0.1:9696/";
+          proxyWebsockets = true;
+        };
+      };
+      "lidarr.*" = {
+        locations."/" = {
+          proxyPass = "http://127.0.0.1:8686/";
+          proxyWebsockets = true;
+        };
+      };
+      "deluge.*" = {
+        locations."/" = {
+          proxyPass = "http://127.0.0.1:8112/";
+          proxyWebsockets = true;
+        };
+      };
+      "music.*" = {
+        root = "${airsonicRefix}";
       };
     };
   };
 
-  services.slskd = {
+  services.tailscale.enable = true;
+
+  services.lidarr.enable = true;
+  services.lidarr.openFirewall = true;
+
+  services.prowlarr.enable = true;
+  services.prowlarr.openFirewall = true;
+
+  services.deluge = {
     enable = true;
-    group = "media";
-    user = "media";
-    openFirewall = true;
-    domain = "slskd.*";
-    environmentFile = "/etc/slskdEnv";
-    settings.shares.directories = [ "/media/music" ];
-    settings.directories = {
-      downloads = /media/slskd/downloads;
-      incomplete = /media/slskd/incomplete;
-    };
+    web.enable = true;
+    package = pkgs.deluged;
   };
 
-  services.navidrome = {
-    enable = true;
-    user = "media";
-    group = "media";
-    settings.MusicFolder = "/media/music";
-  };
-
-  services.fetchpod = {
+  services.gonic = {
     enable = true;
     settings = {
-      update_interval_secs = 3600;
-      download_dir = "/media/podcasts";
-      initial_episode_download_count = 3;
-      feeds = [
-        "https://feeds.megaphone.fm/midst" # Midst
-        "https://feeds.megaphone.fm/GLSS4504081211" # Reslayer's Take
-        "https://feeds.libsyn.com/487862/rss" # Breaker Whiskey
-        "https://anchor.fm/s/a0cdc6ac/podcast/rss" # The Liminal Lands
-        "https://feeds.megaphone.fm/culpable" # Culpable
-      ];
+      music-path = "/media/music";
+      podcast-path = "/media/podcasts";
+      playlists-path = "/media/playlists";
+      scan-at-start-enabled = true;
+      scan-watcher-enabled = true;
+      podcast-purge-age = 30;
     };
   };
-
-  services.tailscale.enable = true;
 
   # Stolen from hardware-configuration (autogen'd by nix installer)
   nixpkgs.hostPlatform = "x86_64-linux";
@@ -129,7 +135,14 @@
   boot.kernelPackages = pkgs.linuxPackages_zen;
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.initrd.availableKernelModules = [ "xhci_pci" "ehci_pci" "ahci" "usb_storage" "usbhid" "sd_mod" ];
+  boot.initrd.availableKernelModules = [
+    "xhci_pci"
+    "ehci_pci"
+    "ahci"
+    "usb_storage"
+    "usbhid"
+    "sd_mod"
+  ];
   boot.initrd.kernelModules = [ ];
 
   fileSystems."/" = {

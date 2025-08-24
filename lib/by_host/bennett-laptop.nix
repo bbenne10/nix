@@ -1,4 +1,4 @@
-{ pkgs, userName, ... }:
+{ pkgs, ... }:
 {
 
   # As of 1/21/25, systemd-networkd
@@ -9,7 +9,7 @@
 
   boot.kernelPackages = pkgs.linuxPackages_zen;
   hardware.system76.enableAll = true;
-  environment.systemPackages = [ 
+  environment.systemPackages = [
     pkgs.pmutils
     pkgs.terminus_font
     # for lanzaboote
@@ -41,8 +41,8 @@
   };
 
   systemd.services.keyd.serviceConfig.CapabilityBoundingSet = [
-    "CAP_SETGID"                                               
-  ];  
+    "CAP_SETGID"
+  ];
 
   networking.firewall.allowedTCPPortRanges = [
     {
@@ -98,11 +98,18 @@
 
   boot = {
     initrd = {
-      availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usb_storage" "sd_mod" "rtsx_pci_sdmmc" ];
+      availableKernelModules = [
+        "xhci_pci"
+        "ahci"
+        "nvme"
+        "usb_storage"
+        "sd_mod"
+        "rtsx_pci_sdmmc"
+      ];
       kernelModules = [ ];
       luks = {
         devices = {
-         root = {
+          root = {
             # device = "/dev/disk/by-label/NixOS";
             device = "/dev/disk/by-uuid/2ffb7979-b188-48a7-9570-4d42ed89a0c7";
           };
@@ -111,9 +118,12 @@
             device = "/dev/disk/by-uuid/9e74fd32-2779-4282-81bd-28f6745bbdf3";
           };
         };
-        };
       };
-    kernelModules = [ "kvm-intel" "i915" ];
+    };
+    kernelModules = [
+      "kvm-intel"
+      "i915"
+    ];
     loader = {
       # lanzaboote replaces systemd-boot
       systemd-boot.enable = false;
@@ -131,25 +141,25 @@
     "/" = {
       label = "NixOS";
       fsType = "btrfs";
-      options = ["subvol=@"];
+      options = [ "subvol=@" ];
     };
 
     "/nix" = {
       label = "NixOS";
       fsType = "btrfs";
-      options = ["subvol=@nix"];
+      options = [ "subvol=@nix" ];
     };
 
     "/etc/nixos" = {
       label = "NixOS";
       fsType = "btrfs";
-      options = ["subvol=@nix-config"];
+      options = [ "subvol=@nix-config" ];
     };
 
     "/var/log" = {
       label = "NixOS";
       fsType = "btrfs";
-      options = ["subvol=@log"];
+      options = [ "subvol=@log" ];
     };
 
     "/home" = {
@@ -158,4 +168,3 @@
     };
   };
 }
-
