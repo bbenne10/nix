@@ -63,17 +63,6 @@
       flake = false;
     };
 
-    # Darwin specific
-    darwin = {
-      url = "github:LnL7/nix-darwin";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    mac-app-util = {
-      url = "github:hraban/mac-app-util";
-    };
-
-    # Linux specific
     dwl = {
       url = "https://codeberg.org/bryan_bennett/dwl/archive/main.tar.gz";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -88,7 +77,6 @@
     {
       self,
       nixpkgs,
-      darwin,
       deploy-rs,
       home-manager,
       lanzaboote,
@@ -152,46 +140,6 @@
             ./lib/by_host/home-server.nix
           ];
           inherit specialArgs;
-        };
-      };
-      darwinConfigurations = {
-        "cipher-12058" = darwin.lib.darwinSystem {
-          system = "aarch64-darwin";
-          specialArgs = specialArgs // {
-            userName = "bbennett37";
-          };
-          modules = [
-            inputs.home-manager.darwinModules.home-manager
-            inputs.mac-app-util.darwinModules.default
-            (
-              { pkgs, config, ... }:
-              {
-                # Enable this for home-manager packages too
-                home-manager.sharedModules = [
-                  inputs.mac-app-util.homeManagerModules.default
-                ];
-              }
-            )
-            ./lib/common.nix
-            ./lib/nix.nix
-            ./lib/graphical.nix
-            ./lib/darwin.nix
-            ./lib/by_host/cipher-12058.nix
-            {
-              home.username = "bbennett37";
-              home-manager.extraSpecialArgs = inputs;
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.users.bbennett37 = {
-                userName = "bbennett37";
-                imports = [
-                  ./lib/home/graphical.nix
-                  ./lib/home/common.nix
-                  ./lib/home/work.nix
-                ];
-              };
-            }
-          ];
         };
       };
       homeConfigurations = {
